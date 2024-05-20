@@ -1,15 +1,15 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
-import net.moznion.uribuildertiny.URIBuilderTiny;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,33 +23,35 @@ import java.util.concurrent.ExecutionException;
   * to be extended by a concrete class
  **/
  abstract class AbstractConnector implements Connector {
+    private static Logger logger = LoggerFactory.getLogger(AbstractConnector.class);
     private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
     private final HttpClient client = HttpClient.newBuilder().build();
-    private Map<String, String> paramsData;
     private String token;
+    private HttpRequest postRequest;
 
     /**
-     * @param uriBuilder The URI builder
+     * @param uri The URI
      * @return HttpRequest
      */
-    public synchronized HttpRequest authenticatedPostRequest(@NotNull URI uriBuilder) {
+    protected HttpRequest postRequest(Map<String, String> paramsData, @NotNull String uri, String path) {
         String dataToSign;
+        String encodedParams;
         String authorizationValue;
         String nonce = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         long timestamp = Instant.now().toEpochMilli();
         var dataToSignBuilder = new StringBuilder();
         if (paramsData != null) {
-            String encodedParams = encodeParams(paramsData);
+            encodedParams = encodeParams(paramsData);
             dataToSignBuilder.append(CONSTANT_STRING).append(timestamp).append(nonce).append(encodedParams);
         } else {
-            throw new NullPointerException("Params data is null");
+            throw new NullPointerException("Parameter data is null");
         }
         dataToSign = dataToSignBuilder.toString();
         String md5hash = DigestUtils.md5Hex(dataToSign);
-        Map<String, String> payloadMap = new HashMap<>();
-        payloadMap.put("params", getParamsData());
+        Map<String,String> payloadMap = new HashMap<>();
+        payloadMap.put("params",encodedParams);
         payloadMap.put("sign", md5hash);
         payloadMap.put("timestamp", String.valueOf(timestamp));
         payloadMap.put("nonce", nonce);
@@ -59,7 +61,8 @@ import java.util.concurrent.ExecutionException;
         } else {
             authorizationValue = "Basic";
         }
-        return HttpRequest.newBuilder()
+        var uriBuilder = new StringBuilder(uri).append(path);
+        postRequest = HttpRequest.newBuilder()
                 .uri(URI.create(uriBuilder.toString()))
                 .header("Authorization", authorizationValue)
                 .header("AppVersion", "0.0.0")
@@ -70,30 +73,16 @@ import java.util.concurrent.ExecutionException;
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
+        return postRequest;
     }
 
-    /**
-     * @param paths The path of the POST call
-     * @return The response
-     */
-    public synchronized HttpResponse<String> authenticatedPostResponse(String... paths){
-        URI builder = getApiBuilder(Arrays.toString(paths));
-        HttpRequest postRequest = authenticatedPostRequest(builder);
-        try {
-            return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+    protected HttpResponse<String> postResponse() throws InterruptedException, ExecutionException {;
+        return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
     }
 
     private static String encodeParams(Map<String, String> paramsData) {
         String jsonString = new Gson().toJson(paramsData);
         return Base64.getEncoder().encodeToString(jsonString.getBytes());
-    }
-    private static URI getApiBuilder(String apiBaseUrl, String... paths) {
-        return new URIBuilderTiny(apiBaseUrl).appendPaths(paths).build();
     }
     public void setToken(String token) {
         this.token = token;
@@ -101,15 +90,6 @@ import java.util.concurrent.ExecutionException;
 
     public String getToken() {
         return token;
-    }
-
-   public void setParamsData(Map<String, String> paramsData) {
-        this.paramsData = paramsData;
-        encodeParams(paramsData);
-    }
-
-    public String getParamsData() {
-        return encodeParams(paramsData);
     }
 }
 
