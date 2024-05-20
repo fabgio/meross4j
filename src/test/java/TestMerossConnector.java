@@ -12,7 +12,7 @@ public class TestMerossConnector  {
     void testGetStatusCodeIs200() {
         MerossConnector connector = new MerossConnector(MerossConstants.EUROPE_BASE_URL,email, password);
         try {
-            int  statusCode =connector.responseToLogin().statusCode();
+            int  statusCode = connector.responseToLogin().statusCode();
             assertEquals(200,statusCode);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
