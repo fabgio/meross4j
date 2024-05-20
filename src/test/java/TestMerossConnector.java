@@ -9,7 +9,7 @@ public class TestMerossConnector  {
     private final String password="bruce975";
 
     @Test
-    void testGetStatusCodeIs200() {
+    void testStatusCodeIs200() {
         MerossConnector connector = new MerossConnector(MerossConstants.EUROPE_BASE_URL,email, password);
         try {
             int  statusCode = connector.responseToLogin().statusCode();

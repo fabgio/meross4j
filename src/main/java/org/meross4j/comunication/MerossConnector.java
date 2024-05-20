@@ -16,7 +16,8 @@ public class MerossConnector extends AbstractConnector {
         this.password = password;
     }
     //TODO: Menage HTTP error conditions
-    public HttpResponse<String> responseToLogin() throws ExecutionException, InterruptedException {
+    public HttpResponse<String> responseToLogin()
+            throws ExecutionException, InterruptedException {
         Map loginMap = new HashMap();
         loginMap.put("email", email);
         loginMap.put("password", password);
