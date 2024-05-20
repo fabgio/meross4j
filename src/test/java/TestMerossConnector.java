@@ -1,9 +1,7 @@
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossConnector;
 import org.meross4j.comunication.MerossConstants;
-
 import java.util.concurrent.ExecutionException;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestMerossConnector  {
@@ -14,7 +12,7 @@ public class TestMerossConnector  {
     void testGetStatusCodeIs200() {
         MerossConnector connector = new MerossConnector(MerossConstants.EUROPE_BASE_URL,email, password);
         try {
-            int  statusCode=connector.responseToLogin().statusCode();
+            int  statusCode =connector.responseToLogin().statusCode();
             assertEquals(200,statusCode);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);

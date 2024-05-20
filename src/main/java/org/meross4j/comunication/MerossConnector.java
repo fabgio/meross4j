@@ -1,6 +1,5 @@
 package org.meross4j.comunication;
 
-import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +21,6 @@ public class MerossConnector extends AbstractConnector {
         Map loginMap = new HashMap();
         loginMap.put("email", email);
         loginMap.put("password", password);
-        merossConnector.postRequest(loginMap,apiBaseUrl,MerossConstants.LOGIN_PATH);
-        return postResponse();
+        return postResponse(loginMap,apiBaseUrl,MerossConstants.LOGIN_PATH);
     }
 }

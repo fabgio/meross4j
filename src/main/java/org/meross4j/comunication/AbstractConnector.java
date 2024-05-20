@@ -29,17 +29,16 @@ import java.util.concurrent.ExecutionException;
     private static final String MODULE_VERSION = "0.0.0";
     private final HttpClient client = HttpClient.newBuilder().build();
     private String token;
-    private HttpRequest postRequest;
 
     /**
      * @param uri The URI
      * @return HttpRequest
      */
-    protected HttpRequest postRequest(Map<String, String> paramsData, @NotNull String uri, String path) {
+    protected HttpResponse postResponse(Map<String, String> paramsData, @NotNull String uri, String path) throws ExecutionException, InterruptedException {
         String dataToSign;
         String encodedParams;
         String authorizationValue;
-        String nonce = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+        String nonce = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         long timestamp = Instant.now().toEpochMilli();
         var dataToSignBuilder = new StringBuilder();
         if (paramsData != null) {
@@ -62,27 +61,22 @@ import java.util.concurrent.ExecutionException;
             authorizationValue = "Basic";
         }
         var uriBuilder = new StringBuilder(uri).append(path);
-        postRequest = HttpRequest.newBuilder()
+        HttpRequest postRequest= HttpRequest.newBuilder()
                 .uri(URI.create(uriBuilder.toString()))
                 .header("Authorization", authorizationValue)
                 .header("AppVersion", "0.0.0")
                 .header("vender", "meross")
                 .header("AppType", DEFAULT_APP_TYPE)
                 .header("AppLanguage", "EN")
-                .header("User-Agent", DEFAULT_APP_TYPE + "/" + MODULE_VERSION)
+                .header("User-Agent", DEFAULT_APP_TYPE +"/"+ MODULE_VERSION)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
-        return postRequest;
-    }
-
-    protected HttpResponse<String> postResponse() throws InterruptedException, ExecutionException {;
         return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
     }
 
     private static String encodeParams(Map<String, String> paramsData) {
-        String jsonString = new Gson().toJson(paramsData);
-        return Base64.getEncoder().encodeToString(jsonString.getBytes());
+        return Base64.getEncoder().encodeToString(new Gson().toJson(paramsData).getBytes());
     }
     public void setToken(String token) {
         this.token = token;
