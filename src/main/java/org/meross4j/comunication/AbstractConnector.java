@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
      * @param uri The URI
      * @return HttpRequest
      */
-     HttpResponse postResponse(Map<String, String> paramsData, @NotNull String uri, String path)
+      HttpResponse postResponse(Map<String, String> paramsData, @NotNull String uri, String path)
             throws ExecutionException, InterruptedException {
         String dataToSign;
         String encodedParams;
