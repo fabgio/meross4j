@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MerossHttpConnector extends AbstractConnector {
+public class MerossHttpConnector  extends AbstractConnector {
     private static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
     private final String apiBaseUrl;
     private final String email;
@@ -32,4 +32,5 @@ public class MerossHttpConnector extends AbstractConnector {
         }
         return null;
     }
+
 }

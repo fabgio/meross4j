@@ -19,10 +19,10 @@ import java.util.concurrent.ExecutionException;
 /**
   * @author Giovanni Fabiani - initial contribution
   *
-  * The AbstractConnector contanins the fundamental APIs  for connecting to the Meross host. It has
+  * The AbstractConnector abstract class contanins the fundamental APIs  for connecting to the Meross host. It has
   * to be extended by a concrete class
  **/
- public abstract class AbstractConnector {
+ public abstract class AbstractConnector implements Connector {
     private static Logger logger = LoggerFactory.getLogger(AbstractConnector.class);
     private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
@@ -32,10 +32,10 @@ import java.util.concurrent.ExecutionException;
 
     /**
      * @param uri The URI
-     * @return  The HttpResponse
+     * @return The HttpResponse
      */
-     synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, @NotNull String uri, String path)
-            throws ExecutionException, InterruptedException {
+     @Override
+     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, @NotNull String uri, String path) {
         String dataToSign;
         String encodedParams;
         String authorizationValue;
@@ -73,8 +73,14 @@ import java.util.concurrent.ExecutionException;
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
-        return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
-    }
+         try {
+             return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
+         } catch (InterruptedException e) {
+             throw new RuntimeException(e);
+         } catch (ExecutionException e) {
+             throw new RuntimeException(e);
+         }
+     }
 
     private static String encodeParams(Map<String, String> paramsData) {
         return Base64.getEncoder().encodeToString(new Gson().toJson(paramsData).getBytes());
