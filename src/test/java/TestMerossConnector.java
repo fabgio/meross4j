@@ -1,10 +1,12 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossConstants;
 import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TestMerossConnector  {
     private MerossHttpConnector connector;
@@ -19,7 +21,7 @@ public class TestMerossConnector  {
     @Test
     void testStatusCodeIs200() {
         try {
-            int  statusCode = connector.responseToLogin().statusCode();
+            int statusCode = connector.responseToLogin().statusCode();
             assertEquals(200,statusCode);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
@@ -27,11 +29,23 @@ public class TestMerossConnector  {
             throw new RuntimeException(e);
         }
     }
+    @Disabled
     @Test
-    void testSResponseIsNotNull() {
+    void testResponseBodyIsNull() {
         try {
             String responseBody = connector.responseToLogin().body();
-            assertNotNull(responseBody,responseBody);
+            assertNull(responseBody);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    @Test
+    void testResponseBodyIsNotNull() {
+        try {
+            String responseBody = connector.responseToLogin().body();
+            assertNotNull(responseBody);
         } catch (ExecutionException e) {
             throw new RuntimeException(e);
         } catch (InterruptedException e) {
