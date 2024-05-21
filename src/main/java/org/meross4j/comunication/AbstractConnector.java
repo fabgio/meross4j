@@ -22,7 +22,7 @@ import java.util.concurrent.ExecutionException;
   * The AbstractConnector contanins the fundamental APIs  for connecting to the Meross host. It has
   * to be extended by a concrete class
  **/
- abstract class AbstractConnector  {
+ public abstract class AbstractConnector {
     private static Logger logger = LoggerFactory.getLogger(AbstractConnector.class);
     private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
