@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TestMerossConnector  {
     private MerossHttpConnector connector;
-    private final String email ="giovanni.fabiani@outlook.com";
+    private final String email ="giovanni.fabiani@outlook.";
     private final String password="bruce975";
 
     @BeforeEach
@@ -20,36 +20,36 @@ public class TestMerossConnector  {
 
     @Test
     void testStatusCodeIs200() {
+        int statusCode;
         try {
-            int statusCode = connector.responseToLogin().statusCode();
+            statusCode = connector.responseToLogin().statusCode();
             assertEquals(200,statusCode);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+
     }
     @Disabled
     @Test
     void testResponseBodyIsNull() {
+        String responseBody;
         try {
-            String responseBody = connector.responseToLogin().body();
+            responseBody = connector.responseToLogin().body();
             assertNull(responseBody);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+
     }
     @Test
     void testResponseBodyIsNotNull() {
+        String responseBody;
         try {
-            String responseBody = connector.responseToLogin().body();
+            responseBody = connector.responseToLogin().body();
             assertNotNull(responseBody);
-        } catch (ExecutionException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
+
     }
 }

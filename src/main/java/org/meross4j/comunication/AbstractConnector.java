@@ -34,7 +34,7 @@ import java.util.concurrent.ExecutionException;
      * @param uri The URI
      * @return HttpRequest
      */
-      HttpResponse postResponse(Map<String, String> paramsData, @NotNull String uri, String path)
+      HttpResponse<String> postResponse(Map<String, String> paramsData, @NotNull String uri, String path)
             throws ExecutionException, InterruptedException {
         String dataToSign;
         String encodedParams;
@@ -62,7 +62,7 @@ import java.util.concurrent.ExecutionException;
             authorizationValue = "Basic";
         }
         var uriBuilder = new StringBuilder(uri).append(path);
-        HttpRequest postRequest= HttpRequest.newBuilder()
+        HttpRequest postRequest = HttpRequest.newBuilder()
                 .uri(URI.create(uriBuilder.toString()))
                 .header("Authorization", authorizationValue)
                 .header("AppVersion", "0.0.0")
