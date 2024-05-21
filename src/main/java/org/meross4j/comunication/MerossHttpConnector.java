@@ -5,12 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class MerossConnector extends AbstractConnector {
+public class MerossHttpConnector extends AbstractConnector {
     private final String apiBaseUrl;
     private final String email;
     private final String password;
 
-    public MerossConnector(String apiBaseUrl, String email, String password) {
+    public MerossHttpConnector(String apiBaseUrl, String email, String password) {
         this.apiBaseUrl = apiBaseUrl;
         this.email = email;
         this.password = password;
