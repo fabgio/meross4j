@@ -3,6 +3,10 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossConstants;
+
+import java.nio.file.AccessDeniedException;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TestMerossConnector  {
     private MerossHttpConnector connector;
-    private final String email ="giovanni.fabiani@outlook.";
-    private final String password="bruce975";
+    private final String email ="giovanni.fabiani@outlook.com";
+    private final String password ="bruce975";
 
     @BeforeEach
     void setUp() {
@@ -34,13 +38,13 @@ public class TestMerossConnector  {
     void testResponseBodyIsNull() {
         String responseBody;
         try {
-            responseBody = connector.responseToLogin().body();
+            responseBody = Objects.requireNonNull(connector.responseToLogin()).body();
             assertNull(responseBody);
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
     }
+
     @Test
     void testResponseBodyIsNotNull() {
         String responseBody;
@@ -50,6 +54,16 @@ public class TestMerossConnector  {
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
     }
-}
+        @Disabled
+        @Test
+        void testResponseBodyAsMapIsNotNull() {
+            Map<String,String> responseBody;
+            try {
+                responseBody = connector.responseBodyToLogin();
+            } catch (ExecutionException | InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            assertNotNull(responseBody);
+        }
+    }

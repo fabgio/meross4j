@@ -74,10 +74,9 @@ import java.util.concurrent.ExecutionException;
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
          try {
-             return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
-         } catch (InterruptedException e) {
-             throw new RuntimeException(e);
-         } catch (ExecutionException e) {
+             HttpResponse<String> response = client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
+             return response;
+         } catch (InterruptedException | ExecutionException e) {
              throw new RuntimeException(e);
          }
      }
