@@ -1,6 +1,6 @@
 package org.meross4j.comunication;
 
-import org.meross4j.utils.GsonDeserializer;
+import org.meross4j.util.GsonDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.http.HttpResponse;
@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-//TODO: Document
+//TODO: Javadoc
 public final class MerossHttpConnector  extends AbstractConnector {
-     private static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
+     private final static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
      private final String apiBaseUrl;
      private final String email;
      private final String password;
@@ -34,7 +34,7 @@ public final class MerossHttpConnector  extends AbstractConnector {
          return null;
      }
 
-    ///TODO: Document
+    ///TODO: Javadoc
      public Map<String, String> responseBodyToLogin() {
          GsonDeserializer<Map<String, String>> gsonDeserializer = new GsonDeserializer<>();
          Map<String, String> responseBodyMap = gsonDeserializer.deserialize(Objects
