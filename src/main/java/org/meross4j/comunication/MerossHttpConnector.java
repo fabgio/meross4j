@@ -10,7 +10,7 @@ import java.util.Objects;
 
 //TODO: Javadoc
 public final class MerossHttpConnector  extends AbstractConnector {
-     private final static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
+     private final static  Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
      private final String apiBaseUrl;
      private final String email;
      private final String password;
