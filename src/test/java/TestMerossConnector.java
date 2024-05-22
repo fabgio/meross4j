@@ -3,8 +3,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossConstants;
-
-import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
