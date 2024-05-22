@@ -7,9 +7,9 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
- public final class MerossHttpConnector  extends AbstractConnector {
+//TODO: Document
+public final class MerossHttpConnector  extends AbstractConnector {
      private static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
      private final String apiBaseUrl;
      private final String email;
@@ -21,8 +21,7 @@ import java.util.concurrent.ExecutionException;
          this.password = password;
      }
 
-     public HttpResponse<String> responseToLogin()
-             throws ExecutionException, InterruptedException {
+     public HttpResponse<String> responseToLogin() {
          Map<String, String> loginMap = new HashMap<>();
          loginMap.put("email", email);
          loginMap.put("password", password);
@@ -35,7 +34,8 @@ import java.util.concurrent.ExecutionException;
          return null;
      }
 
-     public Map<String, String> responseBodyToLogin() throws ExecutionException, InterruptedException {
+    ///TODO: Document
+     public Map<String, String> responseBodyToLogin() {
          GsonDeserializer<Map<String, String>> gsonDeserializer = new GsonDeserializer<>();
          Map<String, String> responseBodyMap = gsonDeserializer.deserialize(Objects
                  .requireNonNull(responseToLogin()).body());

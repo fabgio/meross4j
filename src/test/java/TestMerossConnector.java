@@ -5,7 +5,6 @@ import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossConstants;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TestMerossConnector  {
     private MerossHttpConnector connector;
     private final String email ="giovanni.fabiani@outlook.com";
-    private final String password ="bruce975";
+    private final String password ="bruce976";
 
     @BeforeEach
     void setUp() {
@@ -23,35 +22,23 @@ public class TestMerossConnector  {
     @Test
     void testStatusCodeIs200() {
         int statusCode;
-        try {
-            statusCode = connector.responseToLogin().statusCode();
-            assertEquals(200,statusCode);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        statusCode = connector.responseToLogin().statusCode();
+        assertEquals(200,statusCode);
 
     }
     @Disabled
     @Test
     void testResponseBodyIsNull() {
         String responseBody;
-        try {
-            responseBody = Objects.requireNonNull(connector.responseToLogin()).body();
-            assertNull(responseBody);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        responseBody = Objects.requireNonNull(connector.responseToLogin()).body();
+        assertNull(responseBody);
     }
 
     @Test
     void testResponseBodyIsNotNull() {
         String responseBody;
-        try {
             responseBody = connector.responseToLogin().body();
             assertNotNull(responseBody);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
     }
         @Disabled
         @Test
@@ -59,7 +46,7 @@ public class TestMerossConnector  {
             Map<String,String> responseBody;
             try {
                 responseBody = connector.responseBodyToLogin();
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (IllegalArgumentException e) {
                 throw new RuntimeException(e);
             }
             assertNotNull(responseBody);
