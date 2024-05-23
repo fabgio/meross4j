@@ -35,7 +35,7 @@ import java.util.concurrent.ExecutionException;
      * @return The HttpResponse
      */
      @Override
-     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, @NotNull String uri, String path) {
+     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) {
         String dataToSign;
         String encodedParams;
         String authorizationValue;
@@ -77,6 +77,7 @@ import java.util.concurrent.ExecutionException;
              HttpResponse<String> response = client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
              return response;
          } catch (InterruptedException | ExecutionException e) {
+             logger.debug("Error while posting data", e);
              throw new RuntimeException(e);
          }
      }

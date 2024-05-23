@@ -35,7 +35,7 @@ public final class MerossHttpConnector  extends AbstractConnector {
      }
 
     ///TODO: Javadoc
-     public Map<String, String> responseBodyToLogin() {
+     public Map<String, String> responseBodyToLogin()  {
          GsonDeserializer<Map<String, String>> gsonDeserializer = new GsonDeserializer<>();
          Map<String, String> responseBodyMap = gsonDeserializer.deserialize(Objects
                  .requireNonNull(responseToLogin()).body());

@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TestMerossConnector  {
     private MerossHttpConnector connector;
     private final String email ="giovanni.fabiani@outlook.com";
-    private final String password ="bruce975";
+    private final String password ="bruce97";
 
     @BeforeEach
     void setUp() {
@@ -40,15 +40,11 @@ public class TestMerossConnector  {
             responseBody = connector.responseToLogin().body();
             assertNotNull(responseBody);
     }
-        @Disabled
-        @Test
-        void testResponseBodyAsMapIsNotNull() {
-            Map<String,String> responseBody;
-            try {
-                responseBody = connector.responseBodyToLogin();
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException(e);
-            }
-            assertNotNull(responseBody);
-        }
+
+    @Test
+    void testResponseBodyAsMapIsNotNull() {
+        Map<String,String> responseBody;
+        responseBody = connector.responseBodyToLogin();
+        assertNotNull(responseBody);
+    }
     }
