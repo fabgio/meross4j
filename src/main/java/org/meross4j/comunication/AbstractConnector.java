@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 /**
   * @author Giovanni Fabiani - initial contribution
   *
-  * The AbstractConnector abstract class contanins the fundamental APIs  for connecting to the Meross host. It has
+  * The {@link AbstractConnector}  class contanins the fundamental APIs  for connecting to the Meross host. It has
   * to be extended by a concrete class
  **/
  public abstract class AbstractConnector implements Connector {

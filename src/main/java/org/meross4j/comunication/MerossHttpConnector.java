@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * the {@link MerossHttpConnector} is the concrete implementation of the {@link AbstractConnector} class and it
+ * is responsible for handling the Http functionality for connecting to the Meross Cloud
+ */
 //TODO: Javadoc
 public final class MerossHttpConnector  extends AbstractConnector {
      private final static  Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
@@ -34,8 +38,10 @@ public final class MerossHttpConnector  extends AbstractConnector {
          return null;
      }
 
-    ///TODO: Javadoc
-     public Map<String, String> responseBodyToLogin()  {
+    /**
+     * @return The response body at login
+     */
+     public Map<String, String> responseBodyAtLogin()  {
          GsonDeserializer<Map<String, String>> gsonDeserializer = new GsonDeserializer<>();
          Map<String, String> responseBodyMap = gsonDeserializer.deserialize(Objects
                  .requireNonNull(responseToLogin()).body());
