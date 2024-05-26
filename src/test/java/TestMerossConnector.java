@@ -2,7 +2,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
-import org.meross4j.comunication.MerossConstants;
 import org.meross4j.record.CloudCredentials;
 import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +22,7 @@ public class TestMerossConnector  {
     @Test
     void testStatusCodeIs200() {
         int statusCode;
-        statusCode = connector.response().statusCode();
+        statusCode = connector.getLoginResponse().statusCode();
         assertEquals(200,statusCode);
 
     }
@@ -31,7 +30,7 @@ public class TestMerossConnector  {
     @Test
     void testResponseBodyIsNotNull() {
         String responseBody;
-            responseBody = connector.response().body();
+            responseBody = connector.loginResponseBody();
             assertNotNull(responseBody);
     }
 
@@ -44,7 +43,7 @@ public class TestMerossConnector  {
     @Disabled
     @Test
     void testBodyIsNull() {
-        String responseBody = connector.body();
+        String responseBody = connector.loginResponseBody();
         assertNull(responseBody);
     }
     @Disabled
@@ -58,7 +57,7 @@ public class TestMerossConnector  {
     @Test
     void testResponseBodyIsNull() {
         String responseBody;
-        responseBody = Objects.requireNonNull(connector.response()).body();
+        responseBody = Objects.requireNonNull(connector.loginResponseBody());
         assertNull(responseBody);
     }
 }

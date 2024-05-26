@@ -7,14 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.http.HttpResponse;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 /**
- * the {@link MerossHttpConnector} is the concrete implementation of the {@link AbstractConnector} class and it
+ * the {@link MerossHttpConnector} is the concrete implementation of the {@link AbstractHttpConnector} class and it
  * is responsible for handling the Http functionality for connecting to the Meross Cloud
  */
 
-public final class MerossHttpConnector  extends AbstractConnector {
+public final class MerossHttpConnector  extends AbstractHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
     private final String apiBaseUrl;
     private final String email;
@@ -26,8 +26,18 @@ public final class MerossHttpConnector  extends AbstractConnector {
         this.password = password;
     }
 
-    public HttpResponse<String> response() {
-        Map<String, String> loginMap = new HashMap<>();
+    public HttpResponse<String> getResponse(HashMap<String,String>payloadMap, String path) {
+        HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl,path);
+        if (httpResponse.statusCode() != 200) {
+            logger.error("responseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());
+        } else {
+            return httpResponse;
+        }
+        return null;
+    }
+
+   public HttpResponse<String> getLoginResponse() {
+        HashMap<String, String> loginMap = new HashMap<>();
         if (email != null) {
             loginMap.put("email", email);
         } else {
@@ -39,20 +49,15 @@ public final class MerossHttpConnector  extends AbstractConnector {
             throw new IllegalArgumentException("password is null");
         }
         loginMap.put("password", password);
-        HttpResponse<String> httpResponse = postResponse(loginMap, apiBaseUrl, MerossConstants.LOGIN_PATH);
-        if (httpResponse.statusCode() != 200) {
-            logger.error("responseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());
-        } else {
-            return httpResponse;
-        }
-        return null;
+         return Objects.requireNonNull(getResponse(loginMap, MerossConstants.LOGIN_PATH));
     }
+
 
     /**
      * @return The response body at login
      */
-    public String body() {
-       JSONObject body = new JSONObject(response().body());
+    public String loginResponseBody() {
+       JSONObject body = new JSONObject(getLoginResponse().body());
         if (body.get("info").equals("Email unregistered")) {
             throw new IllegalArgumentException("Email unregistered");
         } else if (body.get("info").equals("Wrong password")) {
@@ -63,7 +68,7 @@ public final class MerossHttpConnector  extends AbstractConnector {
     }
 
     public CloudCredentials cloudCredentials(){
-        JSONObject jsonObject = new JSONObject(body());
+        JSONObject jsonObject = new JSONObject(loginResponseBody());
         String data = jsonObject.getJSONObject("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
     }

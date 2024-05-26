@@ -2,7 +2,6 @@ package org.meross4j.comunication;
 
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.net.URI;
@@ -19,11 +18,11 @@ import java.util.concurrent.ExecutionException;
 /**
   * @author Giovanni Fabiani - initial contribution
   *
-  * The {@link AbstractConnector}  class contanins the fundamental APIs  for connecting to the Meross host. It has
+  * The {@link AbstractHttpConnector}  class contanins the fundamental APIs  for connecting to the Meross host. It has
   * to be extended by a concrete class
  **/
- public abstract class AbstractConnector implements Connector {
-    private static Logger logger = LoggerFactory.getLogger(AbstractConnector.class);
+ public abstract class AbstractHttpConnector implements HttpConnector {
+    private static Logger logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
     private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
