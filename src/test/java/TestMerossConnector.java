@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossConstants;
-import java.util.Map;
+import org.meross4j.record.CloudCredentials;
 import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,29 +22,42 @@ public class TestMerossConnector  {
     @Test
     void testStatusCodeIs200() {
         int statusCode;
-        statusCode = connector.responseToLogin().statusCode();
+        statusCode = connector.response().statusCode();
         assertEquals(200,statusCode);
 
-    }
-    @Disabled
-    @Test
-    void testResponseBodyIsNull() {
-        String responseBody;
-        responseBody = Objects.requireNonNull(connector.responseToLogin()).body();
-        assertNull(responseBody);
     }
 
     @Test
     void testResponseBodyIsNotNull() {
         String responseBody;
-            responseBody = connector.responseToLogin().body();
+            responseBody = connector.response().body();
             assertNotNull(responseBody);
     }
 
     @Test
-    void testResponseBodyAsMapIsNotNull() {
-        Map<String,String> responseBody;
-        responseBody = connector.responseBodyAtLogin();
-        assertNotNull(responseBody);
+    void testCredentialsIsNotNull(){
+        CloudCredentials credentials = connector.cloudCredentials();
+        assertNotNull(credentials);
     }
+
+    @Disabled
+    @Test
+    void testBodyIsNull() {
+        String responseBody = connector.body();
+        assertNull(responseBody);
     }
+    @Disabled
+    @Test
+    void testCredentialsIsNull(){
+        CloudCredentials credentials = connector.cloudCredentials();
+        assertNull(credentials);
+    }
+
+    @Disabled
+    @Test
+    void testResponseBodyIsNull() {
+        String responseBody;
+        responseBody = Objects.requireNonNull(connector.response()).body();
+        assertNull(responseBody);
+    }
+}
