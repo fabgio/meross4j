@@ -5,6 +5,6 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
  interface Connector {
-    HttpResponse<String> postResponse(Map<String, String> paramsData, @NotNull String uri, String path);
+    HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path);
 }
 
