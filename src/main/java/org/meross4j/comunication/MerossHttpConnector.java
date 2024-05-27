@@ -41,19 +41,19 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
 
     public  HttpResponse<String> getLoginResponse()  {
         Map<String, String> loginMap = Collections.synchronizedMap(new HashMap<>());
-        if (email != null && !email.trim().isEmpty()) {
+        if (email != null && !email.isBlank()) {
             loginMap.put("email", email);
         } else {
             try {
-                throw new IllegalArgumentException("email is null or empty");
+                throw new IllegalArgumentException("email is null or blank");
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException(e);
             }
         }
-        if (password != null && !password.trim().isEmpty()) {
+        if (password != null && !password.isBlank()) {
             loginMap.put("password", password);
         } else {
-            throw new IllegalArgumentException("password is null or empty");
+            throw new IllegalArgumentException("password is null or blank");
         }
         try {
             loginMap.put("password", password);
