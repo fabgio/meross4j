@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class TestMerossConnector  {
     private MerossHttpConnector connector;
     private static final String email ="giovanni.fabiani@outlook.com";
-    private static final String password = "bruce975";
+    private  String password="";
     public static final String URL ="https://iotx-eu.meross.com";
 
     @BeforeEach
