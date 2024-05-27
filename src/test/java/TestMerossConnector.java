@@ -12,7 +12,7 @@ public class TestMerossConnector  {
     private MerossHttpConnector connector;
     private final String email ="giovanni.fabiani@outlook.com";
     private final String password="bruce975";
-    public static final String URL ="https://iotx-eu.meross.co";
+    public static final String URL ="https://iotx-eu.meross.com";
 
     @BeforeEach
     void setUp() {
