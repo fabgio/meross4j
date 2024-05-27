@@ -58,6 +58,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
             try {
                 throw new IOException("Unable to reach Meross Host");
             } catch (IOException ex) {
+                logger.info("Unable to reach Meross Host", ex);
                 throw new RuntimeException(ex);
             }
 
