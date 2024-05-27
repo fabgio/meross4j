@@ -84,11 +84,7 @@ import java.util.concurrent.ExecutionException;
              return response;
          } catch (InterruptedException | ExecutionException e) {
              logger.debug("Error while posting data", e);
-             try {
-                 throw new IOException();
-             } catch (IOException ex) {
-                 throw new RuntimeException(ex);
-             }
+             throw new RuntimeException(e);
          }
      }
 
