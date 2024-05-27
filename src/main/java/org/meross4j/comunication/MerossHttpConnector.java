@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return null;
     }
 
-    public HttpResponse<String> getLoginResponse() {
+    public HttpResponse<String> getLoginResponse()  {
         Map<String, String> loginMap = Collections.synchronizedMap(new HashMap<>());
         if (email != null) {
             loginMap.put("email", email);
@@ -50,10 +51,18 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         } else {
             throw new IllegalArgumentException("password is null");
         }
-        loginMap.put("password", password);
-        return Objects.requireNonNull(getResponse(loginMap, MerossConstants.LOGIN_PATH));
-    }
+        try {
+            loginMap.put("password", password);
+            return Objects.requireNonNull(getResponse(loginMap, MerossConstants.LOGIN_PATH));
+        } catch (Exception e) {
+            try {
+                throw new IOException("Unable to reach Meross Host");
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
 
+        }
+    }
 
     /**
      * @return The response body at login
@@ -61,8 +70,10 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
     public String loginResponseBody() {
         JSONObject body = new JSONObject(getLoginResponse().body());
         if (body.get("info").equals("Email unregistered")) {
+            logger.info("Email unregistered");
             throw new IllegalArgumentException("Email unregistered");
         } else if (body.get("info").equals("Wrong password")) {
+            logger.info("Wrong password");
             throw new IllegalArgumentException("Wrong password");
         } else {
             return body.toString();

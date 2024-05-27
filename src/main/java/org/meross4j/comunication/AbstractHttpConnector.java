@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -34,7 +37,7 @@ import java.util.concurrent.ExecutionException;
      * @return The HttpResponse
      */
      @Override
-     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) {
+     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) throws NullPointerException{
         String dataToSign;
         String encodedParams;
         String authorizationValue;
@@ -77,7 +80,12 @@ import java.util.concurrent.ExecutionException;
              return response;
          } catch (InterruptedException | ExecutionException e) {
              logger.debug("Error while posting data", e);
-             throw new RuntimeException(e);
+             try {
+                 throw new IOException();
+             } catch (IOException ex) {
+                 logger.error("Error while posting data", ex);
+                 throw new RuntimeException(ex);
+             }
          }
      }
 
