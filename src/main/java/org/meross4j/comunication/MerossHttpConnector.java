@@ -2,6 +2,7 @@ package org.meross4j.comunication;
 
 import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
@@ -31,7 +32,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         this.password = password;
     }
 
-    public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
+    public @Nullable HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
         HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl, path);
         if (httpResponse.statusCode() != 200) {
             logger.error("responseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());
@@ -41,7 +42,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return null;
     }
 
-    public HttpResponse<String> getLoginResponse()  {
+    public @NotNull HttpResponse<String> getLoginResponse()  {
         Map<String, String> loginMap = Collections.synchronizedMap(new HashMap<>());
         if (email != null) {
             loginMap.put("email", email);
@@ -97,7 +98,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
-    public HttpResponse<String> getDevicesResponse() {
+    public @NotNull HttpResponse<String> getDevicesResponse() {
         String token =  cloudCredentials().token();
         setToken(token);
         return Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));

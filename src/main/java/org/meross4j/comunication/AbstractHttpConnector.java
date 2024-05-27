@@ -2,6 +2,8 @@ package org.meross4j.comunication;
 
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -35,7 +37,7 @@ import java.util.concurrent.ExecutionException;
      * @return The HttpResponse
      */
      @Override
-     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) throws NullPointerException{
+     public synchronized HttpResponse<String> postResponse(@Nullable Map<String, String> paramsData, @NotNull String uri, String path) throws NullPointerException{
         String dataToSign;
         String encodedParams;
         String authorizationValue;
@@ -82,7 +84,6 @@ import java.util.concurrent.ExecutionException;
              try {
                  throw new IOException();
              } catch (IOException ex) {
-                 logger.error("Error while posting data", ex);
                  throw new RuntimeException(ex);
              }
          }
