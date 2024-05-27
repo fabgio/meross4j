@@ -1,7 +1,7 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
-import org.jetbrains.annotations.NotNull;;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
 import org.slf4j.Logger;
@@ -21,8 +21,8 @@ import java.util.Objects;
 public final class MerossHttpConnector  extends AbstractHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
     private final String apiBaseUrl;
-    private final  String  email;
-    private final  String password;
+    private final String email;
+    private final String password;
 
     public MerossHttpConnector(String apiBaseUrl, String email, String password) {
         this.apiBaseUrl = apiBaseUrl;
@@ -89,6 +89,9 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         }
     }
 
+    /**
+     * @return The user's Meross cloud Credentials
+     */
     public CloudCredentials cloudCredentials() {
         JSONObject jsonObject = new JSONObject(loginResponseBody());
         String data = jsonObject.getJSONObject("data").toString();
