@@ -50,6 +50,7 @@ import java.util.concurrent.ExecutionException;
             try {
                 throw new NullPointerException("Parameter data map is null");
             } catch (NullPointerException e) {
+                logger.debug("Parameter data map is null");
                 throw new RuntimeException(e);
             }
         }
