@@ -1,7 +1,6 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
 import org.slf4j.Logger;
@@ -40,7 +39,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return null;
     }
 
-    public @NotNull HttpResponse<String> getLoginResponse()  {
+    public  HttpResponse<String> getLoginResponse()  {
         Map<String, String> loginMap = Collections.synchronizedMap(new HashMap<>());
         if (email != null) {
             loginMap.put("email", email);
