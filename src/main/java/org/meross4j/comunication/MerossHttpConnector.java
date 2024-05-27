@@ -1,9 +1,7 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONException;
+import org.jetbrains.annotations.NotNull;;
 import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
 import org.slf4j.Logger;
@@ -32,7 +30,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         this.password = password;
     }
 
-    public @Nullable HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
+    public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
         HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl, path);
         if (httpResponse.statusCode() != 200) {
             logger.error("responseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());

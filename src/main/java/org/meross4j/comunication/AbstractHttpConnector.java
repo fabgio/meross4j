@@ -2,8 +2,6 @@ package org.meross4j.comunication;
 
 import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -25,7 +23,7 @@ import java.util.concurrent.ExecutionException;
   * to be extended by a concrete class
  **/
  public abstract class AbstractHttpConnector implements HttpConnector {
-    private static Logger logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractHttpConnector.class);
     private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
@@ -37,7 +35,7 @@ import java.util.concurrent.ExecutionException;
      * @return The HttpResponse
      */
      @Override
-     public synchronized HttpResponse<String> postResponse(@Nullable Map<String, String> paramsData, @NotNull String uri, String path) throws NullPointerException{
+     public synchronized HttpResponse<String> postResponse( Map<String, String> paramsData, String uri, String path) throws NullPointerException{
         String dataToSign;
         String encodedParams;
         String authorizationValue;
@@ -49,7 +47,11 @@ import java.util.concurrent.ExecutionException;
             dataToSignBuilder.append(CONSTANT_STRING).append(timestamp).append(nonce).append(encodedParams);
         } else {
             logger.debug("Parameter data map is null");
-            throw new NullPointerException("Parameter data map is null");
+            try {
+                throw new NullPointerException("Parameter data map is null");
+            } catch (NullPointerException e) {
+                throw new RuntimeException(e);
+            }
         }
         dataToSign = dataToSignBuilder.toString();
         String md5hash = DigestUtils.md5Hex(dataToSign);
@@ -92,6 +94,7 @@ import java.util.concurrent.ExecutionException;
     private static String encodeParams(Map<String, String> paramsData) {
         return Base64.getEncoder().encodeToString(new Gson().toJson(paramsData).getBytes());
     }
+
     public void setToken(String token) {
         this.token = token;
     }

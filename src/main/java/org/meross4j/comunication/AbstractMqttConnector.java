@@ -1,4 +1,4 @@
 package org.meross4j.comunication;
-//TODO: TO be implemented
+//TODO: To be implemented
 public abstract class  AbstractMqttConnector {
 }
