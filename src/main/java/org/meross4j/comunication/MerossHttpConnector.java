@@ -75,7 +75,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         JSONObject body = new JSONObject(getLoginResponse().body());
         if (body.get("info").equals("Email unregistered")) {
             try {
-                throw new IllegalArgumentException("Email unregistered");
+                throw new IllegalArgumentException("Email address unregistered");
             } catch (IllegalArgumentException e) {
                 logger.info("Email unregistered", e);
                 throw new RuntimeException(e);
