@@ -45,7 +45,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
             loginMap.put("email", email);
         } else {
             try {
-                throw new IllegalArgumentException("email is null or blank");
+                throw new IllegalArgumentException("Email address is null or blank");
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException(e);
             }
@@ -53,7 +53,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         if (password != null && !password.isBlank()) {
             loginMap.put("password", password);
         } else {
-            throw new IllegalArgumentException("password is null or blank");
+            throw new IllegalArgumentException("Password is null or blank");
         }
         try {
             loginMap.put("password", password);
