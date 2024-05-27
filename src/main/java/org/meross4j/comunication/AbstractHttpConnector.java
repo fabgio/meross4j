@@ -88,9 +88,6 @@ import java.util.concurrent.ExecutionException;
         this.token = token;
     }
 
-    public String getToken() {
-        return token;
-    }
 }
 
 

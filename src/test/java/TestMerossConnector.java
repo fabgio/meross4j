@@ -42,7 +42,7 @@ public class TestMerossConnector  {
 
     @Disabled
     @Test
-    void testBodyIsNull() {
+    void testLoginBodyIsNull() {
         String responseBody = connector.loginResponseBody();
         assertNull(responseBody);
     }
@@ -55,9 +55,15 @@ public class TestMerossConnector  {
 
     @Disabled
     @Test
-    void testResponseBodyIsNull() {
+    void testLoginResponseBodyIsNull() {
         String responseBody;
         responseBody = Objects.requireNonNull(connector.loginResponseBody());
         assertNull(responseBody);
+    }
+    @Test
+    void testDevicesResponseBodyIsNull() {
+        String deviceResponseBody;
+        deviceResponseBody = Objects.requireNonNull(connector.deviceResponseBody());
+        assertNull(deviceResponseBody);
     }
 }
