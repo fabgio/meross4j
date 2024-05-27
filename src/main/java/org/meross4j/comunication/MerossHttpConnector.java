@@ -96,7 +96,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
-    public @NotNull HttpResponse<String> getDevicesResponse() {
+    public  HttpResponse<String> getDevicesResponse() {
         String token =  cloudCredentials().token();
         setToken(token);
         return Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
