@@ -4,10 +4,8 @@ import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -48,7 +46,8 @@ import java.util.concurrent.ExecutionException;
             encodedParams = encodeParams(paramsData);
             dataToSignBuilder.append(CONSTANT_STRING).append(timestamp).append(nonce).append(encodedParams);
         } else {
-            throw new NullPointerException("Parameter data is null");
+            logger.debug("Parameter data map is null");
+            throw new NullPointerException("Parameter data map is null");
         }
         dataToSign = dataToSignBuilder.toString();
         String md5hash = DigestUtils.md5Hex(dataToSign);
@@ -95,7 +94,6 @@ import java.util.concurrent.ExecutionException;
     public void setToken(String token) {
         this.token = token;
     }
-
 }
 
 
