@@ -62,7 +62,6 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
                 logger.info("Unable to reach Meross Host", ex);
                 throw new RuntimeException(ex);
             }
-
         }
     }
 
