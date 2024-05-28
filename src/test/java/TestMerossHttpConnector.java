@@ -74,12 +74,19 @@ public class TestMerossHttpConnector {
         logger.info(deviceResponseBody);
         assertNull(deviceResponseBody);
     }
-
+    @Disabled
     @Test
     void testDevicesNull() {
         ArrayList<Device> devices;
         devices = Objects.requireNonNull(connector.devices());
         logger.info(String.valueOf(devices));
         assertNull(devices);
+    }
+    @Test
+    void testDevicesNotNull() {
+        ArrayList<Device> devices;
+        devices = Objects.requireNonNull(connector.devices());
+        logger.info(String.valueOf(devices));
+        assertNotNull(devices);
     }
 }
