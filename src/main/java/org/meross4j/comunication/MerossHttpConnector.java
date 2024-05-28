@@ -116,6 +116,9 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return body.toString();
         }
 
+    /**
+     * @return The user's devices
+     */
     public ArrayList<Device> getDevices(){
         JSONObject jsonObject = new JSONObject(deviceResponseBody());
         JSONArray jsonArray = jsonObject.getJSONArray("data");
