@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -42,7 +45,7 @@ public class TestMerossHttpConnector {
 
     @Test
     void testCredentialsIsNotNull(){
-        CloudCredentials credentials = connector.cloudCredentials();
+        CloudCredentials credentials = connector.getCloudCredentials();
         assertNotNull(credentials);
     }
 
@@ -55,7 +58,7 @@ public class TestMerossHttpConnector {
     @Disabled
     @Test
     void testCredentialsIsNull(){
-        CloudCredentials credentials = connector.cloudCredentials();
+        CloudCredentials credentials = connector.getCloudCredentials();
         assertNull(credentials);
     }
 
@@ -78,15 +81,24 @@ public class TestMerossHttpConnector {
     @Test
     void testDevicesNull() {
         ArrayList<Device> devices;
-        devices = Objects.requireNonNull(connector.devices());
+        devices = Objects.requireNonNull(connector.getDevices());
         logger.info(String.valueOf(devices));
         assertNull(devices);
     }
     @Test
     void testDevicesNotNull() {
         ArrayList<Device> devices;
-        devices = Objects.requireNonNull(connector.devices());
+        devices = Objects.requireNonNull(connector.getDevices());
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
+    }
+    @Test
+    void testNotFilterTolomeo(){
+        Optional<String> devName = connector.getDevices()
+                .stream()
+                .map(Device::devName)
+                .filter(p->p.equals("tolomeo"))
+                .findFirst();
+        assertNotEquals("tolomeo",devName.get());
     }
 }

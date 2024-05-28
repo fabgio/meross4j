@@ -99,14 +99,14 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
     /**
      * @return The user's Meross cloud Credentials
      */
-    public CloudCredentials cloudCredentials() {
+    public CloudCredentials getCloudCredentials() {
         JSONObject jsonObject = new JSONObject(loginResponseBody());
         String data = jsonObject.getJSONObject("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
     public HttpResponse<String> getDevicesResponse() {
-        String token =  cloudCredentials().token();
+        String token =  getCloudCredentials().token();
         setToken(token);
         return Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
     }
@@ -116,7 +116,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return body.toString();
         }
 
-    public ArrayList<Device> devices(){
+    public ArrayList<Device> getDevices(){
         JSONObject jsonObject = new JSONObject(deviceResponseBody());
         JSONArray jsonArray = jsonObject.getJSONArray("data");
         String data = jsonArray.toString();
