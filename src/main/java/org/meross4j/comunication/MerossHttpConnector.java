@@ -44,7 +44,7 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
     }
 
     public  HttpResponse<String> getLoginResponse()  {
-        Map<String, String> loginMap = Collections.synchronizedMap(new HashMap<>());
+        Map<String, String> loginMap = new HashMap<>();
         if (email != null && !email.isBlank()) {
             loginMap.put("email", email);
         } else {
@@ -118,8 +118,8 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
 
     public ArrayList<Device> devices(){
         JSONObject jsonObject = new JSONObject(deviceResponseBody());
-        JSONArray jsonArray= jsonObject.getJSONArray("data");
-        String data  = jsonArray.toString();
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        String data = jsonArray.toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
         return new Gson().fromJson(data, type);
         }
