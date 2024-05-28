@@ -8,7 +8,9 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +28,10 @@ import java.util.concurrent.ExecutionException;
     private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
-    private final HttpClient client = HttpClient.newBuilder().build();
+    private static final long CONNECTION_TIMEOUT_SECONDS = 15;
+    private final HttpClient client = HttpClient.newBuilder()
+            .connectTimeout(Duration.of(CONNECTION_TIMEOUT_SECONDS, ChronoUnit.SECONDS))
+            .build();
     private String token;
 
     /**

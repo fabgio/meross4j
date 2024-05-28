@@ -73,7 +73,7 @@ public class TestMerossHttpConnector {
     @Test
     void testDevicesResponseBodyIsNull() {
         String deviceResponseBody;
-        deviceResponseBody = Objects.requireNonNull(connector.deviceResponseBody());
+        deviceResponseBody = Objects.requireNonNull(connector.getDevicesResponseBody());
         logger.info(deviceResponseBody);
         assertNull(deviceResponseBody);
     }

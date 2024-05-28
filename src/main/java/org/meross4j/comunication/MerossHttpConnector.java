@@ -111,16 +111,16 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         return Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
     }
 
-    public String deviceResponseBody() {
+    public String getDevicesResponseBody() {
         JSONObject body = new JSONObject(getDevicesResponse().body());
         return body.toString();
         }
 
     /**
-     * @return The user's devices
+     * @return The user's device list
      */
     public ArrayList<Device> getDevices(){
-        JSONObject jsonObject = new JSONObject(deviceResponseBody());
+        JSONObject jsonObject = new JSONObject(getDevicesResponseBody());
         JSONArray jsonArray = jsonObject.getJSONArray("data");
         String data = jsonArray.toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
