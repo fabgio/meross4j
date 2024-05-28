@@ -1,12 +1,16 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
+import org.meross4j.record.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.http.HttpResponse;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -111,4 +115,12 @@ public final class MerossHttpConnector  extends AbstractHttpConnector {
         JSONObject body = new JSONObject(getDevicesResponse().body());
         return body.toString();
         }
+
+    public ArrayList<Device> devices(){
+        JSONObject jsonObject = new JSONObject(deviceResponseBody());
+        JSONArray jsonArray= jsonObject.getJSONArray("data");
+        String data =jsonArray.toString();
+        TypeToken<ArrayList<Device>> type= new TypeToken<>() {};
+        return new Gson().fromJson(data, type);
+    }
     }
