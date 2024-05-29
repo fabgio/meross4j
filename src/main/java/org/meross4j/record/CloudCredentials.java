@@ -12,10 +12,10 @@ import com.google.gson.annotations.SerializedName;
 public record CloudCredentials(
         @SerializedName(value = "token")  String token,
         @SerializedName(value = "key") String key,
-        @SerializedName(value = "userid") String userId,
+        @SerializedName(value = "userid") String userId, //mqtt
         @SerializedName(value = "email") String userEmail,
         @SerializedName(value = "domain") String domain,
-        @SerializedName(value = "mqttDomain") String mqttDomain,
+        @SerializedName(value = "mqttDomain") String mqttDomain,// mqtt
         @SerializedName(value = "mfaLockExpire") String mfaLockExpire
 ) {
 }
