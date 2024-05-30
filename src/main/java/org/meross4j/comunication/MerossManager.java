@@ -74,7 +74,7 @@ public class MerossManager implements Manager {
     public MqttMessage buildMessage(String method, String namespace,byte[] payload, String destinationDeviceUUID) {
         String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         String md5hash = DigestUtils.md5Hex(randomString);
-        String messageId=md5hash.toLowerCase();
+        String messageId = md5hash.toLowerCase();
         long timestamp = Instant.now().toEpochMilli();
         String stringToHash = messageId + merossHttpConnector.getCloudCredentials().key() + timestamp;
         String signature = DigestUtils.md5Hex(stringToHash);
