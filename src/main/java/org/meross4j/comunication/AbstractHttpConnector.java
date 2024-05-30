@@ -39,7 +39,7 @@ import java.util.concurrent.ExecutionException;
      * @return The HttpResponse
      */
      @Override
-     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) throws NullPointerException{
+     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) {
         String dataToSign;
         String encodedParams;
         String authorizationValue;
