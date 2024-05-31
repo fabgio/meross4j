@@ -18,10 +18,9 @@ import java.util.UUID;
 
 public  abstract class AbstractMqttManager implements MqttManager {
     private final static Logger logger = LoggerFactory.getLogger(AbstractMqttManager.class);
-    private  MerossHttpConnector merossHttpConnector;
     private final String MQTT_PORT = "443";
     @Override
-    public synchronized void publishMessage(MqttMessage message, String topic) {
+    public synchronized void publishMqttMessage(MerossHttpConnector merossHttpConnector, MqttMessage message, String topic) {
         String brokerCoordinates = merossHttpConnector.getCloudCredentials().mqttDomain() + ":" + MQTT_PORT;
         String userId = merossHttpConnector.getCloudCredentials().userId();
         try {
@@ -66,19 +65,31 @@ public  abstract class AbstractMqttManager implements MqttManager {
     }
 
     @Override
-    public synchronized MqttMessage buildMessage(String method, String namespace,byte[] payload, String destinationDeviceUUID) {
+    public synchronized MqttMessage buildMqttMessage(MerossHttpConnector merossHttpConnector, String method, String namespace,
+                                                     String payload, String destinationDeviceUUID) {
         String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         long timestamp = Instant.now().toEpochMilli();
         String stringToHash = messageId + merossHttpConnector.getCloudCredentials().key() + timestamp;
         String signature = DigestUtils.md5Hex(stringToHash);
+        String clientResponseTopic = buildResponseTopic(merossHttpConnector);
         Map<String, String>  headermap = new HashMap<>();
         return null;
     }
 
-    public void setMerossHttpConnector(MerossHttpConnector merossHttpConnector) {
-        this.merossHttpConnector = merossHttpConnector;
+    private String  buildResponseTopic(MerossHttpConnector merossHttpConnector) {
+        StringBuilder topicBuilder = new StringBuilder("/app/")
+                .append(merossHttpConnector.getCloudCredentials().userId())
+                .append("-")
+                .append(buildAppId())
+                .append("/subscribe");
+        return topicBuilder.toString();
+    }
+    private static String buildAppId(){
+        String rndUUID = UUID.randomUUID().toString();
+        String stringToHash = "API"+rndUUID;
+        return DigestUtils.md5Hex(stringToHash);
     }
 
 }

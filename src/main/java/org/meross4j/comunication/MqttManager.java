@@ -3,6 +3,7 @@ package org.meross4j.comunication;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 
 public interface MqttManager {
-    void publishMessage(MqttMessage message, String topic);
-    public MqttMessage buildMessage(String method, String namespace,byte[] payload, String destinationDeviceUUID);
+    void publishMqttMessage(MerossHttpConnector merossHttpConnector, MqttMessage message, String topic);
+    MqttMessage buildMqttMessage(MerossHttpConnector merossHttpConnector, String method, String namespace,
+                                 String payload, String destinationDeviceUUID);
 }
