@@ -9,6 +9,7 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.meross4j.util.MqttUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Instant;
@@ -67,7 +68,7 @@ public  abstract class AbstractMqttManager implements MqttManager {
     @Override
     public synchronized MqttMessage buildMqttMessage(MerossHttpConnector merossHttpConnector, String method, String namespace,
                                                      String payload, String destinationDeviceUUID) {
-        String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
+        String randomString = UUID.randomUUID().toString();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         long timestamp = Instant.now().toEpochMilli();
@@ -82,14 +83,9 @@ public  abstract class AbstractMqttManager implements MqttManager {
         StringBuilder topicBuilder = new StringBuilder("/app/")
                 .append(merossHttpConnector.getCloudCredentials().userId())
                 .append("-")
-                .append(buildAppId())
+                .append(MqttUtils.buildAppId())
                 .append("/subscribe");
         return topicBuilder.toString();
-    }
-    private static String buildAppId(){
-        String rndUUID = UUID.randomUUID().toString();
-        String stringToHash = "API"+rndUUID;
-        return DigestUtils.md5Hex(stringToHash);
     }
 
 }
