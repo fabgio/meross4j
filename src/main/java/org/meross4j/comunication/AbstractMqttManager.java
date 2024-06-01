@@ -1,5 +1,6 @@
 package org.meross4j.comunication;
 
+import com.google.gson.Gson;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.paho.mqttv5.client.IMqttToken;
 import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
@@ -22,13 +23,12 @@ public  abstract class AbstractMqttManager implements MqttManager {
     private final String MQTT_PORT = "443";
     @Override
     public synchronized void publishMqttMessage(MerossHttpConnector merossHttpConnector, MqttMessage message, String topic) {
+        int pubQos = 1;
         String brokerCoordinates = merossHttpConnector.getCloudCredentials().mqttDomain() + ":" + MQTT_PORT;
         String userId = merossHttpConnector.getCloudCredentials().userId();
         try {
             MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(brokerCoordinates, userId);
             MqttConnectionOptions options = new MqttConnectionOptions();
-            options.setKeepAliveInterval(30);
-            mqttAsyncClient.connect(options);
             mqttAsyncClient.setCallback(new MqttCallback() {
                 @Override
                 public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
@@ -60,6 +60,14 @@ public  abstract class AbstractMqttManager implements MqttManager {
                     
                 }
             });
+
+            options.setKeepAliveInterval(30);
+            mqttAsyncClient.connect(options);
+            mqttAsyncClient.subscribe(topic, 0);
+            message.setQos(pubQos);
+            mqttAsyncClient.publish(topic, message);
+            mqttAsyncClient.disconnect();
+            mqttAsyncClient.close();
         } catch (MqttException e) {
             throw new RuntimeException(e);
         }
@@ -68,15 +76,28 @@ public  abstract class AbstractMqttManager implements MqttManager {
     @Override
     public synchronized MqttMessage buildMqttMessage(MerossHttpConnector merossHttpConnector, String method, String namespace,
                                                      String payload, String destinationDeviceUUID) {
+        long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
-        long timestamp = Instant.now().toEpochMilli();
         String stringToHash = messageId + merossHttpConnector.getCloudCredentials().key() + timestamp;
         String signature = DigestUtils.md5Hex(stringToHash);
         String clientResponseTopic = buildResponseTopic(merossHttpConnector);
-        Map<String, String>  headermap = new HashMap<>();
-        return null;
+        Map<String, Object>  headerMap = new HashMap<>();
+        Map<String, Object>  dataMap = new HashMap<>();
+        headerMap.put("from",clientResponseTopic);
+        headerMap.put("messageId",messageId);
+        headerMap.put("method",method);
+        headerMap.put("namespace",namespace);
+        headerMap.put("payloadVersion",1);
+        headerMap.put("sign",signature);
+        headerMap.put("timestamp",timestamp);
+        headerMap.put("triggerSrc","Android");
+        headerMap.put("uuid",destinationDeviceUUID);
+        dataMap.put("header",headerMap);
+        dataMap.put("payload",payload);
+        String mqttMessage = new Gson().toJson(dataMap);
+        return new MqttMessage(mqttMessage.getBytes());
     }
 
     private String  buildResponseTopic(MerossHttpConnector merossHttpConnector) {
