@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public  abstract class AbstractMqttManager implements MqttManager {
-    private final static Logger logger = LoggerFactory.getLogger(AbstractMqttManager.class);
+public  abstract class AbstractManager implements MqttConnector {
+    private final static Logger logger = LoggerFactory.getLogger(AbstractManager.class);
     private final String MQTT_PORT = "443";
     @Override
     public synchronized void publishMqttMessage(MerossHttpConnector merossHttpConnector, MqttMessage message, String topic) {

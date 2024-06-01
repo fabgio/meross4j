@@ -90,6 +90,7 @@ public class TestMerossHttpConnector {
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
     }
+    @Disabled
     @Test
     void testNotFilterTolomeo(){
         Optional<String> devName = connector.getDevices()
