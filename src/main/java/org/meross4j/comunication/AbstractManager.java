@@ -18,6 +18,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * @author Giovanni Fabiani - initial contribution
+ *
+ * The {@link AbstractManager}  class contanins the fundamental APIs  for connecting to the Meross broker and menage
+ * MQtt messages. It has to be extended by a concrete class
+ **/
+
 public  abstract class AbstractManager implements Manager {
     private final static Logger logger = LoggerFactory.getLogger(AbstractManager.class);
     private final String MQTT_PORT = "443";
@@ -60,7 +67,6 @@ public  abstract class AbstractManager implements Manager {
                     
                 }
             });
-
             options.setKeepAliveInterval(30);
             mqttAsyncClient.connect(options);
             mqttAsyncClient.subscribe(topic, 0);
@@ -108,6 +114,5 @@ public  abstract class AbstractManager implements Manager {
                 .append("/subscribe");
         return topicBuilder.toString();
     }
-
 }
 
