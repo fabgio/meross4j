@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public  abstract class AbstractManager implements MqttConnector {
+public  abstract class AbstractManager implements Manager {
     private final static Logger logger = LoggerFactory.getLogger(AbstractManager.class);
     private final String MQTT_PORT = "443";
     @Override
