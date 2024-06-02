@@ -20,29 +20,23 @@ import java.util.UUID;
 
 /**
  * @author Giovanni Fabiani - initial contribution
- *
- * The {@link MerossMqttConnector}  class contanins the fundamental APIs  for connecting to the Meross broker, building
+ * The {@link MerossMqttConnector}  class contanins the fundamental APIs  for connecting to the Meross broker i.e. building
  * and publishing MQTT messages.
  **/
 
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
-    private final String MQTT_PORT = "443";
-    private final MerossHttpConnector merossHttpConnector;
-
-    public MerossMqttConnector(MerossHttpConnector merossHttpConnector) {
-        this.merossHttpConnector = merossHttpConnector;
-    }
+    private final static String MQTT_PORT = "443";
+    private final MerossHttpConnector merossHttpConnector = new MerossHttpConnector();
 
     /**
-     *
-     * @param message the Mqtt Message
+     * @param mqttMessage the Mqtt Message
      * @param topic the topic
      */
 
-    public void publishMqttMessage(String message, String topic) {
+    public  void publishMqttMessage(MqttMessage mqttMessage, String topic) {
         int pubQos = 1;
-        String brokerCoordinates = merossHttpConnector.getCloudCredentials().mqttDomain() + ":" + MQTT_PORT;
+        String brokerCoordinates = merossHttpConnector.getCloudCredentials().mqttDomain()+ ":" + MQTT_PORT;
         String userId = merossHttpConnector.getCloudCredentials().userId();
         try {
             MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(brokerCoordinates, userId);
@@ -81,7 +75,6 @@ public final class MerossMqttConnector {
             options.setKeepAliveInterval(30);
             mqttAsyncClient.connect(options);
             mqttAsyncClient.subscribe(topic, 0);
-            MqttMessage mqttMessage = new MqttMessage();
             mqttMessage.setQos(pubQos);
             mqttAsyncClient.publish(topic, mqttMessage);
             mqttAsyncClient.disconnect();
@@ -91,8 +84,7 @@ public final class MerossMqttConnector {
         }
     }
 
-
-    public String buildMqttMessage(String method, String namespace,
+    public  MqttMessage buildMqttMessage(String method, String namespace,
                                                      String payload, String destinationDeviceUUID) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();
@@ -114,11 +106,11 @@ public final class MerossMqttConnector {
         headerMap.put("uuid",destinationDeviceUUID);
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
-        return new Gson().toJson(dataMap); //TODO: return json string or MqttMessage?
-
+        String mqttMessage = new Gson().toJson(dataMap);
+        return new MqttMessage(mqttMessage.getBytes());
     }
 
-    private String  buildResponseTopic() {
+    private  String  buildResponseTopic() {
         StringBuilder topicBuilder = new StringBuilder("/app/")
                 .append(merossHttpConnector.getCloudCredentials().userId())
                 .append("-")

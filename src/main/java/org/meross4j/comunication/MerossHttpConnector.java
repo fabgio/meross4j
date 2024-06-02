@@ -36,9 +36,9 @@ public final class MerossHttpConnector {
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
     private static final long CONNECTION_TIMEOUT_SECONDS = 15;
-    private final String apiBaseUrl;
-    private final String email;
-    private final String password;
+    private String apiBaseUrl;
+    private String email;
+    private String password;
     private String token;
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.of(CONNECTION_TIMEOUT_SECONDS, ChronoUnit.SECONDS))
@@ -48,6 +48,9 @@ public final class MerossHttpConnector {
         this.apiBaseUrl = apiBaseUrl;
         this.email = email;
         this.password = password;
+    }
+
+    public MerossHttpConnector(){
     }
 
     public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
