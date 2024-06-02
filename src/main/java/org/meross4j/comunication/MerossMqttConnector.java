@@ -21,15 +21,26 @@ import java.util.UUID;
 /**
  * @author Giovanni Fabiani - initial contribution
  *
- * The {@link AbstractManager}  class contanins the fundamental APIs  for connecting to the Meross broker and menage
- * MQtt messages. It has to be extended by a concrete class
+ * The {@link MerossMqttConnector}  class contanins the fundamental APIs  for connecting to the Meross broker, building
+ * and publishing MQTT messages.
  **/
 
-public  abstract class AbstractManager implements Manager {
-    private final static Logger logger = LoggerFactory.getLogger(AbstractManager.class);
+public final class MerossMqttConnector {
+    private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private final String MQTT_PORT = "443";
-    @Override
-    public synchronized void publishMqttMessage(MerossHttpConnector merossHttpConnector, MqttMessage message, String topic) {
+    private final MerossHttpConnector merossHttpConnector;
+
+    public MerossMqttConnector(MerossHttpConnector merossHttpConnector) {
+        this.merossHttpConnector = merossHttpConnector;
+    }
+
+    /**
+     *
+     * @param message the Mqtt Message
+     * @param topic the topic
+     */
+
+    public void publishMqttMessage(String message, String topic) {
         int pubQos = 1;
         String brokerCoordinates = merossHttpConnector.getCloudCredentials().mqttDomain() + ":" + MQTT_PORT;
         String userId = merossHttpConnector.getCloudCredentials().userId();
@@ -70,8 +81,9 @@ public  abstract class AbstractManager implements Manager {
             options.setKeepAliveInterval(30);
             mqttAsyncClient.connect(options);
             mqttAsyncClient.subscribe(topic, 0);
-            message.setQos(pubQos);
-            mqttAsyncClient.publish(topic, message);
+            MqttMessage mqttMessage = new MqttMessage();
+            mqttMessage.setQos(pubQos);
+            mqttAsyncClient.publish(topic, mqttMessage);
             mqttAsyncClient.disconnect();
             mqttAsyncClient.close();
         } catch (MqttException e) {
@@ -79,8 +91,8 @@ public  abstract class AbstractManager implements Manager {
         }
     }
 
-    @Override
-    public synchronized MqttMessage buildMqttMessage(MerossHttpConnector merossHttpConnector, String method, String namespace,
+
+    public String buildMqttMessage(String method, String namespace,
                                                      String payload, String destinationDeviceUUID) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();
@@ -88,7 +100,7 @@ public  abstract class AbstractManager implements Manager {
         String messageId = md5hash.toLowerCase();
         String stringToHash = messageId + merossHttpConnector.getCloudCredentials().key() + timestamp;
         String signature = DigestUtils.md5Hex(stringToHash);
-        String clientResponseTopic = buildResponseTopic(merossHttpConnector);
+        String clientResponseTopic = buildResponseTopic();
         Map<String, Object>  headerMap = new HashMap<>();
         Map<String, Object>  dataMap = new HashMap<>();
         headerMap.put("from",clientResponseTopic);
@@ -102,11 +114,11 @@ public  abstract class AbstractManager implements Manager {
         headerMap.put("uuid",destinationDeviceUUID);
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
-        String mqttMessage = new Gson().toJson(dataMap);
-        return new MqttMessage(mqttMessage.getBytes());
+        return new Gson().toJson(dataMap); //TODO: return json string or MqttMessage?
+
     }
 
-    private String  buildResponseTopic(MerossHttpConnector merossHttpConnector) {
+    private String  buildResponseTopic() {
         StringBuilder topicBuilder = new StringBuilder("/app/")
                 .append(merossHttpConnector.getCloudCredentials().userId())
                 .append("-")
