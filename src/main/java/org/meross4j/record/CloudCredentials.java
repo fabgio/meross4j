@@ -3,7 +3,7 @@ package org.meross4j.record;
 import com.google.gson.annotations.SerializedName;
 
 /**
- *  Record containing CloudCredential components
+ *  Record containing the CloudCredential components
  **/
 
 public record CloudCredentials(@SerializedName(value = "token")  String token,

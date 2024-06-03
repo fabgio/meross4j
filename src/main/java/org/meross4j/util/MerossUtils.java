@@ -3,7 +3,6 @@ package org.meross4j.util;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.record.Device;
-
 import java.util.UUID;
 
 public class MerossUtils {

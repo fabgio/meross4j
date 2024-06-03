@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
- *  Record containing Device components
+ *  Record containing the  Device components
  **/
 public record Device(@SerializedName(value = "deviceType") String deviceType,
                      @SerializedName(value = "devIconId" ) String devIconId,
