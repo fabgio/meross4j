@@ -84,7 +84,7 @@ public final class MerossMqttConnector {
         }
     }
 
-    public  MqttMessage buildMqttMessage(String method, String namespace,
+    public MqttMessage buildMqttMessage(String method, String namespace,
                                                      String payload, String destinationDeviceUUID) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();

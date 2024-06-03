@@ -6,23 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 /**
- * @param deviceType
- * @param devIconId
- * @param onlineStatus
- * @param devName
- * @param firmwareVersion
- * @param uuid
- * @param userDeviceIcon
- * @param channels
- * @param bindTime
- * @param iconType
- * @param domain
- * @param reservedDomain
- * @param hardwareCapabilities
- * @param subType
- * @param region
- * @param hardwareVersion
- */
+ *  Record containing Device components
+ **/
 public record Device(@SerializedName(value = "deviceType") String deviceType,
                      @SerializedName(value = "devIconId" ) String devIconId,
                      @SerializedName(value = "onlineStatus") int onlineStatus,

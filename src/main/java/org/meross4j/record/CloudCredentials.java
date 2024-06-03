@@ -3,14 +3,10 @@ package org.meross4j.record;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * The {@link CloudCredentials} class contains cloud credential definitions for the
- * whole library
- *
- * @author Giovanni Fabiani - Initial contribution
- */
+ *  Record containing CloudCredential components
+ **/
 
-public record CloudCredentials(
-        @SerializedName(value = "token")  String token,
+public record CloudCredentials(@SerializedName(value = "token")  String token,
         @SerializedName(value = "key") String key,
         @SerializedName(value = "userid") String userId, //mqtt
         @SerializedName(value = "email") String userEmail,
