@@ -10,7 +10,7 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
-import org.meross4j.util.MqttUtils;
+import org.meross4j.util.MerossUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Instant;
@@ -114,7 +114,7 @@ public final class MerossMqttConnector {
         StringBuilder topicBuilder = new StringBuilder("/app/")
                 .append(merossHttpConnector.getCloudCredentials().userId())
                 .append("-")
-                .append(MqttUtils.buildAppId())
+                .append(MerossUtils.buildAppId())
                 .append("/subscribe");
         return topicBuilder.toString();
     }
