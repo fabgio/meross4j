@@ -30,10 +30,9 @@ public final class MerossMqttConnector {
     private final MerossHttpConnector merossHttpConnector = new MerossHttpConnector();
 
     /**
-     * @param mqttMessage the Mqtt Message
+     * @param mqttMessage the Mqtt Message to be published
      * @param topic the topic
      */
-
     public  void publishMqttMessage(MqttMessage mqttMessage, String topic) {
         int pubQos = 1;
         String brokerCoordinates = merossHttpConnector.getCloudCredentials().mqttDomain()+ ":" + MQTT_PORT;
@@ -84,6 +83,13 @@ public final class MerossMqttConnector {
         }
     }
 
+    /**
+     * @param method The method
+     * @param namespace The namespace
+     * @param payload The payloaf
+     * @param destinationDeviceUUID The destination Device UUID
+     * @return a Mqtt message
+     */
     public MqttMessage buildMqttMessage(String method, String namespace,
                                                      String payload, String destinationDeviceUUID) {
         long timestamp = Instant.now().toEpochMilli();
