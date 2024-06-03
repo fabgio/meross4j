@@ -99,8 +99,8 @@ public final class MerossMqttConnector {
         String stringToHash = messageId + merossHttpConnector.getCloudCredentials().key() + timestamp;
         String signature = DigestUtils.md5Hex(stringToHash);
         String clientResponseTopic = buildResponseTopic();
-        Map<String, Object>  headerMap = new HashMap<>();
-        Map<String, Object>  dataMap = new HashMap<>();
+        Map<String, Object> headerMap = new HashMap<>();
+        Map<String, Object> dataMap = new HashMap<>();
         headerMap.put("from",clientResponseTopic);
         headerMap.put("messageId",messageId);
         headerMap.put("method",method);
@@ -116,6 +116,9 @@ public final class MerossMqttConnector {
         return new MqttMessage(mqttMessage.getBytes());
     }
 
+    /**
+     * @return  The response topic
+     */
     private  String  buildResponseTopic() {
         StringBuilder topicBuilder = new StringBuilder("/app/")
                 .append(merossHttpConnector.getCloudCredentials().userId())
