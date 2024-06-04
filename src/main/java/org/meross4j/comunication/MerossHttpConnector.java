@@ -48,6 +48,7 @@ public final class MerossHttpConnector {
         this.apiBaseUrl = apiBaseUrl;
         this.email = email;
         this.password = password;
+        logger.info("Connecting to Meross IOT API at " + apiBaseUrl);
     }
 
     public MerossHttpConnector(){
