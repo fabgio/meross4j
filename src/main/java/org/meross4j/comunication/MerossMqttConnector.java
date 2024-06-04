@@ -48,27 +48,30 @@ public final class MerossMqttConnector {
 
                 @Override
                 public void mqttErrorOccurred(MqttException e) {
-
+                    logger.error("mqttErrorOccurred: {}", e.getMessage());
                 }
 
                 @Override
                 public void messageArrived(String s, MqttMessage mqttMessage)  {
-
+                    logger.info("Topic: {}", s);
+                    logger.info("Message: {}", mqttMessage.toString());
+                    logger.info("qos: {}", mqttMessage.getQos());
                 }
 
                 @Override
                 public void deliveryComplete(IMqttToken iMqttToken) {
-
+                    logger.info("delivery complete {}", iMqttToken.isComplete());
                 }
 
                 @Override
                 public void connectComplete(boolean b, String s) {
-
+                    logger.info("connect complete {}", s);
+                    logger.info("b: {}", b);
                 }
 
                 @Override
                 public void authPacketArrived(int i, MqttProperties mqttProperties) {
-                    
+                    logger.info("Auth packet arrived");
                 }
             });
             options.setKeepAliveInterval(30);
