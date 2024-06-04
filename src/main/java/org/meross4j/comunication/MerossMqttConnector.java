@@ -43,7 +43,7 @@ public final class MerossMqttConnector {
             mqttAsyncClient.setCallback(new MqttCallback() {
                 @Override
                 public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
-
+                    logger.info("Disconnected. Reason:" + mqttDisconnectResponse.getReasonString());
                 }
 
                 @Override
