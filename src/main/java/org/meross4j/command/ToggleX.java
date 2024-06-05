@@ -19,7 +19,6 @@ public class ToggleX {
                   {'togglex': {"onoff": 1, "channel": 0}}""";
 
 
-
     }
 
     /**
@@ -31,6 +30,7 @@ public class ToggleX {
         String nameSpace="Namespace.CONTROL_TOGGLEX";
         String payload = """
                   {'togglex': {"onoff": 0, "channel": 0}}""";
+
 
     }
 }
