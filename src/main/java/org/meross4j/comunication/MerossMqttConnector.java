@@ -28,9 +28,9 @@ public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
 
     /**
-     * @param message the Mqtt Message to be published
-     * @param topic  the topic
-     * @param brokerCoordinates the Broker coordinates
+     * @param message the mqtt message to be published
+     * @param topic the topic
+     * @param brokerCoordinates the broker coordinates
      * @param userId the userId
      */
     public static synchronized void publishMqttMessage(String message, String topic, String brokerCoordinates, String userId) {
@@ -93,7 +93,7 @@ public final class MerossMqttConnector {
      * @param merossHttpConnector
      * @return a Mqtt message
      */
-    public static String  buildMqttMessage(String method, String namespace,
+    public static String buildMqttMessage(String method, String namespace,
                                         String payload, String destinationDeviceUUID, String userId,String key) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();
