@@ -33,7 +33,7 @@ public final class MerossMqttConnector {
      * @param brokerCoordinates the broker coordinates
      * @param userId the userId
      */
-    public static synchronized void publishMqttMessage(String message, String topic, String brokerCoordinates, String userId) {
+    public static void publishMqttMessage(String message, String topic, String brokerCoordinates, String userId) {
         int pubQos = 1;
         try {
             MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(brokerCoordinates, userId);
