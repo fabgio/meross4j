@@ -12,8 +12,8 @@ public class MerossUtils {
         return DigestUtils.md5Hex(stringToHash);
     }
 
-    public static String getDevUUIDByDevName(String devName) {
-        return new MerossHttpConnector().getDevices().stream()
+    public static String getDevUUIDByDevName(String devName, MerossHttpConnector merossHttpConnector) {
+        return  merossHttpConnector.getDevices().stream()
                 .filter(device->device.devName().equals(devName))
                 .map(Device::uuid)
                 .findFirst()
