@@ -26,17 +26,21 @@ import java.util.UUID;
 
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
+    private static final String brokerPort="443";
+    private static String brokerAddress;
+    private static String userId;
+    private static String key;
+    private static String destinationDeviceUUID;
 
     /**
      * @param message the mqtt message to be published
      * @param topic the topic
-     * @param brokerCoordinates the broker coordinates
-     * @param userId the userId
      */
-    public static void publishMqttMessage(String message, String topic, String brokerCoordinates, String userId) {
+    public static void publishMqttMessage(String message, String topic) {
+        String brokerConnectionString = "tcp://"+brokerAddress+":"+brokerPort;
         int pubQos = 1;
         try {
-            MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(brokerCoordinates, userId);
+            MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(brokerConnectionString, userId);
             MqttConnectionOptions options = new MqttConnectionOptions();
             mqttAsyncClient.setCallback(new MqttCallback() {
                 @Override
@@ -86,22 +90,21 @@ public final class MerossMqttConnector {
     }
 
     /**
+    
      * @param method                The method
      * @param namespace             The namespace
-     * @param payload               The payloaf
-     * @param destinationDeviceUUID The destination Device UUID
-     * @param merossHttpConnector
+     * @param payload               The payload
      * @return a Mqtt message
      */
     public static String buildMqttMessage(String method, String namespace,
-                                        String payload, String destinationDeviceUUID, String userId,String key) {
+                                          String payload) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         String stringToHash = messageId + key + timestamp;
         String signature = DigestUtils.md5Hex(stringToHash);
-        String clientResponseTopic = buildResponseTopic(userId);
+        String clientResponseTopic = buildResponseTopic();
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         headerMap.put("from",clientResponseTopic);
@@ -121,13 +124,33 @@ public final class MerossMqttConnector {
     /**
      * @return  The response topic
      */
-    public static String  buildResponseTopic(String userId) {
+    public static String  buildResponseTopic() {
         StringBuilder topicBuilder = new StringBuilder("/app/")
-                .append(userId)
+                .append(getUserId())
                 .append("-")
                 .append(MerossUtils.buildAppId())
                 .append("/subscribe");
         return topicBuilder.toString();
+    }
+
+    public static void setUserId(String userId) {
+        MerossMqttConnector.userId = userId;
+    }
+
+    public static String getUserId() {
+        return userId;
+    }
+
+    public static void setBrokerAddress(String brokerAddress) {
+        MerossMqttConnector.brokerAddress = brokerAddress;
+    }
+
+    public static void setKey(String key) {
+        MerossMqttConnector.key = key;
+    }
+
+    public static void setDestinationDeviceUUID(String destinationDeviceUUID) {
+        MerossMqttConnector.destinationDeviceUUID = destinationDeviceUUID;
     }
 }
 

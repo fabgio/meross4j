@@ -6,31 +6,19 @@ import org.meross4j.comunication.MerossMqttConnector;
  *   and smart bulbs.
  *
  */
-public class ToggleX {
+public class ToggleXTurnOn {
 
     /**
      * @param devName The device name
      * @return MqttMessage for turning on the device
      */
-    public static void requestTurnOn(String devName){
+    public static String requestTurnOn(String devName){
         String method="SET";
         String nameSpace="Namespace.CONTROL_TOGGLEX";
         String payload = """
                   {'togglex': {"onoff": 1, "channel": 0}}""";
-
-
+        return MerossMqttConnector.buildMqttMessage(method, nameSpace, payload);
     }
 
-    /**
-     * @param devName The device name
-     * @return MqttMessage for turning off the device
-     */
-    public void requestTurnOff(String devName){
-        String method="SET";
-        String nameSpace="Namespace.CONTROL_TOGGLEX";
-        String payload = """
-                  {'togglex': {"onoff": 0, "channel": 0}}""";
 
-
-    }
 }
