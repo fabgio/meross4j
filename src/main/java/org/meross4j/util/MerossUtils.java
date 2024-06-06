@@ -10,5 +10,4 @@ public class MerossUtils {
         String stringToHash = "API"+rndUUID;
         return DigestUtils.md5Hex(stringToHash);
     }
-
 }
