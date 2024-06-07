@@ -1,5 +1,5 @@
 package org.meross4j.command;
 
 public interface Command {
-    String create(String devName);
+    String create(String type);
 }
