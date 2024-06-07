@@ -59,6 +59,14 @@ public final class MerossHttpConnector {
                 .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
     }
 
+    public  String getDevTypeByDevName(String devName) {
+        return  getDevices().stream()
+                .filter(device->device.devName().equals(devName))
+                .map(Device::deviceType)
+                .findFirst()
+                .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
+    }
+
     public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
         HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl, path);
         if (httpResponse.statusCode() != 200) {
@@ -190,9 +198,8 @@ public final class MerossHttpConnector {
         } else {
             authorizationValue = "Basic";
         }
-        var uriBuilder = new StringBuilder(uri).append(path);
         HttpRequest postRequest = HttpRequest.newBuilder()
-                .uri(URI.create(uriBuilder.toString()))
+                .uri(URI.create(uri + path))
                 .header("Authorization", authorizationValue)
                 .header("AppVersion", "0.0.0")
                 .header("vender", "meross")
@@ -203,8 +210,7 @@ public final class MerossHttpConnector {
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
         try {
-            HttpResponse<String> response = client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
-            return response;
+            return client.sendAsync(postRequest, HttpResponse.BodyHandlers.ofString()).get();
         } catch (InterruptedException | ExecutionException e) {
             logger.debug("Error while posting data", e);
             throw new RuntimeException(e);

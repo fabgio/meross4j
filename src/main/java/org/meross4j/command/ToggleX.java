@@ -10,7 +10,7 @@ public class ToggleX {
          */
 
         @Override
-        public String create(String devName) {
+        public String create(String type) {
             String method = "SET";
             String nameSpace = "Namespace.CONTROL_TOGGLEX";
             String payload = """
@@ -25,7 +25,7 @@ public class ToggleX {
          * @return MqttMessage for turning  the device off
          */
         @Override
-        public String create(String devName) {
+        public String create(String type) {
             String method = "SET";
             String nameSpace = "Namespace.CONTROL_TOGGLEX";
             String payload = """

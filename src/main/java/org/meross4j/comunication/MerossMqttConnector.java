@@ -125,12 +125,12 @@ public final class MerossMqttConnector {
      * @return  The response topic
      */
     public static String  buildResponseTopic() {
-        StringBuilder topicBuilder = new StringBuilder("/app/")
-                .append(getUserId())
-                .append("-")
-                .append(MerossUtils.buildAppId())
-                .append("/subscribe");
-        return topicBuilder.toString();
+        String topicBuilder = "/app/" +
+                getUserId() +
+                "-" +
+                MerossUtils.buildAppId() +
+                "/subscribe";
+        return topicBuilder;
     }
 
     public static void setUserId(String userId) {
