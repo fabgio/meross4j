@@ -1,5 +1,4 @@
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.record.CloudCredentials;
@@ -10,9 +9,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class TestMerossHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossHttpConnector.class);
@@ -30,59 +27,26 @@ public class TestMerossHttpConnector {
     void testStatusCodeIs200() {
         int statusCode;
         statusCode = connector.getLoginResponse().statusCode();
+        logger.info("statusCode: " + statusCode);
         assertEquals(200,statusCode);
 
     }
 
     @Test
-    void testResponseBodyIsNotNull() {
+    void testLoginResponseBodyIsNotNull() {
         String responseBody;
             responseBody = connector.loginResponseBody();
+            logger.info("responseBody: " + responseBody);
             assertNotNull(responseBody);
     }
 
     @Test
     void testCredentialsIsNotNull(){
         CloudCredentials credentials = connector.getCloudCredentials();
+        logger.info("credentials: " + credentials);
         assertNotNull(credentials);
     }
 
-    @Disabled
-    @Test
-    void testLoginBodyIsNull() {
-        String responseBody = connector.loginResponseBody();
-        assertNull(responseBody);
-    }
-    @Disabled
-    @Test
-    void testCredentialsIsNull(){
-        CloudCredentials credentials = connector.getCloudCredentials();
-        assertNull(credentials);
-    }
-
-    @Disabled
-    @Test
-    void testLoginResponseBodyIsNull() {
-        String responseBody;
-        responseBody = Objects.requireNonNull(connector.loginResponseBody());
-        assertNull(responseBody);
-    }
-    @Disabled
-    @Test
-    void testDevicesResponseBodyIsNull() {
-        String deviceResponseBody;
-        deviceResponseBody = Objects.requireNonNull(connector.getDevicesResponseBody());
-        logger.info(deviceResponseBody);
-        assertNull(deviceResponseBody);
-    }
-    @Disabled
-    @Test
-    void testDevicesNull() {
-        ArrayList<Device> devices;
-        devices = Objects.requireNonNull(connector.getDevices());
-        logger.info(String.valueOf(devices));
-        assertNull(devices);
-    }
     @Test
     void testDevicesNotNull() {
         ArrayList<Device> devices;
@@ -90,14 +54,27 @@ public class TestMerossHttpConnector {
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
     }
-    @Disabled
+
     @Test
-    void testNotFilterTolomeo(){
+    void testFilterTolomeo(){
         Optional<String> devName = connector.getDevices()
                 .stream()
                 .map(Device::devName)
                 .filter(p->p.equals("tolomeo"))
                 .findFirst();
-        assertNotEquals("tolomeo",devName.get());
+        logger.info("devName: " + devName);
+        assertEquals("tolomeo",devName.get());
+    }
+    @Test
+    void testGetUUIDbyName(){
+        String uuid = connector.getDevUUIDByDevName("tolomeo");
+        logger.info("uuid for tolomeo: " + uuid);
+        assertNotNull(uuid);
+    }
+    @Test
+    void testGetTypeByName(){
+        String type = connector.getDevTypeByDevName("tolomeo");
+        logger.info("devType: " + type);
+        assertNotNull(type);
     }
 }

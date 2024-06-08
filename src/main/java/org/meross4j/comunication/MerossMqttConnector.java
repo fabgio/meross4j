@@ -10,7 +10,6 @@ import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
 import org.eclipse.paho.mqttv5.common.MqttException;
 import org.eclipse.paho.mqttv5.common.MqttMessage;
 import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
-import org.meross4j.util.MerossUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Instant;
@@ -128,9 +127,15 @@ public final class MerossMqttConnector {
         String topicBuilder = "/app/" +
                 getUserId() +
                 "-" +
-                MerossUtils.buildAppId() +
+                buildAppId() +
                 "/subscribe";
         return topicBuilder;
+    }
+
+    public static String buildAppId(){
+        String rndUUID = UUID.randomUUID().toString();
+        String stringToHash = "API"+rndUUID;
+        return DigestUtils.md5Hex(stringToHash);
     }
 
     public static void setUserId(String userId) {
@@ -152,5 +157,7 @@ public final class MerossMqttConnector {
     public static void setDestinationDeviceUUID(String destinationDeviceUUID) {
         MerossMqttConnector.destinationDeviceUUID = destinationDeviceUUID;
     }
+
+
 }
 

@@ -51,22 +51,6 @@ public final class MerossHttpConnector {
 
     }
 
-    public  String getDevUUIDByDevName(String devName) {
-        return  getDevices().stream()
-                .filter(device->device.devName().equals(devName))
-                .map(Device::uuid)
-                .findFirst()
-                .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
-    }
-
-    public  String getDevTypeByDevName(String devName) {
-        return  getDevices().stream()
-                .filter(device->device.devName().equals(devName))
-                .map(Device::deviceType)
-                .findFirst()
-                .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
-    }
-
     public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
         HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl, path);
         if (httpResponse.statusCode() != 200) {
@@ -223,4 +207,22 @@ public final class MerossHttpConnector {
     public void setToken(String token) {
         this.token = token;
     }
+
+    public  String getDevUUIDByDevName(String devName) {
+        return  getDevices().stream()
+                .filter(device->device.devName().equals(devName))
+                .map(Device::uuid)
+                .findFirst()
+                .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
+    }
+
+    public  String getDevTypeByDevName(String devName) {
+        return  getDevices().stream()
+                .filter(device->device.devName().equals(devName))
+                .map(Device::deviceType)
+                .findFirst()
+                .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
+    }
 }
+
+
