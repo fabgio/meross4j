@@ -15,29 +15,29 @@ public class MerossManager {
         return new MerossManager(merossHttpConnector);
     }
     void executeCommand(String name, String mode) {
-        String  userid = merossHttpConnector.getCloudCredentials().userId();
+        String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
-            MerossMqttConnector.userId=userid;
+            MerossMqttConnector.setUserId(userid);
          } else {
             logger.debug("userid is null");
         }
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {
-            MerossMqttConnector.key=key;
+            MerossMqttConnector.setKey(key);
         } else {
             logger.debug("key is null");
         }
 
         String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
-            MerossMqttConnector.brokerAddress=brokerAddress;
+            MerossMqttConnector.setBrokerAddress(brokerAddress);
         } else {
             logger.debug("brokerAddress is null");
         }
 
-        String destinationDeviceUUID = merossHttpConnector.getDevUUIDByDevName(name);
-        if (destinationDeviceUUID != null) {
-            MerossMqttConnector.destinationDeviceUUID=destinationDeviceUUID;
+        String deviceUUID = merossHttpConnector.getDevUUIDByDevName(name);
+        if (deviceUUID != null) {
+            MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
         } else {
             logger.debug("deviceUUID is null");
         }

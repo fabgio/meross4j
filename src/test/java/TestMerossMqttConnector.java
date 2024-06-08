@@ -8,7 +8,7 @@ public class TestMerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossMqttConnector.class);
     @Test
     void testBuildResponseTopicIsNotNull(){
-        MerossMqttConnector.userId="3807527";
+        MerossMqttConnector.setUserId("3807527");
         String responseTopic = MerossMqttConnector.buildResponseTopic();
         logger.info(responseTopic);
         assertNotNull(responseTopic);
