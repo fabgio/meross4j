@@ -29,7 +29,6 @@ public class TestMerossHttpConnector {
         statusCode = connector.getLoginResponse().statusCode();
         logger.info("statusCode: " + statusCode);
         assertEquals(200,statusCode);
-
     }
 
     @Test
@@ -62,7 +61,7 @@ public class TestMerossHttpConnector {
                 .map(Device::devName)
                 .filter(p->p.equals("tolomeo"))
                 .findFirst();
-        logger.info("devName: " + devName);
+        logger.info("devName: " + devName.get());
         assertEquals("tolomeo",devName.get());
     }
     @Test

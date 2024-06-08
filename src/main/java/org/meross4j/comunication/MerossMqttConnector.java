@@ -156,7 +156,5 @@ public final class MerossMqttConnector {
     public static void setDestinationDeviceUUID(String destinationDeviceUUID) {
         MerossMqttConnector.destinationDeviceUUID = destinationDeviceUUID;
     }
-
-
 }
 
