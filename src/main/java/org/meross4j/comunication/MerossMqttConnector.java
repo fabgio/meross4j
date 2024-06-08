@@ -26,10 +26,10 @@ import java.util.UUID;
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private static final String brokerPort="443";
-    private static String brokerAddress;
-    private static String userId;
-    private static String key;
-    private static String destinationDeviceUUID;
+     public static volatile String brokerAddress;
+     public static volatile String userId;
+     public static volatile String key;
+     public static volatile String destinationDeviceUUID;
 
     /**
      * @param message the mqtt message to be published
@@ -125,7 +125,7 @@ public final class MerossMqttConnector {
      */
     public static String  buildResponseTopic() {
         return "/app/" +
-                getUserId() +
+                MerossMqttConnector.userId +
                 "-" +
                 buildAppId() +
                 "/subscribe";
@@ -136,27 +136,6 @@ public final class MerossMqttConnector {
         String stringToHash = "API"+rndUUID;
         return DigestUtils.md5Hex(stringToHash);
     }
-
-    public static void setUserId(String userId) {
-        MerossMqttConnector.userId = userId;
-    }
-
-    public static String getUserId() {
-        return userId;
-    }
-
-    public static void setBrokerAddress(String brokerAddress) {
-        MerossMqttConnector.brokerAddress = brokerAddress;
-    }
-
-    public static void setKey(String key) {
-        MerossMqttConnector.key = key;
-    }
-
-    public static void setDestinationDeviceUUID(String destinationDeviceUUID) {
-        MerossMqttConnector.destinationDeviceUUID = destinationDeviceUUID;
-    }
-
 
 }
 
