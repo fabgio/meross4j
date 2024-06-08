@@ -26,10 +26,10 @@ import java.util.UUID;
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private static final String brokerPort="443";
-    private static String brokerAddress;
-    private static String userId;
-    private static String key;
-    private static String destinationDeviceUUID;
+    private static volatile String brokerAddress;
+    private static volatile String userId;
+    private static volatile String key;
+    private static volatile String destinationDeviceUUID;
 
     /**
      * @param message the mqtt message to be published
