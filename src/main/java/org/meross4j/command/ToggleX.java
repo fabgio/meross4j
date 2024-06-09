@@ -12,10 +12,9 @@ public class ToggleX {
 
         @Override
         public String create(String type) {
-            String method = "SET";
             String payload = """
                     {'togglex': {"onoff": 1, "channel": 0}}""";
-            return MerossMqttConnector.buildMqttMessage(method, MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
+            return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
         }
     }
 
@@ -26,10 +25,9 @@ public class ToggleX {
          */
         @Override
         public String create(String type) {
-            String method = "SET";
             String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}""";
-            return MerossMqttConnector.buildMqttMessage(method, MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
+            return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
         }
     }
 }
