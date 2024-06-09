@@ -1,5 +1,6 @@
 package org.meross4j.command;
 
+import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
 
 public class ToggleX {
@@ -12,10 +13,9 @@ public class ToggleX {
         @Override
         public String create(String type) {
             String method = "SET";
-            String nameSpace = "Namespace.CONTROL_TOGGLEX";
             String payload = """
                     {'togglex': {"onoff": 1, "channel": 0}}""";
-            return MerossMqttConnector.buildMqttMessage(method, nameSpace, payload);
+            return MerossMqttConnector.buildMqttMessage(method, MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
         }
     }
 

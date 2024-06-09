@@ -85,6 +85,10 @@ public class MerossConstants {
         CONTROL_THERMOSTAT_MODE("Appliance.Control.Thermostat.Mode"),
         CONTROL_THERMOSTAT_WINDOWOPENED("Appliance.Control.Thermostat.WindowOpened");
 
+        public String getValue() {
+            return value;
+        }
+
         private String value;
 
 
