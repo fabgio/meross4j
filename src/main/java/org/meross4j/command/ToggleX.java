@@ -27,10 +27,9 @@ public class ToggleX {
         @Override
         public String create(String type) {
             String method = "SET";
-            String nameSpace = "Namespace.CONTROL_TOGGLEX";
             String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}""";
-            return MerossMqttConnector.buildMqttMessage(method, nameSpace, payload);
+            return MerossMqttConnector.buildMqttMessage(method, MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
         }
     }
 }
