@@ -17,7 +17,7 @@ public class MerossConstants {
         SYSTEM_ENCRYPTION("Appliance.Encrypt.Suite"),
         SYSTEM_ENCRYPTION_ECDHE("Appliance.Encrypt.ECDHE"),
 
-        CONTROL_BIND("Appliance.ControlBind"),
+        CONTROL_BIND("Appliance.Control.Bind"),
         CONTROL_CONTROL_UNBIND("Appliance.Control.Unbind"),
         CONTROL_TRIGGER("Appliance.Control.Trigger"),
         CONTROL_TRIGGERX("Appliance.Control.TriggerX"),
@@ -45,9 +45,9 @@ public class MerossConstants {
 
         // Roller shutter timer
 
-        ROLLER_SHUTTER_STATE("Appliance.Roller.State"),
-        ROLLER_SHUTTER_POSITION("Appliance.Roller.Position"),
-        ROLLER_SHUTTER_CONFIG("Appliance.Roller.Config"),
+        ROLLER_SHUTTER_STATE("Appliance.RollerShutter.State"),
+        ROLLER_SHUTTER_POSITION("Appliance.RollerShutter.Position"),
+        ROLLER_SHUTTER_CONFIG("Appliance.RollerShutter.Config"),
 
         // Humidifier
 
@@ -77,6 +77,7 @@ public class MerossConstants {
 
         HUB_MTS100_ALL("Appliance.Hub.Mts100.All"),
         HUB_MTS100_TEMPERATURE("Appliance.Hub.Mts100.Temperature"),
+        HUB_MTS100_MODE("Appliance.Hub.Mts100.Mode"),
         HUB_MTS100_ADJUST("Appliance.Hub.Mts100.Adjust"),
 
         // Thermostat / MTS200
