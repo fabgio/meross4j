@@ -89,7 +89,7 @@ public class MerossConstants {
             return value;
         }
 
-        private String value;
+        private final String value;
 
 
         Namespace(String value) {
