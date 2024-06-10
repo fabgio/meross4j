@@ -95,7 +95,7 @@ public final class MerossHttpConnector {
      */
     public String loginResponseBody() {
         JsonElement jsonElement = JsonParser.parseString(getLoginResponse().body());
-        long errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsLong();
+        int  errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
         if (errorCode != 0) {
             String errorMessage = MerossConstants.ErrorCode.getMessageByStatusCode(errorCode);
             try {

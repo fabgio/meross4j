@@ -113,17 +113,17 @@ public class MerossConstants {
         WRONG_TICKET(1011);
         //TODO:TO BE COMPLETED
 
-        public long getValue() {
+        public int getValue() {
             return value;
         }
 
-        private final long value;
+        private final int value;
 
 
-        ErrorCode(long value) {
+        ErrorCode(int value) {
             this.value = value;
         }
-        public static String getMessageByStatusCode(long statusCode) {
+        public static String getMessageByStatusCode(int statusCode) {
             return Stream.of(ErrorCode.values()).filter(s -> s.getValue() == statusCode)
                     .map(ErrorCode::name).findFirst().orElse("Unidentified Http Error Message");
         }
