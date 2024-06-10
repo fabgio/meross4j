@@ -15,7 +15,7 @@ public class ToggleX {
             String payload = """
                   {'togglex' {"onoff": 1, "channel": 0}}
                   """;
-            return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
+            return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload,MerossMqttConnector.buildResponseTopic());
         }
     }
 
@@ -29,7 +29,7 @@ public class ToggleX {
             String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}
                         """;
-            return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload);
+            return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload,MerossMqttConnector.buildResponseTopic());
         }
     }
 }

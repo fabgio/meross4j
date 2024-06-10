@@ -1,5 +1,7 @@
 package org.meross4j.comunication;
 
+import java.util.stream.Stream;
+
 public class MerossConstants {
     //endpoints
     public static final String LOGIN_PATH = "/v1/Auth/signIn";
@@ -91,9 +93,39 @@ public class MerossConstants {
 
         private final String value;
 
-
         Namespace(String value) {
             this.value = value;
+        }
+    }
+
+    public enum ErrorCode {
+        NOT_AN_ERROR(0),
+        WRONG_OR_ISSING_USER(1000),
+        WRONG_OR_MISSING_PASSWORD(1001),
+        ACCOUNT_DOES_NOT_EXIST(1002),
+        THIS_ACCOUNT_HAS_BEEN_DISABLED_OR_DELETED(1003),
+        WRONG_EMAIL_OR_PASSWORD(1004),
+        INVALID_EMAIL_ADDRESS(1005),
+        BAD_PASSWORD_FORMAT(1006),
+        USER_ALREADY_EXISTS(1007),
+        THIS_EMAIL_IS_NOT_REGISTERED(1008),
+        SEND_EMAIL_FAILED(1009),
+        WRONG_TICKET(1011);
+        //TODO:TO BE COMPLETED
+
+        public long getValue() {
+            return value;
+        }
+
+        private final long value;
+
+
+        ErrorCode(long value) {
+            this.value = value;
+        }
+        public static String getMessageByStatusCode(long statusCode) {
+            return Stream.of(ErrorCode.values()).filter(s -> s.getValue() == statusCode)
+                    .map(ErrorCode::name).findFirst().orElse("Unidentified Http Error Message");
         }
     }
 }

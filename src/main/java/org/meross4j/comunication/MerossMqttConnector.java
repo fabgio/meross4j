@@ -96,17 +96,16 @@ public final class MerossMqttConnector {
      * @return a Mqtt message
      */
     public static String buildMqttMessage(String method, String namespace,
-                                          String payload) {
+                                          String payload, String responseTopic) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString = UUID.randomUUID().toString();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         String stringToHash = messageId + key + timestamp;
-        String signature = DigestUtils.md5Hex(stringToHash);
-        String clientResponseTopic = buildResponseTopic();
+        String signature = DigestUtils.md5Hex(stringToHash);;
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
-        headerMap.put("from",clientResponseTopic);
+        headerMap.put("from",responseTopic);
         headerMap.put("messageId",messageId);
         headerMap.put("method",method);
         headerMap.put("namespace",namespace);

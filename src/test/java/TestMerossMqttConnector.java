@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.Test;
+import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +16,12 @@ public class TestMerossMqttConnector {
     }
     @Test
     void testBuildToggleXMessage(){
-        String method = "SET";
-        String nameSpace = "Namespace.CONTROL_TOGGLEX";
+        MerossMqttConnector.setUserId("3807527");
         String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}""";
-       String mqttMessage = MerossMqttConnector.buildMqttMessage(method,nameSpace,payload);
-       logger.info(mqttMessage);
-       assertNotNull(mqttMessage);
+        String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
+                .Namespace.CONTROL_TOGGLEX.getValue(), payload,MerossMqttConnector.buildResponseTopic());
+        logger.info(mqttMessage);
+        assertNotNull(mqttMessage);
     }
 }

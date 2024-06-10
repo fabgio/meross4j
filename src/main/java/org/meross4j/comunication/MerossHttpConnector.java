@@ -1,10 +1,10 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.meross4j.record.CloudCredentials;
 import org.meross4j.record.Device;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public final class MerossHttpConnector {
             .connectTimeout(Duration.of(CONNECTION_TIMEOUT_SECONDS, ChronoUnit.SECONDS))
             .build();
 
-     public MerossHttpConnector(String apiBaseUrl, String email, String password) {
+    public MerossHttpConnector(String apiBaseUrl, String email, String password) {
         this.apiBaseUrl = apiBaseUrl;
         this.email = email;
         this.password = password;
@@ -61,7 +61,7 @@ public final class MerossHttpConnector {
         return null;
     }
 
-    public HttpResponse<String> getLoginResponse()  {
+    public HttpResponse<String> getLoginResponse() {
         Map<String, String> loginMap = new HashMap<>();
         if (email != null && !email.isBlank()) {
             loginMap.put("email", email);
@@ -93,33 +93,28 @@ public final class MerossHttpConnector {
     /**
      * @return The response body at login
      */
-    public String loginResponseBody()  {
-        JSONObject body = new JSONObject(getLoginResponse().body());
-        if (body.get("info").equals("Email unregistered")) {
+    public String loginResponseBody() {
+        JsonElement jsonElement = JsonParser.parseString(getLoginResponse().body());
+        long errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsLong();
+        if (errorCode != 0) {
+            String errorMessage = MerossConstants.ErrorCode.getMessageByStatusCode(errorCode);
             try {
-                throw new IllegalArgumentException("Email address unregistered");
-            } catch (IllegalArgumentException e) {
-                logger.info("Email unregistered", e);
-                throw new RuntimeException(e);
-            }
-        } else if (body.get("info").equals("Wrong password")) {
-            try {
-                throw new IllegalArgumentException("Wrong password");
-            } catch (IllegalArgumentException e) {
-                logger.info("Wrong password", e);
+                throw new IOException("Response resulted in error code" + "  "+errorCode + " with message"+ " "+ errorMessage);
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            return body.toString();
+            return getLoginResponse().body();
         }
     }
+
 
     /**
      * @return The user's Meross cloud Credentials
      */
     public CloudCredentials getCloudCredentials() {
-        JSONObject jsonObject = new JSONObject(loginResponseBody());
-        String data = jsonObject.getJSONObject("data").toString();
+        JsonElement jsonElement = JsonParser.parseString(getLoginResponse().body());
+        String data = jsonElement.getAsJsonObject().get("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
@@ -130,17 +125,16 @@ public final class MerossHttpConnector {
     }
 
     public String getDevicesResponseBody() {
-        JSONObject body = new JSONObject(getDevicesResponse().body());
-        return body.toString();
+        JsonElement jsonElement = JsonParser.parseString(getDevicesResponse().body());
+        return jsonElement.getAsJsonObject().get("data").toString();
         }
 
     /**
      * @return The user's device list
      */
     public ArrayList<Device> getDevices(){
-        JSONObject jsonObject = new JSONObject(getDevicesResponseBody());
-        JSONArray jsonArray = jsonObject.getJSONArray("data");
-        String data = jsonArray.toString();
+        JsonElement jsonElement = JsonParser.parseString(getDevicesResponse().body());;
+        String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
         return new Gson().fromJson(data, type);
         }
