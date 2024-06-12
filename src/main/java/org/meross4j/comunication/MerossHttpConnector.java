@@ -96,7 +96,7 @@ public final class MerossHttpConnector {
     public HttpResponse<String> errorCodeFreeResponse() {
         JsonElement jsonElement = JsonParser.parseString(validateResponse().body());
         int  errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
-        if (errorCode != 0) {
+        if (errorCode != MerossConstants.ErrorCode.NOT_AN_ERROR.getValue()) {
             String errorMessage = MerossConstants.ErrorCode.getMessageByStatusCode(errorCode);
             try {
                 throw new IOException("Response resulted in error code" + "  "+errorCode + " with message"+ " "+ errorMessage);
