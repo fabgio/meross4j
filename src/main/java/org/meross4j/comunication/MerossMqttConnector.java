@@ -76,7 +76,8 @@ public final class MerossMqttConnector {
                 }
             });
             options.setKeepAliveInterval(30);
-            mqttAsyncClient.connect(options);
+            IMqttToken token= mqttAsyncClient.connect(options);
+            token.waitForCompletion();
             mqttAsyncClient.subscribe(topic, 0);
             MqttMessage mqttMessage = new MqttMessage(message.getBytes());
             mqttMessage.setQos(pubQos);

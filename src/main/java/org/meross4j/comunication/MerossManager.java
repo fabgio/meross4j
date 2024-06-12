@@ -14,7 +14,7 @@ public class MerossManager {
     public static MerossManager createMerossManager(MerossHttpConnector merossHttpConnector) {
         return new MerossManager(merossHttpConnector);
     }
-    void executeCommand(String name, String mode) {
+    public void executeCommand(String name, String mode) {
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
             MerossMqttConnector.setUserId(userid);
