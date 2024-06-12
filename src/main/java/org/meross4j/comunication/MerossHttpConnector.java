@@ -61,7 +61,7 @@ public final class MerossHttpConnector {
         return null;
     }
 
-    public HttpResponse<String> getLoginResponse() {
+    public HttpResponse<String> validateResponse() {
         Map<String, String> loginMap = new HashMap<>();
         if (email != null && !email.isBlank()) {
             loginMap.put("email", email);
@@ -93,8 +93,8 @@ public final class MerossHttpConnector {
     /**
      * @return The response body at login
      */
-    public String loginResponseBody() {
-        JsonElement jsonElement = JsonParser.parseString(getLoginResponse().body());
+    public HttpResponse<String> errorCodeFreeResponse() {
+        JsonElement jsonElement = JsonParser.parseString(validateResponse().body());
         int  errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
         if (errorCode != 0) {
             String errorMessage = MerossConstants.ErrorCode.getMessageByStatusCode(errorCode);
@@ -104,36 +104,29 @@ public final class MerossHttpConnector {
                 throw new RuntimeException(e);
             }
         } else {
-            return getLoginResponse().body();
+            return validateResponse();
         }
     }
-
 
     /**
      * @return The user's Meross cloud Credentials
      */
     public CloudCredentials getCloudCredentials() {
-        JsonElement jsonElement = JsonParser.parseString(getLoginResponse().body());
+        JsonElement jsonElement = JsonParser.parseString(errorCodeFreeResponse().body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
-    public HttpResponse<String> getDevicesResponse() {
-        String token =  getCloudCredentials().token();
-        setToken(token);
-        return Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
-    }
-
-    public String getDevicesResponseBody() {
-        JsonElement jsonElement = JsonParser.parseString(getDevicesResponse().body());
-        return jsonElement.getAsJsonObject().get("data").toString();
-        }
 
     /**
      * @return The user's device list
      */
+
     public ArrayList<Device> getDevices(){
-        JsonElement jsonElement = JsonParser.parseString(getDevicesResponse().body());;
+        String token =  getCloudCredentials().token();
+        setToken(token);
+        var response= Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
+        JsonElement jsonElement = JsonParser.parseString(response.body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
         return new Gson().fromJson(data, type);

@@ -26,7 +26,7 @@ public class TestMerossHttpConnector {
     @Test
     void testStatusCodeIs200() {
         int statusCode;
-        statusCode = connector.getLoginResponse().statusCode();
+        statusCode = connector.validateResponse().statusCode();
         logger.info("statusCode: " + statusCode);
         assertEquals(200,statusCode);
     }
@@ -34,7 +34,7 @@ public class TestMerossHttpConnector {
     @Test
     void testLoginResponseBodyIsNotNull() {
         String responseBody;
-            responseBody = connector.loginResponseBody();
+            responseBody = connector.errorCodeFreeResponse().body();
             logger.info("responseBody: " + responseBody);
             assertNotNull(responseBody);
     }
