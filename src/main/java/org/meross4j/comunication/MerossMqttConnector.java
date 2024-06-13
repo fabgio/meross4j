@@ -40,7 +40,7 @@ public final class MerossMqttConnector {
                 .sslWithDefaultConfig()
                 .buildBlocking();
 
-       String hashedPassword = DigestUtils.md5Hex(clientId +key);
+       String hashedPassword = DigestUtils.md5Hex(clientId+key);
 
       var connAck= client.connectWith().simpleAuth().password(hashedPassword.getBytes());
 

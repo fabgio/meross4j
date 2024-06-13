@@ -47,6 +47,7 @@ public class MerossManager {
         }
 
         String requestTopic = MerossMqttConnector.buildClientId();
+        MerossMqttConnector.setClientId(requestTopic);
 
         String type = merossHttpConnector.getDevTypeByDevName(name);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
