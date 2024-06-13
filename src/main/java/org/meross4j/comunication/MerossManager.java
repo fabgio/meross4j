@@ -22,6 +22,9 @@ public class MerossManager {
          } else {
             logger.debug("userid is null");
         }
+
+        MerossMqttConnector.setClientId(MerossMqttConnector.buildClientId());
+
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
@@ -46,7 +49,8 @@ public class MerossManager {
             logger.debug("destinationDeviceUUID is null");
         }
 
-        String requestTopic = MerossMqttConnector.buildClientId();
+        String requestTopic = MerossMqttConnector.buildClientUserTopic();
+
 
         String type = merossHttpConnector.getDevTypeByDevName(name);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);

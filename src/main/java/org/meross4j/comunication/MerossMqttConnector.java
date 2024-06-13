@@ -25,6 +25,7 @@ public final class MerossMqttConnector {
     private static final int SECURE_WEB_SOCKET_PORT = 443; //Secure WebSocket
     private static volatile String brokerAddress;
     private static volatile String userId;
+    private static volatile String clientId = buildClientId();
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
 
@@ -34,7 +35,7 @@ public final class MerossMqttConnector {
      */
     public static void publishMqttMessage(String message, String requestTopic) {
        @NotNull Mqtt5BlockingClient client = Mqtt5Client.builder()
-                .identifier(userId)
+                .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
                 .sslWithDefaultConfig()
@@ -42,9 +43,8 @@ public final class MerossMqttConnector {
 
        String hashedPassword = DigestUtils.md5Hex(userId+key);
 
-      var connAck= client.connectWith().simpleAuth().password(hashedPassword.getBytes());
-
-      logger.debug("connAck : {}",connAck);
+       client.connectWith().simpleAuth().password(hashedPassword.getBytes());
+       client.connect();
        client.subscribeWith().topicFilter(requestTopic).qos(MqttQos.AT_LEAST_ONCE).send();
 
         Mqtt5Publish publishMessage = Mqtt5Publish.builder()
@@ -98,6 +98,10 @@ public final class MerossMqttConnector {
                 "/subscribe";
     }
 
+    public static String buildClientUserTopic(){
+        return "/app/"+userId+"/subscribe";
+    }
+
     public static String buildAppId(){
         String rndUUID = UUID.randomUUID().toString();
         String stringToHash = "API"+rndUUID;
@@ -110,6 +114,10 @@ public final class MerossMqttConnector {
 
     public static void setUserId(String userId) {
         MerossMqttConnector.userId = userId;
+    }
+
+    public static void setClientId(String clientId) {
+        MerossMqttConnector.clientId = clientId;
     }
 
     public static String getUserId() {
