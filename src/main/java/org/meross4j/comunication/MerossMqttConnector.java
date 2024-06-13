@@ -1,15 +1,12 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
+import com.hivemq.client.mqtt.datatypes.MqttQos;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
+import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.eclipse.paho.mqttv5.client.IMqttToken;
-import org.eclipse.paho.mqttv5.client.MqttAsyncClient;
-import org.eclipse.paho.mqttv5.client.MqttCallback;
-import org.eclipse.paho.mqttv5.client.MqttConnectionOptions;
-import org.eclipse.paho.mqttv5.client.MqttDisconnectResponse;
-import org.eclipse.paho.mqttv5.common.MqttException;
-import org.eclipse.paho.mqttv5.common.MqttMessage;
-import org.eclipse.paho.mqttv5.common.packet.MqttProperties;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Instant;
@@ -25,9 +22,9 @@ import java.util.UUID;
 
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
-    private static final String brokerPort="443";
+    private static final int SECURE_WEB_SOCKET_PORT = 443; //Secure WebSocket
     private static volatile String brokerAddress;
-    private static volatile String userId;
+    private static volatile String clientId;
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
 
@@ -35,58 +32,28 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param topic the topic
      */
-    public static void publishMqttMessage(String message, String topic) {
-        String brokerConnectionString = "tcp://"+brokerAddress+":"+brokerPort;
-        int pubQos = 1;
-        try {
-            MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(brokerConnectionString, userId);
-            MqttConnectionOptions options = new MqttConnectionOptions();
-            mqttAsyncClient.setCallback(new MqttCallback() {
-                @Override
-                public void disconnected(MqttDisconnectResponse mqttDisconnectResponse) {
-                    logger.info("Disconnected. Reason:" + mqttDisconnectResponse.getReasonString());
-                }
+    public static void publishMqttMessage(String message, String requestTopic) {
+       @NotNull Mqtt5BlockingClient client = Mqtt5Client.builder()
+                .identifier(clientId)
+                .serverHost(brokerAddress)
+                .serverPort(SECURE_WEB_SOCKET_PORT)
+                .sslWithDefaultConfig()
+                .buildBlocking();
 
-                @Override
-                public void mqttErrorOccurred(MqttException e) {
-                    logger.error("mqttErrorOccurred: {}", e.getMessage());
-                }
+       String hashedPassword = DigestUtils.md5Hex(clientId +key);
 
-                @Override
-                public void messageArrived(String s, MqttMessage mqttMessage)  {
-                    logger.info("Topic: {}", s);
-                    logger.info("Message: {}", mqttMessage.toString());
-                    logger.info("qos: {}", mqttMessage.getQos());
-                }
+      var connAck= client.connectWith().simpleAuth().password(hashedPassword.getBytes());
 
-                @Override
-                public void deliveryComplete(IMqttToken iMqttToken) {
-                    logger.info("delivery complete {}", iMqttToken.isComplete());
-                }
+      logger.debug("connAck : {}",connAck);
+       client.subscribeWith().topicFilter(requestTopic).qos(MqttQos.AT_LEAST_ONCE).send();
 
-                @Override
-                public void connectComplete(boolean b, String s) {
-                    logger.info("connect complete {}", s);
-                    logger.info("b: {}", b);
-                }
+        Mqtt5Publish publishMessage = Mqtt5Publish.builder()
+                .topic(requestTopic)
+                .payload(message.getBytes())
+                .build();
 
-                @Override
-                public void authPacketArrived(int i, MqttProperties mqttProperties) {
-                    logger.info("Auth packet arrived");
-                }
-            });
-            options.setKeepAliveInterval(30);
-            IMqttToken token= mqttAsyncClient.connect(options);
-            token.waitForCompletion();
-            mqttAsyncClient.subscribe(topic, 0);
-            MqttMessage mqttMessage = new MqttMessage(message.getBytes());
-            mqttMessage.setQos(pubQos);
-            mqttAsyncClient.publish(topic, mqttMessage);
-            mqttAsyncClient.disconnect();
-            mqttAsyncClient.close();
-        } catch (MqttException e) {
-            throw new RuntimeException(e);
-        }
+        client.toAsync()
+                .publish(publishMessage);
     }
 
     /**
@@ -125,7 +92,7 @@ public final class MerossMqttConnector {
      */
     public static String  buildResponseTopic() {
         return "/app/" +
-                getUserId() +
+                getClientId() +
                 "-" +
                 buildAppId() +
                 "/subscribe";
@@ -137,12 +104,16 @@ public final class MerossMqttConnector {
         return DigestUtils.md5Hex(stringToHash);
     }
 
-    public static void setUserId(String userId) {
-        MerossMqttConnector.userId = userId;
+    public static String buildClientId(){
+        return "app"+buildAppId();
     }
 
-    public static String getUserId() {
-        return userId;
+    public static void setClientId(String clientId) {
+        MerossMqttConnector.clientId = clientId;
+    }
+
+    public static String getClientId() {
+        return clientId;
     }
 
     public static void setBrokerAddress(String brokerAddress) {

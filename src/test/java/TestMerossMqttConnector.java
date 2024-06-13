@@ -9,14 +9,14 @@ public class TestMerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossMqttConnector.class);
     @Test
     void testBuildResponseTopicIsNotNull(){
-        MerossMqttConnector.setUserId("3807527");
+        MerossMqttConnector.setClientId("3807527");
         String responseTopic = MerossMqttConnector.buildResponseTopic();
         logger.info(responseTopic);
         assertNotNull(responseTopic);
     }
     @Test
     void testBuildToggleXMessage(){
-        MerossMqttConnector.setUserId("3807527");
+        MerossMqttConnector.setClientId("3807527");
         String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}""";
         String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
