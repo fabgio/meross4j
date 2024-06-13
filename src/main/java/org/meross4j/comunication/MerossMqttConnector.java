@@ -24,23 +24,23 @@ public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private static final int SECURE_WEB_SOCKET_PORT = 443; //Secure WebSocket
     private static volatile String brokerAddress;
-    private static volatile String clientId;
+    private static volatile String userId;
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
 
     /**
      * @param message the mqtt message to be published
-     * @param topic the topic
+     * @param requestTopic the topic
      */
     public static void publishMqttMessage(String message, String requestTopic) {
        @NotNull Mqtt5BlockingClient client = Mqtt5Client.builder()
-                .identifier(clientId)
+                .identifier(userId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
                 .sslWithDefaultConfig()
                 .buildBlocking();
 
-       String hashedPassword = DigestUtils.md5Hex(clientId+key);
+       String hashedPassword = DigestUtils.md5Hex(userId+key);
 
       var connAck= client.connectWith().simpleAuth().password(hashedPassword.getBytes());
 
@@ -92,7 +92,7 @@ public final class MerossMqttConnector {
      */
     public static String  buildResponseTopic() {
         return "/app/" +
-                getClientId() +
+                getUserId() +
                 "-" +
                 buildAppId() +
                 "/subscribe";
@@ -108,12 +108,12 @@ public final class MerossMqttConnector {
         return "app"+buildAppId();
     }
 
-    public static void setClientId(String clientId) {
-        MerossMqttConnector.clientId = clientId;
+    public static void setUserId(String userId) {
+        MerossMqttConnector.userId = userId;
     }
 
-    public static String getClientId() {
-        return clientId;
+    public static String getUserId() {
+        return userId;
     }
 
     public static void setBrokerAddress(String brokerAddress) {
