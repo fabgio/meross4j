@@ -43,8 +43,9 @@ public final class MerossMqttConnector {
 
        String hashedPassword = DigestUtils.md5Hex(userId+key);
 
-       client.connectWith().simpleAuth().password(hashedPassword.getBytes());
-       client.connect();
+       var connect =client.connectWith().simpleAuth().password(hashedPassword.getBytes());
+       var conAck=client.connect();
+       logger.info("Publishing message{}",conAck);
        client.subscribeWith().topicFilter(requestTopic).qos(MqttQos.AT_LEAST_ONCE).send();
 
         Mqtt5Publish publishMessage = Mqtt5Publish.builder()
