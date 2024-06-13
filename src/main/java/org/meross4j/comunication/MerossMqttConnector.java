@@ -42,8 +42,6 @@ public final class MerossMqttConnector {
                 .buildBlocking();
 
        String hashedPassword = DigestUtils.md5Hex(userId+key);
-
-       var connect =client.connectWith().simpleAuth().password(hashedPassword.getBytes());
        var conAck=client.connect();
        logger.info("Publishing message{}",conAck);
        client.subscribeWith().topicFilter(requestTopic).qos(MqttQos.AT_LEAST_ONCE).send();
