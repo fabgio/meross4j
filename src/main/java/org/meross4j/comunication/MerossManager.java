@@ -49,7 +49,7 @@ public class MerossManager {
             logger.debug("destinationDeviceUUID is null");
         }
 
-        String requestTopic = MerossMqttConnector.buildClientUserTopic();
+        String requestTopic = MerossMqttConnector.buildDeviceRequestTopic();
 
 
         String type = merossHttpConnector.getDevTypeByDevName(name);

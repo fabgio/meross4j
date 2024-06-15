@@ -6,7 +6,6 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.Instant;
@@ -34,16 +33,17 @@ public final class MerossMqttConnector {
      * @param requestTopic the topic
      */
     public static void publishMqttMessage(String message, String requestTopic) {
-       @NotNull Mqtt5BlockingClient client = Mqtt5Client.builder()
+        String hashedPassword = DigestUtils.md5Hex(userId+key);
+        Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
+                .simpleAuth().password(hashedPassword.getBytes()).applySimpleAuth()
                 .sslWithDefaultConfig()
                 .buildBlocking();
 
-       String hashedPassword = DigestUtils.md5Hex(userId+key);
        var conAck=client.connect();
-       logger.info("Publishing message{}",conAck);
+       logger.info("Publishing message{}",conAck.getReasonString().get());
        client.subscribeWith().topicFilter(requestTopic).qos(MqttQos.AT_LEAST_ONCE).send();
 
         Mqtt5Publish publishMessage = Mqtt5Publish.builder()
@@ -53,6 +53,7 @@ public final class MerossMqttConnector {
 
         client.toAsync()
                 .publish(publishMessage);
+        client.disconnect();
     }
 
     /**
@@ -97,9 +98,16 @@ public final class MerossMqttConnector {
                 "/subscribe";
     }
 
-    public static String buildClientUserTopic(){
-        return "/app/"+userId+"/subscribe";
+    /**
+     * @return  The response topic
+     */
+    public static String  buildDeviceRequestTopic() {
+        return "/appliance/" +
+                clientId+
+                "/subscribe";
     }
+
+
 
     public static String buildAppId(){
         String rndUUID = UUID.randomUUID().toString();
