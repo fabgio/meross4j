@@ -34,6 +34,8 @@ public final class MerossMqttConnector {
      */
     public static void publishMqttMessage(String message, String requestTopic) {
         String hashedPassword = DigestUtils.md5Hex(userId+key);
+        logger.debug("hashedPassword: {}", hashedPassword);
+        logger.debug("clientId: {}", clientId);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
@@ -116,7 +118,7 @@ public final class MerossMqttConnector {
     }
 
     public static String buildClientId(){
-        return "app"+buildAppId();
+        return "app:"+buildAppId();
     }
 
     public static void setUserId(String userId) {
