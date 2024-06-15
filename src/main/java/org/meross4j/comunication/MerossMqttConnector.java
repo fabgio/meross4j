@@ -32,7 +32,7 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param requestTopic the topic
      */
-    public synchronized static void  publishMqttMessage(String message, String requestTopic) {
+    public  static void  publishMqttMessage(String message, String requestTopic) {
         String hashedPassword = DigestUtils.md5Hex(userId+key);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
