@@ -6,6 +6,8 @@ import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,12 +45,17 @@ public final class MerossMqttConnector {
 
         Mqtt3Publish publishMessage = Mqtt3Publish.builder()
                 .topic(requestTopic)
-                .payload(message.getBytes())
+                .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
         client.toBlocking()
-                .connectWith().simpleAuth().username(clientId)
+                .connectWith()
+                .cleanSession(false)
+                .simpleAuth()
+                .username(clientId)
                 .password(hashedPassword.getBytes())
-                .applySimpleAuth().willPublish(publishMessage).send();
+                .applySimpleAuth()
+                .willPublish(publishMessage)
+                .send();
 
     }
 
