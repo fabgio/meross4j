@@ -1,10 +1,8 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
-import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
-import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
+import com.hivemq.client.mqtt.mqtt3.Mqtt3Client;
+import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,26 +34,22 @@ public final class MerossMqttConnector {
         String hashedPassword = DigestUtils.md5Hex(userId+key);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
-        Mqtt5BlockingClient client = Mqtt5Client.builder()
+        Mqtt3Client client = Mqtt3Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
-                .simpleAuth().password(hashedPassword.getBytes()).applySimpleAuth()
                 .sslWithDefaultConfig()
-                .buildBlocking();
+                .build();
 
-       var conAck=client.connect();
-       logger.info("Publishing message{}",conAck.getReasonString().get());
-       client.subscribeWith().topicFilter(requestTopic).qos(MqttQos.AT_LEAST_ONCE).send();
-
-        Mqtt5Publish publishMessage = Mqtt5Publish.builder()
+        Mqtt3Publish publishMessage = Mqtt3Publish.builder()
                 .topic(requestTopic)
                 .payload(message.getBytes())
                 .build();
+        client.toBlocking()
+                .connectWith().simpleAuth().username(clientId)
+                .password(hashedPassword.getBytes())
+                .applySimpleAuth().willPublish(publishMessage).send();
 
-        client.toAsync()
-                .publish(publishMessage);
-        client.disconnect();
     }
 
     /**
