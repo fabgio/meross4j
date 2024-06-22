@@ -11,7 +11,7 @@ public class ToggleX {
          */
 
         @Override
-        public void createCommand(String type) {
+        public void createCommandType(String type) {
             String payload = """
                   {'togglex' {"onoff": 1, "channel": 0}}
                   """;
@@ -25,7 +25,7 @@ public class ToggleX {
          *
          */
         @Override
-        public void createCommand(String type) {
+        public void createCommandType(String type) {
             String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}
                         """;

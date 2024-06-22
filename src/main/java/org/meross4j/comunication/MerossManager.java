@@ -52,8 +52,8 @@ public class MerossManager {
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic();
         String type = merossHttpConnector.getDevTypeByDevName(name);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
-        Command command = abstractFactory.createCommand(mode);
-        command.createCommand(type);
+        Command command = abstractFactory.createCommandMode(mode);
+        command.createCommandType(type);
         MerossMqttConnector.publishMqttMessage(command.toString(),requestTopic);
     }
 }
