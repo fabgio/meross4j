@@ -11,7 +11,7 @@ public class ToggleX {
          */
 
         @Override
-        public String create(String type) {
+        public String createCommand(String type) {
             String payload = """
                   {'togglex' {"onoff": 1, "channel": 0}}
                   """;
@@ -25,7 +25,7 @@ public class ToggleX {
          * @return MqttMessage for turning  the device off
          */
         @Override
-        public String create(String type) {
+        public String createCommand(String type) {
             String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}
                         """;
