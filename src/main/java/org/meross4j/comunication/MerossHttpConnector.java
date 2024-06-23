@@ -48,7 +48,6 @@ public final class MerossHttpConnector {
         this.apiBaseUrl = apiBaseUrl;
         this.email = email;
         this.password = password;
-
     }
 
     public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
@@ -116,7 +115,6 @@ public final class MerossHttpConnector {
         String data = jsonElement.getAsJsonObject().get("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
     }
-
 
     /**
      * @return The user's device list
