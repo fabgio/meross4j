@@ -5,11 +5,6 @@ import org.meross4j.comunication.MerossMqttConnector;
 
 public class ToggleX {
     public static class turnOn implements Command {
-
-        /**
-         *
-         */
-
         @Override
         public void createCommandType(String type) {
             String payload = """
@@ -21,9 +16,6 @@ public class ToggleX {
     }
 
     public static class turnOff implements Command {
-        /**
-         *
-         */
         @Override
         public void createCommandType(String type) {
             String payload = """
