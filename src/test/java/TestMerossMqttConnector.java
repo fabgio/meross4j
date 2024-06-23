@@ -3,6 +3,9 @@ import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Base64;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestMerossMqttConnector {
@@ -22,7 +25,9 @@ public class TestMerossMqttConnector {
                         {'togglex': {"onoff": 1, "channel": 0}}""";
         String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
                 .Namespace.CONTROL_TOGGLEX.getValue(), payload,MerossMqttConnector.buildResponseTopic());
-        logger.info(mqttMessage);
-        assertNotNull(mqttMessage);
+        byte[] decodedBytes = Base64.getDecoder().decode(mqttMessage);
+        String decodedString = new String(decodedBytes);
+        logger.info(decodedString);
+        assertNotNull(decodedString);
     }
 }

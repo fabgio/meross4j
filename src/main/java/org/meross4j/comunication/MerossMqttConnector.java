@@ -3,12 +3,12 @@ package org.meross4j.comunication;
 import com.google.gson.Gson;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3Client;
 import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -27,7 +27,7 @@ public final class MerossMqttConnector {
     private static volatile String clientId = buildClientId();
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
-    ;
+
 
     /**
      * @param message the mqtt message to be published
@@ -42,13 +42,14 @@ public final class MerossMqttConnector {
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
                 .sslWithDefaultConfig()
-                .build().toBlocking();
+                .build();
 
 
         Mqtt3Publish publishMessage = Mqtt3Publish.builder()
                 .topic(requestTopic)
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
+
                  client.toBlocking()
                 .connectWith()
                 .keepAlive(30)
@@ -59,7 +60,7 @@ public final class MerossMqttConnector {
                 .applySimpleAuth()
                 .willPublish(publishMessage)
                 .send();
-
+                logger.debug("Published message: {}", publishMessage);
     }
 
     /**
@@ -90,7 +91,7 @@ public final class MerossMqttConnector {
         headerMap.put("uuid",destinationDeviceUUID);
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
-        return Base64.encodeBase64String(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
+        return Base64.getEncoder().encodeToString(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
     /**
@@ -112,8 +113,6 @@ public final class MerossMqttConnector {
                 clientId+
                 "/subscribe";
     }
-
-
 
     public static String buildAppId(){
         String rndUUID = UUID.randomUUID().toString();
