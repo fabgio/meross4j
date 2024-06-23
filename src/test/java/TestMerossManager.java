@@ -9,6 +9,8 @@ public class TestMerossManager {
     @Test
     void  testManager(){
          MerossHttpConnector merossHttpConnector=new MerossHttpConnector(URL,email,password);
-        MerossManager.createMerossManager(merossHttpConnector).executeCommand("tolomeo","on");
+       var manager= MerossManager.createMerossManager(merossHttpConnector);
+                manager.executeCommand("tolomeo","on");
+
 }
 }

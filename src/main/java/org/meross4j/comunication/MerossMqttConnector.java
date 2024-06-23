@@ -3,6 +3,7 @@ package org.meross4j.comunication;
 import com.google.gson.Gson;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3Client;
 import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +27,13 @@ public final class MerossMqttConnector {
     private static volatile String clientId = buildClientId();
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
+    ;
 
     /**
      * @param message the mqtt message to be published
      * @param requestTopic the topic
      */
-    public  static void  publishMqttMessage(String message, String requestTopic) {
+    public static void  publishMqttMessage(String message, String requestTopic) {
         String hashedPassword = DigestUtils.md5Hex(userId+key);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
@@ -40,13 +42,14 @@ public final class MerossMqttConnector {
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
                 .sslWithDefaultConfig()
-                .build();
+                .build().toBlocking();
+
 
         Mqtt3Publish publishMessage = Mqtt3Publish.builder()
                 .topic(requestTopic)
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
-        client.toBlocking()
+                 client.toBlocking()
                 .connectWith()
                 .keepAlive(30)
                 .cleanSession(false)
@@ -87,7 +90,7 @@ public final class MerossMqttConnector {
         headerMap.put("uuid",destinationDeviceUUID);
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
-        return new Gson().toJson(dataMap);
+        return Base64.encodeBase64String(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
     /**

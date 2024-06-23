@@ -17,8 +17,9 @@ public class TestMerossMqttConnector {
     @Test
     void testBuildToggleXMessage(){
         MerossMqttConnector.setUserId("3807527");
+        MerossMqttConnector.setDestinationDeviceUUID("2306066404030351200248e1e9c96ff1");
         String payload = """
-                        {'togglex': {"onoff": 0, "channel": 0}}""";
+                        {'togglex': {"onoff": 1, "channel": 0}}""";
         String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
                 .Namespace.CONTROL_TOGGLEX.getValue(), payload,MerossMqttConnector.buildResponseTopic());
         logger.info(mqttMessage);

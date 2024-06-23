@@ -15,12 +15,12 @@ public class ToggleX {
             String payload = """
                   {'togglex' {"onoff": 1, "channel": 0}}
                   """;
-            MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload, MerossMqttConnector.buildResponseTopic());
+            MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(),
+                    payload, MerossMqttConnector.buildResponseTopic());
         }
     }
 
     public static class turnOff implements Command {
-
         /**
          *
          */
@@ -29,7 +29,8 @@ public class ToggleX {
             String payload = """
                         {'togglex': {"onoff": 0, "channel": 0}}
                         """;
-            MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(), payload, MerossMqttConnector.buildResponseTopic());
+            MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(),
+                    payload, MerossMqttConnector.buildResponseTopic());
         }
     }
 }
