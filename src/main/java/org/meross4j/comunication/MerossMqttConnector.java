@@ -28,7 +28,6 @@ public final class MerossMqttConnector {
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
 
-
     /**
      * @param message the mqtt message to be published
      * @param requestTopic the topic
