@@ -43,12 +43,10 @@ public final class MerossMqttConnector {
                 .sslWithDefaultConfig()
                 .build();
 
-
         Mqtt3Publish publishMessage = Mqtt3Publish.builder()
                 .topic(requestTopic)
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
-
                  client.toBlocking()
                 .connectWith()
                 .keepAlive(30)
