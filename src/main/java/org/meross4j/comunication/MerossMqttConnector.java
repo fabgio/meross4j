@@ -108,9 +108,9 @@ public final class MerossMqttConnector {
     /**
      * @return  The response topic
      */
-    public static String  buildDeviceRequestTopic() {
+    public static String  buildDeviceRequestTopic(String destinationDeviceUUID) {
         return "/appliance/" +
-                clientId+
+                destinationDeviceUUID+
                 "/subscribe";
     }
 
