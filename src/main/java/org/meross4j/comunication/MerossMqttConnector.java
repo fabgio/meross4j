@@ -74,7 +74,7 @@ public final class MerossMqttConnector {
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         String stringToHash = messageId + key + timestamp;
-        String signature = DigestUtils.md5Hex(stringToHash);
+        String signature = DigestUtils.md5Hex(stringToHash).toLowerCase();
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         headerMap.put("from",responseTopic);
