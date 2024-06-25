@@ -6,6 +6,7 @@ import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
@@ -57,7 +58,9 @@ public final class MerossMqttConnector {
                 .applySimpleAuth()
                 .willPublish(publishMessage)
                 .send();
-                logger.debug("Published message: {}", publishMessage);
+          ByteBuffer b=publishMessage.getPayload().get();
+          logger.debug("Published message: {}", publishMessage);
+          logger.debug("payload: {}",StandardCharsets.UTF_8.decode(b).toString());
     }
 
     /**
@@ -88,6 +91,7 @@ public final class MerossMqttConnector {
         headerMap.put("uuid",destinationDeviceUUID);
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
+        logger.debug("payload: {}", payload);
         return Base64.getEncoder().encodeToString(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
