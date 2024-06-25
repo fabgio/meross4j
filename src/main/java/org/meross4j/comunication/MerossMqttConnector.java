@@ -70,7 +70,7 @@ public final class MerossMqttConnector {
     public static String buildMqttMessage(String method, String namespace,
                                           String payload, String responseTopic) {
         long timestamp = Instant.now().toEpochMilli();
-        String randomString = UUID.randomUUID().toString();
+        String randomString =  UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         String stringToHash = messageId + key + timestamp;
