@@ -60,7 +60,7 @@ public final class MerossMqttConnector {
                 .send();
           ByteBuffer b=publishMessage.getPayload().get();
           logger.debug("Published message: {}", publishMessage);
-          logger.debug("payload: {}",StandardCharsets.UTF_8.decode(b).toString());
+          logger.debug("payload: {}",StandardCharsets.UTF_8.decode(b));
     }
 
     /**
