@@ -1,8 +1,11 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
+import com.hivemq.client.mqtt.datatypes.MqttQos;
+import com.hivemq.client.mqtt.mqtt3.Mqtt3BlockingClient;
 import com.hivemq.client.mqtt.mqtt3.Mqtt3Client;
 import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
+import com.hivemq.client.mqtt.mqtt3.message.subscribe.Mqtt3Subscribe;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,18 +40,25 @@ public final class MerossMqttConnector {
         String hashedPassword = DigestUtils.md5Hex(userId+key);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
-        Mqtt3Client client = Mqtt3Client.builder()
+        Mqtt3BlockingClient client = Mqtt3Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
                 .sslWithDefaultConfig()
-                .build();
+                .buildBlocking();
 
         Mqtt3Publish publishMessage = Mqtt3Publish.builder()
                 .topic(requestTopic)
+                .qos(MqttQos.AT_LEAST_ONCE)
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
-                 client.toBlocking()
+
+        Mqtt3Subscribe subscribeMessage = Mqtt3Subscribe.builder()
+                .topicFilter(buildResponseTopic())
+                .qos(MqttQos.AT_LEAST_ONCE)
+                .build();
+
+          var connAck=client
                 .connectWith()
                 .keepAlive(30)
                 .cleanSession(false)
@@ -58,9 +68,15 @@ public final class MerossMqttConnector {
                 .applySimpleAuth()
                 .willPublish(publishMessage)
                 .send();
-          ByteBuffer b=publishMessage.getPayload().get();
-          logger.debug("Published message: {}", publishMessage);
-          logger.debug("payload: {}",StandardCharsets.UTF_8.decode(b));
+
+          var subAck= client.subscribe(subscribeMessage);
+
+        logger.debug("Published message: {}", publishMessage);
+        logger.debug("connAck: {}",connAck);
+        logger.debug("subAck: {}",subAck);
+
+        client.disconnect();
+
     }
 
     /**
