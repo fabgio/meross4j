@@ -141,8 +141,7 @@ public final class MerossMqttConnector {
     }
 
     public static String buildClientId(){
-        String stringToHash = "app:" + buildAppId();
-        return DigestUtils.md5Hex(stringToHash);
+        return "app:"+buildAppId();
     }
 
     public static void setUserId(String userId) {
