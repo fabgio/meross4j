@@ -134,12 +134,15 @@ public final class MerossMqttConnector {
                 "/subscribe";
     }
 
-    public static String buildAppId(){//MD5 hashed or not
-        return  "API"+UUID.randomUUID();
+    public static String buildAppId(){
+        String rndUUID = UUID.randomUUID().toString();
+        String stringToHash = "API"+rndUUID;
+        return DigestUtils.md5Hex(stringToHash);
     }
 
     public static String buildClientId(){
-        return "app:"+buildAppId();
+        String stringToHash = "app:" + buildAppId();
+        return DigestUtils.md5Hex(stringToHash);
     }
 
     public static void setUserId(String userId) {
