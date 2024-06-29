@@ -68,15 +68,11 @@ public final class MerossMqttConnector {
                 .applySimpleAuth()
                 .willPublish(publishMessage)
                 .send();
-
-          var subAck= client.subscribe(subscribeMessage);
-
         logger.debug("Published message: {}", publishMessage);
         logger.debug("connAck: {}",connAck);
+        var subAck= client.subscribe(subscribeMessage);
         logger.debug("subAck: {}",subAck);
-
         client.disconnect();
-
     }
 
     /**
