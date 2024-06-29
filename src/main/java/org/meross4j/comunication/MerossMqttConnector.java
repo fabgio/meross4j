@@ -10,7 +10,7 @@ import com.hivemq.client.mqtt.mqtt3.message.subscribe.Mqtt3Subscribe;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.nio.ByteBuffer;
+
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.Base64;
@@ -55,7 +55,7 @@ public final class MerossMqttConnector {
                 .build();
 
         Mqtt3Subscribe subscribeMessage = Mqtt3Subscribe.builder()
-                .topicFilter(buildResponseTopic())
+                .topicFilter(buildClientResponseTopic())
                 .qos(MqttQos.AT_LEAST_ONCE)
                 .build();
 
@@ -90,7 +90,7 @@ public final class MerossMqttConnector {
      * @return a Mqtt message
      */
     public static String buildMqttMessage(String method, String namespace,
-                                          String payload, String responseTopic) {
+                                          String payload) {
         long timestamp = Instant.now().toEpochMilli();
         String randomString =  UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         String md5hash = DigestUtils.md5Hex(randomString);
@@ -99,7 +99,7 @@ public final class MerossMqttConnector {
         String signature = DigestUtils.md5Hex(stringToHash).toLowerCase();
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
-        headerMap.put("from",responseTopic);
+        headerMap.put("from",buildClientResponseTopic());
         headerMap.put("messageId",messageId);
         headerMap.put("method",method);
         headerMap.put("namespace",namespace);
@@ -110,34 +110,32 @@ public final class MerossMqttConnector {
         headerMap.put("uuid",destinationDeviceUUID);
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
-        logger.debug("payload: {}", payload);
         return Base64.getEncoder().encodeToString(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
     /**
      * @return  The response topic
      */
-    public static String  buildResponseTopic() {
+    public static String buildClientResponseTopic() {//ok
         return "/app/" +
-                getUserId() +
+                getUserId()+
                 "-" +
-                buildAppId() +
+                buildAppId()+
                 "/subscribe";
     }
 
     /**
-     * @return  The response topic
+     * @return  The publish  topic
      */
-    public static String  buildDeviceRequestTopic(String destinationDeviceUUID) {
-        return "/appliance/" +
+    public static String buildDeviceRequestTopic(String destinationDeviceUUID) {
+        //uncertain
+        return "/appliance/"+
                 destinationDeviceUUID+
                 "/subscribe";
     }
 
-    public static String buildAppId(){
-        String rndUUID = UUID.randomUUID().toString();
-        String stringToHash = "API"+rndUUID;
-        return DigestUtils.md5Hex(stringToHash);
+    public static String buildAppId(){//MD5 hashed or not
+        return  "API"+UUID.randomUUID();
     }
 
     public static String buildClientId(){
@@ -152,7 +150,7 @@ public final class MerossMqttConnector {
         MerossMqttConnector.clientId = clientId;
     }
 
-    public static String getUserId() {
+    public static  String getUserId() {
         return userId;
     }
 
