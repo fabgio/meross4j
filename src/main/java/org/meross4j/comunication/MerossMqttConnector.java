@@ -76,9 +76,10 @@ public final class MerossMqttConnector {
             logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
             logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
             logger.debug("SubAck type: {}", subAck.getType());
-            client.disconnect();
         }catch (Mqtt3SubAckException e) {
-            e.getCause();
+            logger.debug("cause",e.getCause());
+        }finally{
+            client.disconnect();
         }
     }
 

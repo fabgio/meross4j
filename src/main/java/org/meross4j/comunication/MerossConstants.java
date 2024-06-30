@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 public class MerossConstants {
     //endpoints
     public static final String LOGIN_PATH = "/v1/Auth/signIn";
+    public static final String LOGOUT_PATH = "/v1/Profile/logout";
     public static final String DEV_LIST_PATH = "/v1/Device/devList";
 
     public enum Namespace{

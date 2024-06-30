@@ -113,6 +113,7 @@ public final class MerossHttpConnector {
     public CloudCredentials getCloudCredentials() {
         JsonElement jsonElement = JsonParser.parseString(errorCodeFreeResponse().body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
+        logOut(); //race condition?
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
@@ -127,7 +128,12 @@ public final class MerossHttpConnector {
         JsonElement jsonElement = JsonParser.parseString(response.body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
+        logOut();//race condition?
         return new Gson().fromJson(data, type);
+        }
+
+        public void logOut() {
+            Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
         }
 
     /**
@@ -208,6 +214,7 @@ public final class MerossHttpConnector {
                 .findFirst()
                 .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
     }
+    //TODO: Menage logout
 }
 
 
