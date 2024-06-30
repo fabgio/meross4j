@@ -71,17 +71,12 @@ public final class MerossMqttConnector {
                 .send();
         logger.debug("published message: {}", publishMessage);
         logger.debug("connAck: {}", connAck);
-        try {
             var subAck = client.subscribe(subscribeMessage);
             logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
             logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
             logger.debug("SubAck type: {}", subAck.getType());
-        }catch (Mqtt3SubAckException e) {
-            logger.debug("cause",e.getCause());
-        }finally{
             client.disconnect();
         }
-    }
 
     /**
     
