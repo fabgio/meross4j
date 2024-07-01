@@ -7,6 +7,7 @@ import com.hivemq.client.mqtt.mqtt3.Mqtt3Client;
 import com.hivemq.client.mqtt.mqtt3.exceptions.Mqtt3SubAckException;
 import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 import com.hivemq.client.mqtt.mqtt3.message.subscribe.Mqtt3Subscribe;
+import com.hivemq.client.mqtt.mqtt3.message.subscribe.suback.Mqtt3SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ public final class MerossMqttConnector {
      */
     public static void  publishMqttMessage(String message, String requestTopic) {
         String hashedPassword = DigestUtils.md5Hex(userId + key);
+        Mqtt3SubAck subAck = null;
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
         Mqtt3BlockingClient client = Mqtt3Client.builder()
@@ -56,7 +58,7 @@ public final class MerossMqttConnector {
 
         Mqtt3Subscribe subscribeMessage = Mqtt3Subscribe.builder()
                 .topicFilter(buildClientResponseTopic())
-                .qos(MqttQos.AT_LEAST_ONCE)
+                .qos(MqttQos.AT_MOST_ONCE)// check QOS level
                 .build();
 
         var connAck = client
@@ -71,11 +73,12 @@ public final class MerossMqttConnector {
                 .send();
         logger.debug("published message: {}", publishMessage);
         logger.debug("connAck: {}", connAck);
-        var subAck = client.subscribe(subscribeMessage);
+        subAck = client.subscribe(subscribeMessage);
         logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
         logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
         logger.debug("SubAck type: {}", subAck.getType());
         logger.debug("MQTT Client disconnecting...");
+        logger.debug("Return codes:{}",subAck.getReturnCodes());
         client.disconnect();
         }
 

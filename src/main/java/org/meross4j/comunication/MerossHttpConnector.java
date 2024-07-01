@@ -111,7 +111,7 @@ public final class MerossHttpConnector {
      * @return The user's Meross cloud Credentials
      */
     public CloudCredentials getCloudCredentials() {
-        logger.info("getCloudCredentials...");
+        //logger.info("getCloudCredentials...");
         JsonElement jsonElement = JsonParser.parseString(errorCodeFreeResponse().body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         logOut();
@@ -123,7 +123,7 @@ public final class MerossHttpConnector {
      */
 
     public ArrayList<Device> getDevices(){
-        logger.info("getDevices...");
+        //logger.info("getDevices...");
         String token =  getCloudCredentials().token();
         setToken(token);
         var response= Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
@@ -135,7 +135,7 @@ public final class MerossHttpConnector {
         }
 
         public void logOut() {
-            logger.info("HTTP connection logging out...");
+            //logger.info("HTTP connection logging out...");
             Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
         }
 
