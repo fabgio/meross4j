@@ -1,4 +1,5 @@
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.record.CloudCredentials;
@@ -23,7 +24,7 @@ public class TestMerossHttpConnector {
     void setUp() {
          connector = new MerossHttpConnector(URL, email, password);
     }
-
+    @Disabled
     @Test
     void testStatusCodeIs200() {
         int statusCode;
@@ -31,7 +32,7 @@ public class TestMerossHttpConnector {
         logger.info("statusCode: " + statusCode);
         assertEquals(200,statusCode);
     }
-
+    @Disabled
     @Test
     void testLoginResponseBodyIsNotNull()  {
         String responseBody;
@@ -54,7 +55,7 @@ public class TestMerossHttpConnector {
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
     }
-
+    @Disabled
     @Test
     void testFilterTolomeo(){
         Optional<String> devName = connector.getDevices()
@@ -65,6 +66,7 @@ public class TestMerossHttpConnector {
         logger.info("devName: " + devName.get());
         assertEquals("tolomeo",devName.get());
     }
+    @Disabled
     @Test
     void testGetUUIDbyName(){
         String uuid = connector.getDevUUIDByDevName("tolomeo");

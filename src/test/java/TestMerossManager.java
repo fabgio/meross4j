@@ -12,6 +12,5 @@ public class TestMerossManager {
         MerossHttpConnector merossHttpConnector = new MerossHttpConnector(URL, email, password);
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         manager.executeCommand("tolomeo", "on");
-
     }
 }

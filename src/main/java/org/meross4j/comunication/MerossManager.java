@@ -41,19 +41,19 @@ public class MerossManager {
             logger.debug("brokerAddress is null");
         }
 
-        String destinationDeviceUUID = merossHttpConnector.getDevUUIDByDevName(name);
-        if (destinationDeviceUUID != null) {
-            MerossMqttConnector.setDestinationDeviceUUID(destinationDeviceUUID);
-            logger.debug("destinationDeviceUUID set to {}", destinationDeviceUUID);
+        String deviceUUID = merossHttpConnector.getDevUUIDByDevName(name);
+        if (deviceUUID != null) {
+            MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
+            logger.debug("deviceUUID set to {}", deviceUUID);
         } else {
-            logger.debug("destinationDeviceUUID is null");
+            logger.debug("deviceUUID is null");
         }
 
-        String publishTopic = MerossMqttConnector.buildDeviceRequestTopic(destinationDeviceUUID);
+        String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
         String type = merossHttpConnector.getDevTypeByDevName(name);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
         command.createCommandType(type);
-        MerossMqttConnector.publishMqttMessage(command.toString(),publishTopic);
+        MerossMqttConnector.publishMqttMessage(command.toString(),requestTopic);
     }
 }

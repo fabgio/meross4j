@@ -71,11 +71,12 @@ public final class MerossMqttConnector {
                 .send();
         logger.debug("published message: {}", publishMessage);
         logger.debug("connAck: {}", connAck);
-            var subAck = client.subscribe(subscribeMessage);
-            logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
-            logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
-            logger.debug("SubAck type: {}", subAck.getType());
-            client.disconnect();
+        var subAck = client.subscribe(subscribeMessage);
+        logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
+        logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
+        logger.debug("SubAck type: {}", subAck.getType());
+        logger.debug("MQTT Client disconnecting...");
+        client.disconnect();
         }
 
     /**
@@ -123,10 +124,10 @@ public final class MerossMqttConnector {
     /**
      * @return  The publish  topic
      */
-    public static String buildDeviceRequestTopic(String destinationDeviceUUID) {
+    public static String buildDeviceRequestTopic(String deviceUUID) {
         //uncertain
         return "/appliance/"+
-                destinationDeviceUUID+
+                deviceUUID+
                 "/subscribe";
     }
 

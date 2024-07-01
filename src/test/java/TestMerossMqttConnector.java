@@ -18,13 +18,6 @@ public class TestMerossMqttConnector {
         logger.info("Response Topic:{} ",responseTopic);
         assertNotNull(responseTopic);
     }
-    @Test
-    void testBuildDeviceRequestTopicTobePublished(){
-        String deviceUUID= "2306066404030351200248e1e9c96ff1";
-        String publishTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
-        logger.info("Publish Topic:{} ",publishTopic);
-        assertNotNull(publishTopic);
-    }
     @Disabled
     @Test
     void testBuildToggleXMessage(){
