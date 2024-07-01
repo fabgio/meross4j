@@ -110,9 +110,11 @@ public final class MerossHttpConnector {
     /**
      * @return The user's Meross cloud Credentials
      */
-    public  synchronized CloudCredentials getCloudCredentials() {
+    public CloudCredentials getCloudCredentials() {
+        logger.info("getCloudCredentials...");
         JsonElement jsonElement = JsonParser.parseString(errorCodeFreeResponse().body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
+        logOut();
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
@@ -120,7 +122,8 @@ public final class MerossHttpConnector {
      * @return The user's device list
      */
 
-    public synchronized ArrayList<Device> getDevices(){
+    public ArrayList<Device> getDevices(){
+        logger.info("getDevices...");
         String token =  getCloudCredentials().token();
         setToken(token);
         var response= Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
