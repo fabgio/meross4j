@@ -38,9 +38,8 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param requestTopic the topic
      */
-    public static void  publishMqttMessage(String message, String requestTopic) {
+    public static synchronized void  publishMqttMessage(String message, String requestTopic) {
         String hashedPassword = DigestUtils.md5Hex(userId + key);
-        Mqtt3SubAck subAck = null;
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
         Mqtt3BlockingClient client = Mqtt3Client.builder()
@@ -57,8 +56,8 @@ public final class MerossMqttConnector {
                 .build();
 
         Mqtt3Subscribe subscribeMessage = Mqtt3Subscribe.builder()
-                .topicFilter(buildClientResponseTopic())
-                .qos(MqttQos.AT_MOST_ONCE)// check QOS level
+                .addSubscription().topicFilter(buildClientUserTopic()).qos(MqttQos.AT_LEAST_ONCE).applySubscription()
+                .addSubscription().topicFilter(buildClientResponseTopic()).qos(MqttQos.AT_LEAST_ONCE).applySubscription()
                 .build();
 
         var connAck = client
@@ -73,13 +72,12 @@ public final class MerossMqttConnector {
                 .send();
         logger.debug("published message: {}", publishMessage);
         logger.debug("connAck: {}", connAck);
-        subAck = client.subscribe(subscribeMessage);
+        var subAck = client.subscribe(subscribeMessage);//ERR_SUCCESS = 0
         logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
         logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
         logger.debug("SubAck type: {}", subAck.getType());
         logger.debug("MQTT Client disconnecting...");
         logger.debug("Return codes:{}",subAck.getReturnCodes());
-        client.disconnect();
         }
 
     /**
@@ -122,6 +120,10 @@ public final class MerossMqttConnector {
                 "-" +
                 buildAppId()+
                 "/subscribe";
+    }
+
+    public static String  buildClientUserTopic(){
+        return "/app/"+getUserId()+"subscribe";
     }
 
     /**
