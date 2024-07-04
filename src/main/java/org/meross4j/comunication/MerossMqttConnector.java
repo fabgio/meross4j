@@ -57,10 +57,11 @@ public final class MerossMqttConnector {
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
 
+        //GRANTED_QOS_1 subscription[0] topic!
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
                 .topicFilter(buildClientUserTopic())
-                .qos(MqttQos.AT_LEAST_ONCE) //GRANTED_QOS_1!
+                .qos(MqttQos.AT_LEAST_ONCE)
                 .applySubscription()
                 .addSubscription()
                 .topicFilter(buildClientResponseTopic())
