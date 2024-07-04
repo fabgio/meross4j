@@ -133,7 +133,7 @@ public final class MerossMqttConnector {
      */
     // topic to be subscribed?
     public static String buildClientResponseTopic() {
-        return "/app/"+getUserId()+"-" +buildAppId()+ "/subscribe";
+        return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
     }
 
 
