@@ -8,14 +8,25 @@ import com.hivemq.client.mqtt.mqtt3.exceptions.Mqtt3SubAckException;
 import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 import com.hivemq.client.mqtt.mqtt3.message.subscribe.Mqtt3Subscribe;
 import com.hivemq.client.mqtt.mqtt3.message.subscribe.suback.Mqtt3SubAck;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
+import com.hivemq.client.mqtt.mqtt5.exceptions.Mqtt5SubAckException;
+import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
+import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
+import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ssl.TrustManagerFactory;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -38,50 +49,56 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param requestTopic the topic
      */
-    public static synchronized void  publishMqttMessage(String message, String requestTopic) {
+    public static  void  publishMqttMessage(String message, String requestTopic)  {
         String hashedPassword = DigestUtils.md5Hex(userId + key);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
-        Mqtt3BlockingClient client = Mqtt3Client.builder()
+        Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
-                .sslWithDefaultConfig()
+                .sslConfig()
+                .protocols(List.of("TLSv1.2", "TLSv1.3"))
+                .cipherSuites(null)
+                .applySslConfig()
                 .buildBlocking();
 
-        Mqtt3Publish publishMessage = Mqtt3Publish.builder()
+        Mqtt5Publish publishMessage = Mqtt5Publish.builder()
                 .topic(requestTopic)
-                .qos(MqttQos.AT_LEAST_ONCE)
+                .qos(MqttQos.AT_MOST_ONCE)
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
 
-        Mqtt3Subscribe subscribeMessage = Mqtt3Subscribe.builder()
-                .addSubscription().topicFilter(buildClientUserTopic()).qos(MqttQos.AT_LEAST_ONCE).applySubscription()
-                .addSubscription().topicFilter(buildClientResponseTopic()).qos(MqttQos.AT_LEAST_ONCE).applySubscription()
+        Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
+                .addSubscription()
+                .topicFilter(buildClientUserTopic())
+                .qos(MqttQos.AT_LEAST_ONCE).applySubscription()
+                .addSubscription()
+                .topicFilter(buildClientResponseTopic())
+                .applySubscription()
                 .build();
 
         var connAck = client
                 .connectWith()
                 .keepAlive(30)
-                .cleanSession(false)
+                .cleanStart(false)
                 .simpleAuth()
                 .username(userId)
                 .password(hashedPassword.getBytes())
                 .applySimpleAuth()
                 .willPublish(publishMessage)
                 .send();
-        logger.debug("published message: {}", publishMessage);
-        logger.debug("connAck: {}", connAck);
-        var subAck = client.subscribe(subscribeMessage);//ERR_SUCCESS = 0
-        logger.debug("subAck 0: {}", subAck.getReturnCodes().get(0));
-        logger.debug("SubAck size: {}", subAck.getReturnCodes().size());
-        logger.debug("SubAck type: {}", subAck.getType());
-        logger.debug("MQTT Client disconnecting...");
-        logger.debug("Return codes:{}",subAck.getReturnCodes());
+        logger.debug("connAck: {}", connAck.getReasonCode());
+        try {
+            client.subscribe(subscribeMessage).getReasonString();
+        } catch (Mqtt5SubAckException e) {
+            logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
         }
+        client.disconnect();
+    }
 
     /**
-    
+
      * @param method                The method
      * @param namespace             The namespace
      * @param payload               The payload
@@ -111,17 +128,19 @@ public final class MerossMqttConnector {
         return Base64.getEncoder().encodeToString(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
-    /**
+    /** App command
      * @return  The response topic
      */
-    public static String buildClientResponseTopic() {//ok
-        return "/app/" +
-                getUserId()+
-                "-" +
-                buildAppId()+
-                "/subscribe";
+    // topic to be subscribed?
+    public static String buildClientResponseTopic() {
+        return "/app/"+getUserId()+"-" +buildAppId()+ "/subscribe";
     }
 
+
+    /**
+     * @return The client user topic
+     */
+    // topic to subscribed?
     public static String  buildClientUserTopic(){
         return "/app/"+getUserId()+"subscribe";
     }
@@ -129,17 +148,23 @@ public final class MerossMqttConnector {
     /**
      * @return  The publish  topic
      */
+
+    /** App command
+     * @param deviceUUID
+     * @return
+     */
     public static String buildDeviceRequestTopic(String deviceUUID) {
-        //uncertain
         return "/appliance/"+
                 deviceUUID+
                 "/subscribe";
     }
 
+
     public static String buildAppId(){
-        String rndUUID = UUID.randomUUID().toString();
-        String stringToHash = "API"+rndUUID;
-        return DigestUtils.md5Hex(stringToHash);
+        String rndUUID = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
+        String stringToEncode = "API"+rndUUID;
+        String encodedString = Base64.getEncoder().encodeToString(stringToEncode.getBytes(StandardCharsets.UTF_8));
+        return DigestUtils.md5Hex(encodedString);
     }
 
     public static String buildClientId(){

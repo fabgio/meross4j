@@ -4,6 +4,8 @@ import org.meross4j.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.NoSuchAlgorithmException;
+
 public class MerossManager {
     private final static Logger logger = LoggerFactory.getLogger(MerossManager.class);
     private final MerossHttpConnector merossHttpConnector;
@@ -14,7 +16,7 @@ public class MerossManager {
     public static MerossManager createMerossManager(MerossHttpConnector merossHttpConnector) {
         return new MerossManager(merossHttpConnector);
     }
-    public void executeCommand(String name, String mode) {
+    public void executeCommand(String name, String mode)  {
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
         MerossMqttConnector.setUserId(userid);
