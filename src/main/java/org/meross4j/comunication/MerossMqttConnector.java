@@ -65,16 +65,18 @@ public final class MerossMqttConnector {
 
         Mqtt5Publish publishMessage = Mqtt5Publish.builder()
                 .topic(requestTopic)
-                .qos(MqttQos.AT_MOST_ONCE)
+                .qos(MqttQos.AT_MOST_ONCE) // QOS=0 python paho default value
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
 
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
                 .topicFilter(buildClientUserTopic())
-                .qos(MqttQos.AT_LEAST_ONCE).applySubscription()
+                .qos(MqttQos.AT_LEAST_ONCE)
+                .applySubscription()
                 .addSubscription()
                 .topicFilter(buildClientResponseTopic())
+                .qos(MqttQos.AT_LEAST_ONCE)
                 .applySubscription()
                 .build();
 
