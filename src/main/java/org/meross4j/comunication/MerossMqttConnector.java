@@ -60,7 +60,7 @@ public final class MerossMqttConnector {
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
                 .topicFilter(buildClientUserTopic())
-                .qos(MqttQos.AT_LEAST_ONCE)
+                .qos(MqttQos.AT_LEAST_ONCE) //GRANTED_QOS_1!
                 .applySubscription()
                 .addSubscription()
                 .topicFilter(buildClientResponseTopic())
