@@ -47,9 +47,9 @@ public final class MerossMqttConnector {
 
     /**
      * @param message the mqtt message to be published
-     * @param requestTopic the topic
+     * @param requestTopic the request topic
      */
-    public static void  publishMqttMessage(String message, String requestTopic)  {
+    public static void publishMqttMessage(String message, String requestTopic)  {
         String hashedPassword = DigestUtils.md5Hex(userId + key);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
@@ -104,7 +104,7 @@ public final class MerossMqttConnector {
      * @param method                The method
      * @param namespace             The namespace
      * @param payload               The payload
-     * @return a Mqtt message
+     * @return A Mqtt message
      */
     public static String buildMqttMessage(String method, String namespace,
                                           String payload) {
@@ -131,7 +131,7 @@ public final class MerossMqttConnector {
     }
 
     /** App command
-     * @return  The response topic
+     * @return The response topic
      */
     // topic to be subscribed?
     public static String buildClientResponseTopic() {
