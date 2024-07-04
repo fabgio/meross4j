@@ -2,27 +2,15 @@ package org.meross4j.comunication;
 
 import com.google.gson.Gson;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt3.Mqtt3BlockingClient;
-import com.hivemq.client.mqtt.mqtt3.Mqtt3Client;
-import com.hivemq.client.mqtt.mqtt3.exceptions.Mqtt3SubAckException;
-import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
-import com.hivemq.client.mqtt.mqtt3.message.subscribe.Mqtt3Subscribe;
-import com.hivemq.client.mqtt.mqtt3.message.subscribe.suback.Mqtt3SubAck;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.exceptions.Mqtt5SubAckException;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
-import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.net.ssl.TrustManagerFactory;
 import java.nio.charset.StandardCharsets;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.HashMap;
@@ -142,13 +130,13 @@ public final class MerossMqttConnector {
     /**
      * @return The client user topic
      */
-    // topic to subscribed?
+    // topic to be subscribed?
     public static String  buildClientUserTopic(){
         return "/app/"+getUserId()+"subscribe";
     }
 
     /** App command
-     * @param deviceUUID
+     * @param deviceUUID The device UUID
      * @return The publish  topic
      */
     // topic to be published?
@@ -176,7 +164,7 @@ public final class MerossMqttConnector {
         MerossMqttConnector.clientId = clientId;
     }
 
-    public static  String getUserId() {
+    public static String getUserId() {
         return userId;
     }
 
