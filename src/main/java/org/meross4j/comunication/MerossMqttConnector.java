@@ -132,8 +132,8 @@ public final class MerossMqttConnector {
      * @return The client user topic
      */
     // topic to be subscribed?
-    public static String  buildClientUserTopic(){
-        return "/app/"+getUserId()+"subscribe";
+    public static String buildClientUserTopic(){
+        return "/app/"+getUserId()+"/subscribe";
     }
 
     /** App command
