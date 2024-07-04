@@ -147,18 +147,13 @@ public final class MerossMqttConnector {
         return "/app/"+getUserId()+"subscribe";
     }
 
-    /**
-     * @return  The publish  topic
-     */
-
     /** App command
      * @param deviceUUID
-     * @return
+     * @return The publish  topic
      */
+    // topic to be published?
     public static String buildDeviceRequestTopic(String deviceUUID) {
-        return "/appliance/"+
-                deviceUUID+
-                "/subscribe";
+        return "/appliance/"+deviceUUID+"/subscribe";
     }
 
 
