@@ -55,7 +55,6 @@ public class TestMerossHttpConnector {
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
     }
-    @Disabled
     @Test
     void testFilterTolomeo(){
         Optional<String> devName = connector.getDevices()
@@ -66,7 +65,7 @@ public class TestMerossHttpConnector {
         logger.info("devName: " + devName.get());
         assertEquals("tolomeo",devName.get());
     }
-    @Disabled
+
     @Test
     void testGetUUIDbyName(){
         String uuid = connector.getDevUUIDByDevName("tolomeo");

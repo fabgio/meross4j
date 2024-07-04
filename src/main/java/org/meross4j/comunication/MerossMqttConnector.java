@@ -81,10 +81,11 @@ public final class MerossMqttConnector {
         logger.debug("connAck: {}", connAck.getReasonCode());
         try {
             client.subscribe(subscribeMessage).getReasonString();
-        } catch (Mqtt5SubAckException e) {
+        }catch (Mqtt5SubAckException e) {
             logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
+        }finally {
+            client.disconnect();
         }
-        client.disconnect();
     }
 
     /**
@@ -143,7 +144,6 @@ public final class MerossMqttConnector {
     public static String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
     }
-
 
     public static String buildAppId(){
         String rndUUID = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();

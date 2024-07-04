@@ -144,16 +144,15 @@ public final class MerossHttpConnector {
      * @return The HttpResponse
      */
 
+    //TODO: Consider ReentrantLock instead of synchronized keyword,  grasp Goetz  book
     public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) {
         String dataToSign;
         String encodedParams;
         String authorizationValue;
         String nonce = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
         long timestamp = Instant.now().toEpochMilli();
-        var dataToSignBuilder = new StringBuilder();
         if (paramsData != null) {
             encodedParams = encodeParams(paramsData);
-            dataToSignBuilder.append(CONSTANT_STRING).append(timestamp).append(nonce).append(encodedParams);
         } else {
             logger.debug("Parameter data map is null");
             try {
@@ -163,7 +162,7 @@ public final class MerossHttpConnector {
                 throw new RuntimeException(e);
             }
         }
-        dataToSign = dataToSignBuilder.toString();
+        dataToSign = CONSTANT_STRING + timestamp + nonce + encodedParams;
         String md5hash = DigestUtils.md5Hex(dataToSign);
         Map<String,String> payloadMap = new HashMap<>();
         payloadMap.put("params",encodedParams);
