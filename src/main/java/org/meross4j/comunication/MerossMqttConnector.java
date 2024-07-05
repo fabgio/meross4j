@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
@@ -45,13 +46,10 @@ public final class MerossMqttConnector {
                 .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
-                .sslConfig()
-                .protocols(List.of("TLSv1.2", "TLSv1.3"))
-                .cipherSuites(null)
-                .applySslConfig()
+                .sslWithDefaultConfig()
                 .buildBlocking();
 
-        Mqtt5Publish publishMessage = Mqtt5Publish.builder()
+       Mqtt5Publish publishMessage = Mqtt5Publish.builder()
                 .topic(requestTopic)
                 .qos(MqttQos.AT_MOST_ONCE) // QOS=0 python paho default value
                 .payload(message.getBytes(StandardCharsets.UTF_8))
@@ -81,7 +79,8 @@ public final class MerossMqttConnector {
                 .send();
         logger.debug("connAck: {}", connAck.getReasonCode());
         try {
-            client.subscribe(subscribeMessage).getReasonString();
+            logger.debug("publishMessage: {}", publishMessage.getTopic());
+            client.subscribe(subscribeMessage);
         }catch (Mqtt5SubAckException e) {
             logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
         }finally {
@@ -148,9 +147,7 @@ public final class MerossMqttConnector {
 
     public static String buildAppId(){
         String rndUUID = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
-        String stringToEncode = "API"+rndUUID;
-        String encodedString = Base64.getEncoder().encodeToString(stringToEncode.getBytes(StandardCharsets.UTF_8));
-        return DigestUtils.md5Hex(encodedString);
+        return "API"+rndUUID;
     }
 
     public static String buildClientId(){

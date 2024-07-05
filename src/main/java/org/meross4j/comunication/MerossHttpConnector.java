@@ -144,8 +144,7 @@ public final class MerossHttpConnector {
      * @return The HttpResponse
      */
 
-    //TODO: Consider ReentrantLock instead of synchronized keyword,  grasp Goetz  book
-    public synchronized HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) {
+    public HttpResponse<String> postResponse(Map<String, String> paramsData, String uri, String path) {
         String dataToSign;
         String encodedParams;
         String authorizationValue;

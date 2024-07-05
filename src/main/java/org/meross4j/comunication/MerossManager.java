@@ -4,8 +4,6 @@ import org.meross4j.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.NoSuchAlgorithmException;
-
 public class MerossManager {
     private final static Logger logger = LoggerFactory.getLogger(MerossManager.class);
     private final MerossHttpConnector merossHttpConnector;
@@ -20,7 +18,7 @@ public class MerossManager {
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
         MerossMqttConnector.setUserId(userid);
-            logger.debug("userid set to {}", userid);
+            logger.debug("userid set to: {}", userid);
          } else {
             logger.debug("userid is null");
         }
@@ -30,7 +28,7 @@ public class MerossManager {
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
-            logger.debug("key set to {}", key);
+            logger.debug("key set to: {}", key);
         } else {
             logger.debug("key is null");
         }
@@ -38,7 +36,7 @@ public class MerossManager {
         String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
             MerossMqttConnector.setBrokerAddress(brokerAddress);
-            logger.debug("brokerAddress set to {}", brokerAddress);
+            logger.debug("brokerAddress set to: {}", brokerAddress);
         } else {
             logger.debug("brokerAddress is null");
         }
@@ -46,7 +44,7 @@ public class MerossManager {
         String deviceUUID = merossHttpConnector.getDevUUIDByDevName(name);
         if (deviceUUID != null) {
             MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
-            logger.debug("deviceUUID set to {}", deviceUUID);
+            logger.debug("deviceUUID set to: {}", deviceUUID);
         } else {
             logger.debug("deviceUUID is null");
         }
