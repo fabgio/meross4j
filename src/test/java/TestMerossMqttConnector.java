@@ -22,9 +22,9 @@ public class TestMerossMqttConnector {
     @Test
     void testBuildClientUserTopicIsNotNull() {
         MerossMqttConnector.setUserId("3807527");
-        String responseTopic = MerossMqttConnector.buildClientResponseTopic();
-        logger.info("Response Topic:{} ", responseTopic);
-        assertNotNull(responseTopic);
+        String clientUserTopic = MerossMqttConnector.buildClientUserTopic();
+        logger.info("Client-User Topic:{} ", clientUserTopic);
+        assertNotNull(clientUserTopic);
     }
     @Disabled
     @Test

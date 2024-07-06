@@ -144,8 +144,7 @@ public final class MerossMqttConnector {
     }
 
     public static String buildAppId(){
-        String rndUUID = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toLowerCase();
-        return "API"+rndUUID;
+      return UUID.randomUUID().toString().replace("-", "").substring(0, 16).toLowerCase();
     }
 
     public static String buildClientId(){
