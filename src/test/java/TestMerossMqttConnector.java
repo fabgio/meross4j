@@ -18,6 +18,14 @@ public class TestMerossMqttConnector {
         logger.info("Response Topic:{} ",responseTopic);
         assertNotNull(responseTopic);
     }
+
+    @Test
+    void testBuildClientUserTopicIsNotNull() {
+        MerossMqttConnector.setUserId("3807527");
+        String responseTopic = MerossMqttConnector.buildClientResponseTopic();
+        logger.info("Response Topic:{} ", responseTopic);
+        assertNotNull(responseTopic);
+    }
     @Disabled
     @Test
     void testBuildToggleXMessage(){

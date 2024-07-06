@@ -56,7 +56,7 @@ public final class MerossMqttConnector {
         //GRANTED_QOS_1 subscription[0] topic!
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
-                .topicFilter(buildClientUserTopic())
+                .topicFilter(buildClientUserTopic())//correct
                 .qos(MqttQos.AT_LEAST_ONCE)
                 .applySubscription()
                 .addSubscription()
@@ -144,12 +144,12 @@ public final class MerossMqttConnector {
     }
 
     public static String buildAppId(){
-        String rndUUID = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
+        String rndUUID = UUID.randomUUID().toString().replace("-", "").substring(0, 16).toLowerCase();
         return "API"+rndUUID;
     }
 
     public static String buildClientId(){
-        return "app:"+buildAppId();
+        return "app:"+DigestUtils.md5Hex(Base64.getEncoder().encodeToString(buildAppId().getBytes(StandardCharsets.UTF_8)));
     }
 
     public static void setUserId(String userId) {
