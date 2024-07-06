@@ -28,7 +28,7 @@ public final class MerossMqttConnector {
     private static final int SECURE_WEB_SOCKET_PORT = 443; //Secure WebSocket
     private static volatile String brokerAddress;
     private static volatile String userId;
-    private static volatile String clientId = buildClientId();
+    private static volatile String clientId;
     private static volatile String key;
     private static volatile String destinationDeviceUUID;
 
@@ -37,7 +37,8 @@ public final class MerossMqttConnector {
      * @param requestTopic the request topic
      */
     public static void publishMqttMessage(String message, String requestTopic)  {
-        String hashedPassword = DigestUtils.md5Hex(userId + key);
+        String clearPwd = userId + key;
+        String hashedPassword = DigestUtils.md5Hex(Base64.getEncoder().encodeToString(clearPwd.getBytes(StandardCharsets.UTF_8)));
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
@@ -71,7 +72,7 @@ public final class MerossMqttConnector {
                 .cleanStart(false)
                 .simpleAuth()
                 .username(userId)
-                .password(hashedPassword.getBytes())
+                .password(hashedPassword.getBytes(StandardCharsets.UTF_8))
                 .applySimpleAuth()
                 .willPublish(publishMessage)
                 .send();
@@ -125,7 +126,6 @@ public final class MerossMqttConnector {
         return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
     }
 
-
     /**
      * @return The client user topic
      */
@@ -144,11 +144,13 @@ public final class MerossMqttConnector {
     }
 
     public static String buildAppId(){
-      return UUID.randomUUID().toString().replace("-", "").substring(0, 16).toLowerCase();
+        String randomString = "API"+UUID.randomUUID().toString().replace("-", "");
+        String encodedString = Base64.getEncoder().encodeToString(randomString.getBytes(StandardCharsets.UTF_8));
+        return DigestUtils.md5Hex(encodedString);
     }
 
     public static String buildClientId(){
-        return "app:"+DigestUtils.md5Hex(Base64.getEncoder().encodeToString(buildAppId().getBytes(StandardCharsets.UTF_8)));
+        return "app:"+buildAppId();
     }
 
     public static void setUserId(String userId) {

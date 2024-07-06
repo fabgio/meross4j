@@ -15,6 +15,10 @@ public class MerossManager {
         return new MerossManager(merossHttpConnector);
     }
     public void executeCommand(String name, String mode)  {
+        String clientId=MerossMqttConnector.buildClientId();
+        MerossMqttConnector.setClientId(clientId);
+        logger.debug("ClientId set to "+clientId);
+
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
         MerossMqttConnector.setUserId(userid);
@@ -23,7 +27,6 @@ public class MerossManager {
             logger.debug("userid is null");
         }
 
-        MerossMqttConnector.setClientId(MerossMqttConnector.buildClientId());
 
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {

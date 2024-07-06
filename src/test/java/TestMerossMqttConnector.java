@@ -15,7 +15,7 @@ public class TestMerossMqttConnector {
     void testBuildResponseTopicIsNotNull(){
         MerossMqttConnector.setUserId("3807527");
         String responseTopic = MerossMqttConnector.buildClientResponseTopic();
-        logger.info("Response Topic:{} ",responseTopic);
+        logger.info("Response Topic:  {} ",responseTopic);
         assertNotNull(responseTopic);
     }
 
@@ -23,8 +23,16 @@ public class TestMerossMqttConnector {
     void testBuildClientUserTopicIsNotNull() {
         MerossMqttConnector.setUserId("3807527");
         String clientUserTopic = MerossMqttConnector.buildClientUserTopic();
-        logger.info("Client-User Topic:{} ", clientUserTopic);
+        logger.info("Client-User Topic:  {} ", clientUserTopic);
         assertNotNull(clientUserTopic);
+    }
+
+    @Test
+    void testBuildClientUIdsNotNull() {
+        MerossMqttConnector.setUserId("3807527");
+        String clientIfd= MerossMqttConnector.buildClientId();
+        logger.info("ClientId Topic:  {} ", clientIfd);
+        assertNotNull(clientIfd);
     }
     @Disabled
     @Test
