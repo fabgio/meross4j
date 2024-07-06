@@ -31,7 +31,7 @@ public class TestMerossMqttConnector {
     void testBuildClientUIdsNotNull() {
         MerossMqttConnector.setUserId("3807527");
         String clientIfd= MerossMqttConnector.buildClientId();
-        logger.info("ClientId Topic:  {} ", clientIfd);
+        logger.info("ClientId:  {} ", clientIfd);
         assertNotNull(clientIfd);
     }
     @Disabled
