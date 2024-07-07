@@ -79,7 +79,9 @@ public final class MerossMqttConnector {
         logger.debug("connAck: {}", connAck.getReasonCode());
         try {
             logger.debug("publishMessage: {}", publishMessage.getTopic());
-            client.subscribe(subscribeMessage);
+            var subAck=client.subscribe(subscribeMessage);
+            logger.debug("subscriptions: {}",subscribeMessage.getSubscriptions());
+            logger.debug("subAck: {}", subAck);
         }catch (Mqtt5SubAckException e) {
             logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
         }finally {
@@ -131,7 +133,8 @@ public final class MerossMqttConnector {
 
     public static String buildAppId(){
         String randomString = "API"+UUID.randomUUID();
-        return DigestUtils.md5Hex(randomString);
+        String encodedString=StandardCharsets.UTF_8.encode(randomString).toString();
+        return DigestUtils.md5Hex(encodedString);
     }
     /** App command
      * @return The response topic
