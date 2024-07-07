@@ -97,7 +97,7 @@ public final class MerossMqttConnector {
     public static String buildMqttMessage(String method, String namespace,
                                           String payload) {
         long timestamp = Instant.now().toEpochMilli();
-        String randomString =  UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();
+        String randomString =  UUID.randomUUID().toString();
         String md5hash = DigestUtils.md5Hex(randomString);
         String messageId = md5hash.toLowerCase();
         String stringToHash = messageId + key + timestamp;
@@ -123,7 +123,7 @@ public final class MerossMqttConnector {
     /**
      * @return The client user topic
      */
-    // topic to be subscribed?
+    // topic to be subscribed? //ok
     public static String buildClientUserTopic(){
         return "/app/"+getUserId()+"/subscribe";
     }
