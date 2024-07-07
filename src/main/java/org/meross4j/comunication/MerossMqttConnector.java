@@ -39,7 +39,7 @@ public final class MerossMqttConnector {
     public static void publishMqttMessage(String message, String requestTopic)  {
         String clearPwd = userId + key;
         String hashedPassword = DigestUtils.md5Hex(clearPwd);
-        logger.debug("hashedPassword: {}", hashedPassword);;
+        logger.debug("hashedPassword: {}", hashedPassword);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
@@ -53,7 +53,6 @@ public final class MerossMqttConnector {
                 .payload(message.getBytes(StandardCharsets.UTF_8))
                 .build();
 
-        //GRANTED_QOS_1 subscription[0] topic!
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
                 .topicFilter(buildClientUserTopic())//correct
@@ -78,7 +77,7 @@ public final class MerossMqttConnector {
         var pubAck = client.publish(publishMessage);
         logger.debug("connAck: {}", connAck);
         try {
-            logger.debug("pubAck: {} payload {}", pubAck, publishMessage.getPayload());
+            logger.debug("pubAck: {} payload {}", pubAck, publishMessage.getPayload().get());
             var subAck = client.subscribe(subscribeMessage);
             logger.debug("subAck: {} subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
         }catch (Mqtt5SubAckException e) {
@@ -138,7 +137,7 @@ public final class MerossMqttConnector {
     /** App command
      * @return The response topic
      */
-    // topic to be subscribed?
+    // topic to be subscribed? ok
     public static String buildClientResponseTopic() {
         return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
     }
