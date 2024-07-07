@@ -88,7 +88,6 @@ public final class MerossMqttConnector {
     }
 
     /**
-
      * @param method                The method
      * @param namespace             The namespace
      * @param payload               The payload
@@ -123,7 +122,6 @@ public final class MerossMqttConnector {
     /**
      * @return The client user topic
      */
-    // topic to be subscribed? //ok
     public static String buildClientUserTopic(){
         return "/app/"+getUserId()+"/subscribe";
     }
@@ -137,7 +135,6 @@ public final class MerossMqttConnector {
     /** App command
      * @return The response topic
      */
-    // topic to be subscribed? ok
     public static String buildClientResponseTopic() {
         return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
     }
