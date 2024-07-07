@@ -36,9 +36,9 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param requestTopic the request topic
      */
-    public static void publishMqttMessage(String message, String requestTopic)  {
+    public static  void publishMqttMessage(String message, String requestTopic)  {
         String clearPwd = userId + key;
-        String hashedPassword = DigestUtils.md5Hex(Base64.getEncoder().encodeToString(clearPwd.getBytes(StandardCharsets.UTF_8)));
+        String hashedPassword = DigestUtils.md5Hex(clearPwd);
         logger.debug("hashedPassword: {}", hashedPassword);
         logger.debug("clientId: {}", clientId);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
@@ -118,13 +118,7 @@ public final class MerossMqttConnector {
         return Base64.getEncoder().encodeToString(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
-    /** App command
-     * @return The response topic
-     */
-    // topic to be subscribed?
-    public static String buildClientResponseTopic() {
-        return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
-    }
+
 
     /**
      * @return The client user topic
@@ -134,6 +128,23 @@ public final class MerossMqttConnector {
         return "/app/"+getUserId()+"/subscribe";
     }
 
+
+    public static String buildAppId(){
+        String randomString = "API"+UUID.randomUUID();
+        return DigestUtils.md5Hex(randomString);
+    }
+    /** App command
+     * @return The response topic
+     */
+    // topic to be subscribed?
+    public static String buildClientResponseTopic() {
+        return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
+    }
+
+    public static String buildClientId(){
+        return "app:"+buildAppId();
+    }
+
     /** App command
      * @param deviceUUID The device UUID
      * @return The publish  topic
@@ -141,16 +152,6 @@ public final class MerossMqttConnector {
     // topic to be published?
     public static String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
-    }
-
-    public static String buildAppId(){
-        String randomString = "API"+UUID.randomUUID().toString().replace("-", "");
-        String encodedString = Base64.getEncoder().encodeToString(randomString.getBytes(StandardCharsets.UTF_8));
-        return DigestUtils.md5Hex(encodedString);
-    }
-
-    public static String buildClientId(){
-        return "app:"+buildAppId();
     }
 
     public static void setUserId(String userId) {
