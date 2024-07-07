@@ -74,6 +74,7 @@ public final class MerossMqttConnector {
                 .password(hashedPassword.getBytes(StandardCharsets.UTF_8))
                 .applySimpleAuth()
                 .send();
+
         var pubAck = client.publish(publishMessage);
         logger.debug("connAck: {}", connAck);
         try {
