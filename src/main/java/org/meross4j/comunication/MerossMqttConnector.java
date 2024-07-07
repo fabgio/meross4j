@@ -73,11 +73,11 @@ public final class MerossMqttConnector {
                 .username(userId)
                 .password(hashedPassword.getBytes(StandardCharsets.UTF_8))
                 .applySimpleAuth()
-                .willPublish(publishMessage)
                 .send();
-        logger.debug("connAck: {}", connAck.getReasonCode());
+        var pubAck = client.publish(publishMessage);
+        logger.debug("connAck: {}", connAck);
         try {
-            logger.debug("publishMessage: {}", publishMessage.getTopic());
+            logger.debug("pubAck: {}", pubAck);
             var subAck = client.subscribe(subscribeMessage);
             logger.debug("subscriptions: {}",subscribeMessage.getSubscriptions());
             logger.debug("subAck: {}", subAck);
