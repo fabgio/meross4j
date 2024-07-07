@@ -78,10 +78,9 @@ public final class MerossMqttConnector {
         var pubAck = client.publish(publishMessage);
         logger.debug("connAck: {}", connAck);
         try {
-            logger.debug("pubAck: {}", pubAck);
+            logger.debug("pubAck: {} payload {}", pubAck, publishMessage.getPayload());
             var subAck = client.subscribe(subscribeMessage);
-            logger.debug("subscriptions: {}",subscribeMessage.getSubscriptions());
-            logger.debug("subAck: {}", subAck);
+            logger.debug("subAck: {} subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
         }catch (Mqtt5SubAckException e) {
             logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
         }finally {
