@@ -133,7 +133,7 @@ public final class MerossMqttConnector {
 
     public static String buildAppId(){
         String randomString = "API"+UUID.randomUUID();
-        String encodedString=StandardCharsets.UTF_8.encode(randomString).toString();
+        String encodedString = StandardCharsets.UTF_8.encode(randomString).toString();
         return DigestUtils.md5Hex(encodedString);
     }
     /** App command
