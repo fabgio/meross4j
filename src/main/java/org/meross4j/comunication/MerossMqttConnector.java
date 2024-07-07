@@ -36,9 +36,10 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param requestTopic the request topic
      */
-    public static  void publishMqttMessage(String message, String requestTopic)  {
+    public static void publishMqttMessage(String message, String requestTopic)  {
         String clearPwd = userId + key;
         String hashedPassword = DigestUtils.md5Hex(clearPwd);
+        logger.debug("hashedPassword: {}", hashedPassword);;
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
@@ -77,7 +78,7 @@ public final class MerossMqttConnector {
         logger.debug("connAck: {}", connAck.getReasonCode());
         try {
             logger.debug("publishMessage: {}", publishMessage.getTopic());
-            var subAck=client.subscribe(subscribeMessage);
+            var subAck = client.subscribe(subscribeMessage);
             logger.debug("subscriptions: {}",subscribeMessage.getSubscriptions());
             logger.debug("subAck: {}", subAck);
         }catch (Mqtt5SubAckException e) {
