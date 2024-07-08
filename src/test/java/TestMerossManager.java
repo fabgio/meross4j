@@ -5,8 +5,8 @@ import org.meross4j.comunication.MerossManager;
 import java.security.NoSuchAlgorithmException;
 
 public class TestMerossManager {
-    private static final String email = "";
-    private static final String password = "";
+    private static final String email = "giovanni.fabiani@outlook.com";
+    private static final String password = "bruce975";
     public static final String URL = "https://iotx-eu.meross.com";
 
     @Test
