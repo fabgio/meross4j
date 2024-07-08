@@ -2,8 +2,6 @@ import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossManager;
 
-import java.security.NoSuchAlgorithmException;
-
 public class TestMerossManager {
     private static final String email = "giovanni.fabiani@outlook.com";
     private static final String password = "bruce975";

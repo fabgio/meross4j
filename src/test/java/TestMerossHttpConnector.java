@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestMerossHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossHttpConnector.class);
     private MerossHttpConnector connector;
-    private static final String email ="";
-    private static final String password = "";
+    private static final String email ="giovanni.fabiani@outlook.com";
+    private static final String password = "bruce975";
     public static final String URL ="https://iotx-eu.meross.com";
 
     @BeforeEach
@@ -29,7 +29,7 @@ public class TestMerossHttpConnector {
     void testStatusCodeIs200() {
         int statusCode;
         statusCode = connector.validateResponse().statusCode();
-        logger.info("statusCode: " + statusCode);
+        logger.info("statusCode: {}", statusCode);
         assertEquals(200,statusCode);
     }
     @Disabled
@@ -37,14 +37,14 @@ public class TestMerossHttpConnector {
     void testLoginResponseBodyIsNotNull()  {
         String responseBody;
             responseBody = connector.errorCodeFreeResponse().body();
-            logger.info("responseBody: " + responseBody);
+        logger.info("responseBody: {}", responseBody);
             assertNotNull(responseBody);
     }
 
     @Test
     void testCredentialsIsNotNull(){
         CloudCredentials credentials = connector.getCloudCredentials();
-        logger.info("credentials: " + credentials);
+        logger.info("credentials: {}", credentials);
         assertNotNull(credentials);
     }
 
@@ -62,20 +62,20 @@ public class TestMerossHttpConnector {
                 .map(Device::devName)
                 .filter(p->p.equals("tolomeo"))
                 .findFirst();
-        logger.info("devName: " + devName.get());
-        assertEquals("tolomeo",devName.get());
+        devName.ifPresent(s -> logger.info("devName: {}", s));
+        assertEquals("tolomeo",devName.orElse(null));
     }
 
     @Test
     void testGetUUIDbyName(){
         String uuid = connector.getDevUUIDByDevName("tolomeo");
-        logger.info("uuid for tolomeo: " + uuid);
+        logger.info("uuid for tolomeo: {}", uuid);
         assertNotNull(uuid);
     }
     @Test
     void testGetTypeByName(){
         String type = connector.getDevTypeByDevName("tolomeo");
-        logger.info("devType: " + type);
+        logger.info("devType: {}", type);
         assertNotNull(type);
     }
 }

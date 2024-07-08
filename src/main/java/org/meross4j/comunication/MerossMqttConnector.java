@@ -8,6 +8,7 @@ import com.hivemq.client.mqtt.mqtt5.exceptions.Mqtt5SubAckException;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
@@ -36,7 +37,7 @@ public final class MerossMqttConnector {
      * @param message the mqtt message to be published
      * @param requestTopic the request topic
      */
-    public static void publishMqttMessage(String message, String requestTopic)  {
+    public static void publishMqttMessage(@NotNull String message, @NotNull String requestTopic)  {
         String clearPwd = userId + key;
         String hashedPassword = DigestUtils.md5Hex(clearPwd);
         logger.debug("hashedPassword: {}", hashedPassword);
@@ -77,7 +78,8 @@ public final class MerossMqttConnector {
         var pubAck = client.publish(publishMessage);
         logger.debug("connAck: {}", connAck);
         try {
-            logger.debug("pubAck: {} payload {}", pubAck, publishMessage.getPayload().get());
+            if(publishMessage.getPayload().isPresent())
+                logger.debug("pubAck: {} payload {}", pubAck, publishMessage.getPayload().get());
             var subAck = client.subscribe(subscribeMessage);
             logger.debug("subAck: {} subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
         }catch (Mqtt5SubAckException e) {
@@ -117,17 +119,15 @@ public final class MerossMqttConnector {
         return Base64.getEncoder().encodeToString(new Gson().toJson(dataMap).getBytes(StandardCharsets.UTF_8));
     }
 
-
-
     /**
      * @return The client user topic
      */
-    public static String buildClientUserTopic(){
+    public static @NotNull String buildClientUserTopic(){
         return "/app/"+getUserId()+"/subscribe";
     }
 
 
-    public static String buildAppId(){
+    public static @NotNull String buildAppId(){
         String randomString = "API"+UUID.randomUUID();
         String encodedString = StandardCharsets.UTF_8.encode(randomString).toString();
         return DigestUtils.md5Hex(encodedString);
@@ -135,11 +135,11 @@ public final class MerossMqttConnector {
     /** App command
      * @return The response topic
      */
-    public static String buildClientResponseTopic() {
+    public static @NotNull String buildClientResponseTopic() {
         return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
     }
 
-    public static String buildClientId(){
+    public static @NotNull String buildClientId(){
         return "app:"+buildAppId();
     }
 
@@ -148,7 +148,7 @@ public final class MerossMqttConnector {
      * @return The publish  topic
      */
     // topic to be published?
-    public static String buildDeviceRequestTopic(String deviceUUID) {
+    public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
     }
 
