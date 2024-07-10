@@ -1,3 +1,7 @@
+import io.netty.handler.codec.base64.Base64Decoder;
+import org.apache.commons.codec.Charsets;
+import org.apache.commons.codec.Decoder;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossConstants;
@@ -5,6 +9,15 @@ import org.meross4j.comunication.MerossMqttConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
 import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,15 +49,13 @@ public class TestMerossMqttConnector {
     }
     @Disabled
     @Test
-    void testBuildToggleXMessage(){
+    void testBuildToggleXMessage() throws UnsupportedEncodingException {
         MerossMqttConnector.setUserId("3807527");
         String payload = """
-                        {'togglex': {"onoff": 1, "channel": 0}}""";
-        String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
+                        {"togglex": {"onoff": 1, "channel": 0}}""";
+       String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
                 .Namespace.CONTROL_TOGGLEX.getValue(), payload);
-        byte[] decodedBytes = Base64.getDecoder().decode(mqttMessage);
-        String decodedString = new String(decodedBytes);
-        logger.info(decodedString);
-        assertNotNull(decodedString);
+   logger.info("MQTT Message : {}", StandardCharsets.UTF_8.decode(ByteBuffer.wrap(mqttMessage.getBytes(Charsets.UTF_8))).toString());
+
     }
 }
