@@ -2,8 +2,6 @@ package org.meross4j.command;
 
 import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
-
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

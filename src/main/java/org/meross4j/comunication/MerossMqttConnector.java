@@ -75,17 +75,16 @@ public final class MerossMqttConnector {
                 .password(hashedPassword.getBytes(StandardCharsets.UTF_8))
                 .applySimpleAuth()
                 .send();
-
-        var pubAck = client.publish(publishMessage);
         logger.debug("connAck: {}", connAck);
+        var subAck = client.subscribe(subscribeMessage);
+        logger.debug("subAck: {} subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
         try {
             if(publishMessage.getPayload().isPresent()) {
                 ByteBuffer buffer = publishMessage.getPayload().get();
                 CharBuffer charBuffer = StandardCharsets.US_ASCII.decode(buffer);
-                logger.debug("pubAck: {} payload: {}",pubAck,charBuffer);;
+                var pubAck = client.publish(publishMessage);
+                logger.debug("pubAck: {} payload: {}",pubAck,charBuffer);
             }
-            var subAck = client.subscribe(subscribeMessage);
-            logger.debug("subAck: {} subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
         }catch (Mqtt5SubAckException e) {
             logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
         }finally {
@@ -101,11 +100,10 @@ public final class MerossMqttConnector {
     public static byte[]  buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
         long timestamp = Instant.now().toEpochMilli();
-        String randomString =  UUID.randomUUID().toString();
-        String md5hash = DigestUtils.md5Hex(randomString);
-        String messageId = md5hash.toLowerCase();
-        String stringToHash = StandardCharsets.UTF_8.encode(messageId + key + timestamp).toString();
-        String signature = DigestUtils.md5Hex(stringToHash).toLowerCase();
+        byte[] randomStringToEncode = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).array();
+        String messageId = DigestUtils.md5Hex(randomStringToEncode).toLowerCase();
+        byte[] signatureToEncode = StandardCharsets.UTF_8.encode(messageId + key + timestamp).array();
+        String signature = DigestUtils.md5Hex(signatureToEncode).toLowerCase();
         Map<String, Object> headerMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
         headerMap.put("from",buildClientResponseTopic());
