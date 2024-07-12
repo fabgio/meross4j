@@ -19,6 +19,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -47,15 +50,5 @@ public class TestMerossMqttConnector {
         logger.info("ClientId:  {} ", clientIfd);
         assertNotNull(clientIfd);
     }
-    @Disabled
-    @Test
-    void testBuildToggleXMessage() throws UnsupportedEncodingException {
-        MerossMqttConnector.setUserId("3807527");
-        String payload = """
-                        {"togglex": {"onoff": 1, "channel": 0}}""";
-       String mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
-                .Namespace.CONTROL_TOGGLEX.getValue(), payload);
-   logger.info("MQTT Message : {}", StandardCharsets.UTF_8.decode(ByteBuffer.wrap(mqttMessage.getBytes(Charsets.UTF_8))).toString());
-
-    }
 }
+

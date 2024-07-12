@@ -126,7 +126,7 @@ public final class MerossHttpConnector {
         //logger.info("getDevices...");
         String token =  getCloudCredentials().token();
         setToken(token);
-        var response= Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
+        var response = Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
         JsonElement jsonElement = JsonParser.parseString(response.body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
