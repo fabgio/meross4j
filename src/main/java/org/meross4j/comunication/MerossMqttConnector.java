@@ -82,8 +82,7 @@ public final class MerossMqttConnector {
             if(publishMessage.getPayload().isPresent()) {
                 ByteBuffer buffer = publishMessage.getPayload().get();
                 CharBuffer charBuffer = StandardCharsets.US_ASCII.decode(buffer);
-                logger.debug("pubAck: {} payload: {}",pubAck,charBuffer);
-                logger.debug("message {}",message);
+                logger.debug("pubAck: {} payload: {}",pubAck,charBuffer);;
             }
             var subAck = client.subscribe(subscribeMessage);
             logger.debug("subAck: {} subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
