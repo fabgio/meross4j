@@ -2,6 +2,8 @@ package org.meross4j.command;
 
 import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
+
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -27,6 +29,12 @@ public class ToggleX {
             Map<String,Object> payload = new LinkedHashMap<>();
             payload.put("togglex",elements);
             return MerossMqttConnector.buildMqttMessage("SET", MerossConstants.Namespace.CONTROL_TOGGLEX.getValue(),payload);
+        }
+    }
+    public static class abilities implements Command {
+        @Override
+        public byte[] createCommandType(String type) {
+            return MerossMqttConnector.buildMqttMessage("GET", MerossConstants.Namespace.SYSTEM_ABILITY.getValue(), Collections.emptyMap());
         }
     }
 }

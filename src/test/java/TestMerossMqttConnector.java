@@ -27,11 +27,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestMerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossMqttConnector.class);
+
     @Test
-    void testBuildResponseTopicIsNotNull(){
+    void testBuildResponseTopicIsNotNull() {
         MerossMqttConnector.setUserId("3807527");
         String responseTopic = MerossMqttConnector.buildClientResponseTopic();
-        logger.info("Response Topic:  {} ",responseTopic);
+        logger.info("Response Topic:  {} ", responseTopic);
         assertNotNull(responseTopic);
     }
 
@@ -46,9 +47,24 @@ public class TestMerossMqttConnector {
     @Test
     void testBuildClientUIdsNotNull() {
         MerossMqttConnector.setUserId("3807527");
-        String clientIfd= MerossMqttConnector.buildClientId();
+        String clientIfd = MerossMqttConnector.buildClientId();
         logger.info("ClientId:  {} ", clientIfd);
         assertNotNull(clientIfd);
+    }
+
+    @Disabled
+    @Test
+    void testBuildToggleXMessage() {
+        MerossMqttConnector.setUserId("3807527");
+        Map<String, Integer> elements = new LinkedHashMap<>();
+        elements.put("onoff", 0);
+        elements.put("channel", 0);
+        Map<String, Object> payload = new LinkedHashMap<>();
+        payload.put("togglex", elements);
+        var mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
+                .Namespace.CONTROL_TOGGLEX.getValue(), payload);
+        logger.info("MQTT Message : {}", mqttMessage);
+        assertNotNull(mqttMessage);
     }
 }
 

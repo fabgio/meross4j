@@ -9,6 +9,7 @@ public class ToggleXFactory  extends AbstractFactory{
         return switch (mode){
             case "on" -> new ToggleX.turnOn();
             case "off" -> new ToggleX.turnOff();
+            case "abilities" -> new ToggleX.abilities();
             default -> throw new IllegalStateException("Unexpected value: " + mode);
         };
     }
