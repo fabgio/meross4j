@@ -135,7 +135,6 @@ public final class MerossHttpConnector {
         }
 
         public void logOut() {
-            //logger.info("HTTP connection logging out...");
             Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
         }
 

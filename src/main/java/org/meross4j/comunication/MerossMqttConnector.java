@@ -98,7 +98,7 @@ public final class MerossMqttConnector {
      * @param namespace The namespace
      * @param payload   The payload
      */
-    public static byte[]  buildMqttMessage(String method, String namespace,
+    public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
         long timestamp = Instant.now().toEpochMilli();
         byte[] messageIdToHash = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).array();
