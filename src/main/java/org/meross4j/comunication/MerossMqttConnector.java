@@ -15,6 +15,7 @@ import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -100,9 +101,9 @@ public final class MerossMqttConnector {
     public static byte[]  buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
         long timestamp = Instant.now().toEpochMilli();
-        byte[] randomStringToEncode = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).array();
-        String messageId = DigestUtils.md5Hex(randomStringToEncode).toLowerCase();
-        byte[] signatureToEncode = StandardCharsets.UTF_8.encode(messageId + key + timestamp).array();
+       // byte[] randomStringToEncode = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).array();
+        String messageId = DigestUtils.md5Hex(UUID.randomUUID().toString()).toLowerCase();
+        String  signatureToEncode = messageId + key + timestamp;
         String signature = DigestUtils.md5Hex(signatureToEncode).toLowerCase();
         Map<String, Object> headerMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
