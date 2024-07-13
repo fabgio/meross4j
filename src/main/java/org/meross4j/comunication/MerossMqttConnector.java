@@ -101,9 +101,10 @@ public final class MerossMqttConnector {
     public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
         long timestamp = Instant.now().toEpochMilli();
-        byte[] messageIdToHash = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).array();
+        String messageIdToHash = UUID.randomUUID().toString().replace("-", "")
+                .substring(0, 16).toUpperCase(); //need UTF-8 encoding?  probably not
         String messageId = DigestUtils.md5Hex(messageIdToHash).toLowerCase();
-        byte[] signatureToHash = StandardCharsets.UTF_8.encode(messageId + key + timestamp).array();
+        String signatureToHash = messageId + key + timestamp; //need UTF-8 encoding? probably not
         String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase();
         Map<String, Object> headerMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
