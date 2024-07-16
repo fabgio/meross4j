@@ -32,8 +32,8 @@ public final class MerossMqttConnector {
     private static String brokerAddress;
     private static String userId;
     private static String clientId;
-    private static String key;
-    private static String destinationDeviceUUID;
+    private static volatile String key;
+    private static volatile String destinationDeviceUUID;
 
     /**
      * @param message the mqtt message to be published
@@ -55,6 +55,7 @@ public final class MerossMqttConnector {
                 .qos(MqttQos.AT_MOST_ONCE) // QOS=0 python paho default value
                 .payload(message)
                 .build();
+
 
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
@@ -85,6 +86,7 @@ public final class MerossMqttConnector {
                 CharBuffer charBuffer = StandardCharsets.UTF_8.decode(buffer);
                 Mqtt5PublishResult mqtt5PublishResult = client.publish(publishMessage);
                 logger.debug("pubAck: {} payload: {}",mqtt5PublishResult,charBuffer);
+
             }
         }catch (Mqtt5SubAckException e) {
             logger.error("subscription(s) failed: {}", e.getMqttMessage().getReasonCodes());
@@ -103,7 +105,7 @@ public final class MerossMqttConnector {
         long timestamp = Instant.now().toEpochMilli();
         byte[] messageIdToHash = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).array();
         String messageId = DigestUtils.md5Hex(messageIdToHash).toLowerCase();
-        byte[] signatureToHash = StandardCharsets.UTF_8.encode(messageId + key + timestamp).array();
+        byte[] signatureToHash = StandardCharsets.UTF_8.encode(messageId+key+timestamp).array();
         String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase();
         Map<String, Object> headerMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
@@ -123,6 +125,7 @@ public final class MerossMqttConnector {
     }
 
     /**
+     * In general, the Meross App subscribes to this topic in order to update its state as events happen on the physical device.
      * @return The client user topic
      */
     public static @NotNull String buildClientUserTopic(){
@@ -136,6 +139,7 @@ public final class MerossMqttConnector {
         return DigestUtils.md5Hex(encodedString);
     }
     /** App command
+     * It is the topic to which the Meross App subscribes. It is used by the app to receive the response to commands sent to the appliance
      * @return The response topic
      */
     public  static @NotNull String buildClientResponseTopic() {
@@ -147,10 +151,11 @@ public final class MerossMqttConnector {
     }
 
     /** App command
+     * It represents the topic from where the appliance pulls commands to be executed
      * @param deviceUUID The device UUID
      * @return The publish  topic
      */
-    // topic to be published?
+    // topic to be published? push notification
     public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
     }
