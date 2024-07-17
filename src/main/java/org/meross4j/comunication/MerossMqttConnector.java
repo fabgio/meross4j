@@ -121,6 +121,7 @@ public final class MerossMqttConnector {
     }
 
     /**
+     * In general, the Meross App subscribes to this topic in order to update its state as events happen on the physical device.
      * @return The client user topic
      */
     public static @NotNull String buildClientUserTopic(){
@@ -134,6 +135,7 @@ public final class MerossMqttConnector {
         return DigestUtils.md5Hex(encodedString);
     }
     /** App command
+     * It is the topic to which the Meross App subscribes. It is used by the app to receive the response to commands sent to the appliance
      * @return The response topic
      */
     public  static @NotNull String buildClientResponseTopic() {
@@ -148,7 +150,7 @@ public final class MerossMqttConnector {
      * @param deviceUUID The device UUID
      * @return The publish  topic
      */
-    // topic to be published?
+    // topic to be published. push notification
     public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
     }
