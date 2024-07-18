@@ -1,6 +1,9 @@
 package org.meross4j.comunication;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
@@ -9,12 +12,18 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.text.CharacterPredicates;
+import org.apache.commons.text.RandomStringGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,6 +44,7 @@ public final class MerossMqttConnector {
     private static String clientId;
     private static String key;
     private static String destinationDeviceUUID;
+    private static final Path resource = Paths.get("src","main","resources","message.json");
 
     /**
      * @param message the mqtt message to be published
@@ -81,13 +91,13 @@ public final class MerossMqttConnector {
 
         logger.debug("connAck: {}", connAck.getReasonCode());
         Mqtt5SubAck subAck = client.subscribe(subscribeMessage);
-        logger.debug("subAck: {} reason codes: {} subscriptions: {}",subAck,subAck.getReasonCodes(),subscribeMessage.getSubscriptions());
+        logger.debug("subAck: {}  subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
         Mqtt5PublishResult mqtt5PublishResult = client.publish(publishMessage);
-        logger.debug("pubAck: {} payload: {}",mqtt5PublishResult.getPublish(),toCharBuffer(publishMessage.getPayload()));;
+        logger.debug("pubAck: {} payload: {}",mqtt5PublishResult.getPublish(),toCharBuffer(publishMessage.getPayload()));
         client.disconnect();
         }
 
-        static CharBuffer toCharBuffer(Optional<ByteBuffer> byteBuffer) {
+        private static CharBuffer toCharBuffer(Optional<ByteBuffer> byteBuffer) {
             return byteBuffer.map(StandardCharsets.UTF_8::decode).orElse(null);
         }
 
@@ -98,10 +108,14 @@ public final class MerossMqttConnector {
      */
     public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
-        long timestamp = Instant.now().toEpochMilli();
-        String messageIdToHash = StandardCharsets.UTF_8.encode(UUID.randomUUID().toString()).toString();
-        String messageId = DigestUtils.md5Hex(messageIdToHash).toLowerCase(); //hashed as string
-        String signatureToHash = StandardCharsets.UTF_8.encode(messageId + key + timestamp).toString();
+        Integer timestamp =  Math.round(Instant.now().getEpochSecond());
+        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                .withinRange('0', 'z')
+                .build();
+        String randomString=randomStringGenerator.generate(16);
+        String messageId = DigestUtils.md5Hex(randomString.toLowerCase()); //hashed as string
+        String signatureToHash = messageId + key + timestamp;
         String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase(); //hashed as string
         Map<String, Object> headerMap = new LinkedHashMap<>();
         Map<String, Object> dataMap = new LinkedHashMap<>();
@@ -117,6 +131,7 @@ public final class MerossMqttConnector {
         dataMap.put("header",headerMap);
         dataMap.put("payload",payload);
         String jsonString = new Gson().toJson(dataMap);
+        saveMessage(jsonString);
         return StandardCharsets.UTF_8.encode(jsonString).array();
     }
 
@@ -153,6 +168,26 @@ public final class MerossMqttConnector {
     // topic to be published. push notification
     public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
+    }
+
+    public static void saveMessage(String json) {
+        try {
+            Files.writeString(resource, json, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static LinkedHashMap<String,Object> loadMessageHeader(){
+        try{
+            String jsonString = Files.readString(resource, StandardCharsets.UTF_8);
+            JsonElement jsonElement = JsonParser.parseString(jsonString);
+            String header = jsonElement.getAsJsonObject().get("header").toString();
+            TypeToken<LinkedHashMap<String,Object>> type = new TypeToken<>() {};
+            return new Gson().fromJson(header, type);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void setUserId(String userId) {

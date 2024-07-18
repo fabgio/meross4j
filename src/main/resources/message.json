@@ -1,0 +1,1 @@
+{"header":{"from":"/app/3807527-d2fefdd3191d2c61440f90f70e6f8f56/subscribe","messageId":"3f25d8956f7ad63310c1dc9ffeaa4930","method":"SET","namespace":"Appliance.Control.ToggleX","payloadVersion":1,"sign":"fe5830d65e53c1679c76066a9b351863","timestamp":1721315840,"triggerSrc":"Android","uuid":"2306066404030351200248e1e9c96ff1"},"payload":{"togglex":{"onoff":1,"channel":0}}}
