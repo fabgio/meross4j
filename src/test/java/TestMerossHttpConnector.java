@@ -23,7 +23,6 @@ public class TestMerossHttpConnector {
     void setUp() {
          connector = new MerossHttpConnector(URL, email, password);
     }
-    @Disabled
     @Test
     void testStatusCodeIs200() {
         int statusCode;
@@ -31,7 +30,7 @@ public class TestMerossHttpConnector {
         logger.info("statusCode: {}", statusCode);
         assertEquals(200,statusCode);
     }
-    @Disabled
+
     @Test
     void testLoginResponseBodyIsNotNull()  {
         String responseBody;

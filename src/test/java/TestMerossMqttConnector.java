@@ -1,11 +1,11 @@
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashMap;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,19 +37,16 @@ public class TestMerossMqttConnector {
         assertNotNull(clientIfd);
     }
 
-    @Disabled
+
     @Test
     void testBuildToggleXMessage() {
         MerossMqttConnector.setUserId("3807527");
-        Map<String, Integer> elements = new LinkedHashMap<>();
-        elements.put("onoff", 0);
-        elements.put("channel", 0);
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("togglex", elements);
-        var mqttMessage = MerossMqttConnector.buildMqttMessage("SET", MerossConstants
-                .Namespace.CONTROL_TOGGLEX.getValue(), payload);
-        logger.info("MQTT Message : {}", mqttMessage);
-        assertNotNull(mqttMessage);
+        Map<String,Object> payload = Map.of("togglex",Map.of("onoff",1,"channel",0));
+        ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("SET", MerossConstants
+                .Namespace.CONTROL_TOGGLEX.getValue(), payload));
+        CharBuffer charBuffer= StandardCharsets.UTF_8.decode(mqttMessage);
+        logger.info("MQTT Message : {}", charBuffer);
+        assertNotNull(charBuffer);
     }
 }
 
