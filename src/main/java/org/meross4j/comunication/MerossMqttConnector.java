@@ -42,8 +42,8 @@ public final class MerossMqttConnector {
      * @param requestTopic the request topic
      */
     public static void publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
-        String clearPwd = userId + key;
-        String hashedPassword = DigestUtils.md5Hex(clearPwd);
+        String clearPassword = userId + key;
+        String hashedPassword = DigestUtils.md5Hex(clearPassword);
         logger.debug("hashedPassword: {}", hashedPassword);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
