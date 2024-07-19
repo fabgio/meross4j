@@ -129,11 +129,6 @@ public final class MerossHttpConnector {
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
         return new Gson().fromJson(data, type);
         }
-
-        public void logOut() {
-            Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
-        }
-
     /**
      * @param uri The URI
      * @return The HttpResponse
@@ -209,6 +204,9 @@ public final class MerossHttpConnector {
                 .map(Device::deviceType)
                 .findFirst()
                 .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
+    }
+    void logOut() {
+        Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
     }
 }
 

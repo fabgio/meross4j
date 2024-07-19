@@ -138,7 +138,7 @@ public final class MerossMqttConnector {
         String encodedString = StandardCharsets.UTF_8.encode(randomString).toString();
         return DigestUtils.md5Hex(encodedString);
     }
-    /** App command
+    /** App command.
      * It is the topic to which the Meross App subscribes. It is used by the app to receive the response to commands sent to the appliance
      * @return The response topic
      */
@@ -150,9 +150,9 @@ public final class MerossMqttConnector {
         return "app:"+buildAppId();
     }
 
-    /** App command
+    /** App command.
      * @param deviceUUID The device UUID
-     * @return The publish  topic
+     * @return The topic to be published
      */
     // topic to be published. push notification
     public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
