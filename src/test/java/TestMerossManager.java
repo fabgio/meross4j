@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public class TestMerossManager {
     private static final String email = "giovanni.fabiani@outlook.com";
     private static final String password = "bruce975";
-    public static final String URL = "https://iotx-eu.meross.com";
+    private static final String URL = "https://iotx-eu.meross.com";
     private final static Logger logger = LoggerFactory.getLogger(TestMerossManager.class);
     private MerossHttpConnector merossHttpConnector;
     @BeforeEach
