@@ -14,11 +14,10 @@ public class MerossManager {
     public static MerossManager createMerossManager(MerossHttpConnector merossHttpConnector) {
         return new MerossManager(merossHttpConnector);
     }
-    public void executeCommand(String name, String mode)  {
+    public void executeCommand(String deviceName, String mode)  {
         String clientId=MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
         logger.debug("ClientId set to: {} ",clientId);
-
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
         MerossMqttConnector.setUserId(userid);
@@ -26,8 +25,6 @@ public class MerossManager {
          } else {
             logger.debug("userid is null");
         }
-
-
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
@@ -35,7 +32,6 @@ public class MerossManager {
         } else {
             logger.debug("key is null");
         }
-
         String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
             MerossMqttConnector.setBrokerAddress(brokerAddress);
@@ -43,20 +39,19 @@ public class MerossManager {
         } else {
             logger.debug("brokerAddress is null");
         }
-
-        String deviceUUID = merossHttpConnector.getDevUUIDByDevName(name);
+        String deviceUUID = merossHttpConnector.getDevUUIDByDevName(deviceName);
         if (deviceUUID != null) {
             MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
             logger.debug("deviceUUID set to: {}", deviceUUID);
         } else {
             logger.debug("deviceUUID is null");
         }
-
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
-        String type = merossHttpConnector.getDevTypeByDevName(name);
+        String type = merossHttpConnector.getDevTypeByDevName(deviceName);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
         byte[] message = command.createCommandType(type);
         MerossMqttConnector.publishMqttMessage(message,requestTopic);
+        merossHttpConnector.logOut();
     }
 }

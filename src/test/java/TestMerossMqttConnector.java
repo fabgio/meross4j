@@ -1,7 +1,3 @@
-import io.netty.handler.codec.base64.Base64Decoder;
-import org.apache.commons.codec.Charsets;
-import org.apache.commons.codec.Decoder;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossConstants;
@@ -9,17 +5,6 @@ import org.meross4j.comunication.MerossMqttConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
