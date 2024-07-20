@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
+import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
@@ -69,7 +70,7 @@ public final class MerossMqttConnector {
                 .applySubscription()
                 .build();
 
-        var connAck = client
+        Mqtt5ConnAck connAck = client
                 .connectWith()
                 .keepAlive(30)
                 .cleanStart(false)

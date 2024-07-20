@@ -205,6 +205,7 @@ public final class MerossHttpConnector {
                 .findFirst()
                 .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
     }
+
     void logOut() {
         Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
     }
