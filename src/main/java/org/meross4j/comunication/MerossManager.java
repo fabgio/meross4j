@@ -14,7 +14,7 @@ public class MerossManager {
     public static MerossManager createMerossManager(MerossHttpConnector merossHttpConnector) {
         return new MerossManager(merossHttpConnector);
     }
-    public void executeCommand(String deviceName, String mode)  {
+    public  void executeCommand(String deviceName, String mode)  {
         String clientId=MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
         logger.debug("ClientId set to: {} ",clientId);
@@ -51,7 +51,7 @@ public class MerossManager {
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
         byte[] message = command.createCommandType(type);
-        MerossMqttConnector.publishMqttMessage(message,requestTopic);
+        MerossMqttConnector.publishMqttMessage(message,requestTopic); //response
         merossHttpConnector.logOut();
     }
 }

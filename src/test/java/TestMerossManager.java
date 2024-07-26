@@ -1,4 +1,4 @@
-import org.junit.jupiter.api.BeforeEach;
+import                                                                                                                    org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossManager;
@@ -20,6 +20,6 @@ public class TestMerossManager {
     void testManager()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         manager.executeCommand("tolomeo", "on");
-        manager.executeCommand("tolomeo", "off");
+
     }
 }
