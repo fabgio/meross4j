@@ -17,8 +17,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * @author Giovanni Fabiani - initial contribution
@@ -102,7 +100,7 @@ public final class MerossMqttConnector {
                 dataMap.put("payload", payload);
                 String jsonString = new Gson().toJson(dataMap);
                 logger.debug("jsonString: {}", jsonString);
-                return StandardCharsets.UTF_8.encode(jsonString).array();;
+                return StandardCharsets.UTF_8.encode(jsonString).array();
 
 
     }
