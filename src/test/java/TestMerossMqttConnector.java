@@ -37,7 +37,7 @@ public class TestMerossMqttConnector {
         assertNotNull(clientIfd);
     }
 
-
+    
     @Test
     void testBuildToggleXMessage() {
         MerossMqttConnector.setUserId("3807527");

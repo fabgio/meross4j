@@ -51,7 +51,7 @@ public class MerossManager {
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
         byte[] message = command.createCommandType(type);
-        MerossMqttConnector.publishMqttMessage(message,requestTopic); //response
+        MerossMqttConnector.publishMqttMessage(message,requestTopic);//response
         merossHttpConnector.logOut();
     }
 }

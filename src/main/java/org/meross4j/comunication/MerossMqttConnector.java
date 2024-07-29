@@ -3,20 +3,27 @@ package org.meross4j.comunication;
 import com.google.gson.Gson;
 import com.hivemq.client.mqtt.MqttGlobalPublishFilter;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
-import com.hivemq.client.mqtt.mqtt5.Mqtt5AsyncClient;
+import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
+import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
+import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
+import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
+import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
+import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.text.CharacterPredicates;
 import org.apache.commons.text.RandomStringGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Giovanni Fabiani - initial contribution
@@ -38,35 +45,59 @@ public final class MerossMqttConnector {
      * @param message      the mqtt message to be published
      * @param requestTopic the request topic
      */
-    //this method becomes invisible using async
-    public static void publishMqttMessage(byte[] message, @NotNull String requestTopic) {
-            String clearPassword = userId + key;
-            String hashedPassword = DigestUtils.md5Hex(clearPassword);
-            logger.debug("hashedPassword: {}", hashedPassword);
-            final Mqtt5AsyncClient client = Mqtt5Client.builder()
-                    .identifier(clientId)
-                    .serverHost(brokerAddress)
-                    .serverPort(SECURE_WEB_SOCKET_PORT)
-                    .simpleAuth()
-                    .username(userId)
-                    .password(hashedPassword.getBytes(StandardCharsets.UTF_8))
-                    .applySimpleAuth()
-                    .sslWithDefaultConfig()
-                    .buildAsync();
+    public static void publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
+        String clearPassword = userId + key;
+        String hashedPassword = DigestUtils.md5Hex(clearPassword);
+        logger.debug("hashedPassword: {}", hashedPassword);
+        Mqtt5BlockingClient client = Mqtt5Client.builder()
+                .identifier(clientId)
+                .serverHost(brokerAddress)
+                .serverPort(SECURE_WEB_SOCKET_PORT)
+                .sslWithDefaultConfig()
+                .buildBlocking();
+        Mqtt5ConnAck connAck = client
+                .connectWith()
+                .keepAlive(30)
+                .cleanStart(false)
+                .simpleAuth()
+                .username(userId)
+                .password(hashedPassword.getBytes(StandardCharsets.UTF_8))
+                .applySimpleAuth()
+                .send();
+        Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
+                .addSubscription()
+                .topicFilter(buildClientUserTopic())//correct
+                .qos(MqttQos.AT_LEAST_ONCE)
+                .applySubscription()
+                .addSubscription()
+                .topicFilter(buildClientResponseTopic())
+                .qos(MqttQos.AT_LEAST_ONCE)
+                .applySubscription()
+                .build();
+       Mqtt5Publish publishMessage = Mqtt5Publish.builder()
+                .topic(requestTopic)
+                .qos(MqttQos.AT_MOST_ONCE) // QOS=0 python paho default value
+                .payload(message)
+                .build();
 
-            client.connectWith().keepAlive(30).cleanStart(false).send()
-                    .thenAccept(connAck -> logger.debug("connected: {}", connAck))
-                    .thenCompose(v -> client.publishWith().topic(requestTopic).payload(message).qos(MqttQos.AT_MOST_ONCE).send())
-                    .thenAccept(pubAck -> logger.debug("published: {} ", pubAck))
-                    .thenCompose(v -> client.subscribeWith().addSubscription().topicFilter(buildClientUserTopic()).qos(MqttQos.AT_LEAST_ONCE).applySubscription()
-                            .addSubscription().topicFilter(buildClientResponseTopic()).qos(MqttQos.AT_LEAST_ONCE).applySubscription()
-                            .send())
-                    .thenAccept(subAck -> logger.debug("subscribed: {}", subAck))
-                    .thenAccept(receiveResult -> client.publishes(MqttGlobalPublishFilter.SUBSCRIBED, response -> logger.info("receive result {}", response.getPayload().get())))
-                    .thenCompose(v -> client.disconnect())
-                    .thenAccept(v -> logger.debug("disconnected: {}", v));
+        logger.debug("connAck: {}", connAck.getReasonCode());
+        Mqtt5SubAck subAck = client.subscribe(subscribeMessage);
+        logger.debug("subAck: {}  subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
+        Mqtt5PublishResult mqtt5PublishResult = client.publish(publishMessage);
+        if (publishMessage.getPayload().isPresent()) {
+            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(publishMessage.getPayload().get());
+            logger.debug("pubAck: {} payload: {}",mqtt5PublishResult.getPublish(),charBuffer);
+        } else {
+            logger.debug("pubAck: is null {}", mqtt5PublishResult);
         }
-
+        try (final Mqtt5BlockingClient.Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.SUBSCRIBED)) {
+           Optional<Mqtt5Publish>response= publishes.receive(1, TimeUnit.SECONDS);
+           logger.debug("response: {}", StandardCharsets.UTF_8.decode(response.get().getPayload().get()));
+        }catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        client.disconnect();
+        }
 
 
     /**
@@ -76,33 +107,30 @@ public final class MerossMqttConnector {
      */
     public  static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
-                int timestamp = Math.round(Instant.now().getEpochSecond());
-                RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
-                        .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
-                        .withinRange('0', 'z')
-                        .build();
-                String randomString = randomStringGenerator.generate(16);
-                String messageId = DigestUtils.md5Hex(randomString.toLowerCase()); //hashed as string
-                String signatureToHash = messageId + key + timestamp;
-                String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase(); //hashed as string
-                Map<String, Object> headerMap = Collections.synchronizedMap(new HashMap<>());
-                Map<String, Object> dataMap = Collections.synchronizedMap(new HashMap<>());
-                headerMap.put("from", buildClientResponseTopic());
-                headerMap.put("messageId", messageId);
-                headerMap.put("method", method);
-                headerMap.put("namespace", namespace);
-                headerMap.put("payloadVersion", 1);
-                headerMap.put("sign", signature);
-                headerMap.put("timestamp", timestamp);
-                headerMap.put("triggerSrc", "Android");
-                headerMap.put("uuid", destinationDeviceUUID);
-                dataMap.put("header", headerMap);
-                dataMap.put("payload", payload);
-                String jsonString = new Gson().toJson(dataMap);
-                logger.debug("jsonString: {}", jsonString);
-                return StandardCharsets.UTF_8.encode(jsonString).array();
-
-
+        int timestamp = Math.round(Instant.now().getEpochSecond());
+        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
+                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                .withinRange('0', 'z')
+                .build();
+        String randomString = randomStringGenerator.generate(16);
+        String messageId = DigestUtils.md5Hex(randomString.toLowerCase()); //hashed as string
+        String signatureToHash = messageId + key + timestamp;
+        String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase(); //hashed as string
+        Map<String, Object> headerMap = new HashMap<>();
+        Map<String, Object> dataMap = new HashMap<>();
+        headerMap.put("from", buildClientResponseTopic());
+        headerMap.put("messageId", messageId);
+        headerMap.put("method", method);
+        headerMap.put("namespace", namespace);
+        headerMap.put("payloadVersion", 1);
+        headerMap.put("sign", signature);
+        headerMap.put("timestamp", timestamp);
+        headerMap.put("triggerSrc", "Android");
+        headerMap.put("uuid", destinationDeviceUUID);
+        dataMap.put("header", headerMap);
+        dataMap.put("payload", payload);
+        String jsonString = new Gson().toJson(dataMap);
+        return StandardCharsets.UTF_8.encode(jsonString).array();
     }
 
     /**
