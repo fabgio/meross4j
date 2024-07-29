@@ -104,6 +104,7 @@ public final class MerossMqttConnector {
      * @param method    The method
      * @param namespace The namespace
      * @param payload   The payload
+     * @return  the message in byte[]
      */
     public  static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
@@ -132,6 +133,8 @@ public final class MerossMqttConnector {
         String jsonString = new Gson().toJson(dataMap);
         return StandardCharsets.UTF_8.encode(jsonString).array();
     }
+
+
 
     /**
      * In general, the Meross App subscribes to this topic in order to update its state as events happen on the physical device.

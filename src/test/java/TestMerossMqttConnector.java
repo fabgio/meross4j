@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,16 +38,26 @@ public class TestMerossMqttConnector {
         assertNotNull(clientIfd);
     }
 
-    
+
     @Test
     void testBuildToggleXMessage() {
         MerossMqttConnector.setUserId("3807527");
-        Map<String,Object> payload = Map.of("togglex",Map.of("onoff",1,"channel",0));
+        Map<String, Object> payload = Map.of("togglex", Map.of("onoff", 1, "channel", 0));
         ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("SET", MerossConstants
                 .Namespace.CONTROL_TOGGLEX.getValue(), payload));
-        CharBuffer charBuffer= StandardCharsets.UTF_8.decode(mqttMessage);
+        CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqttMessage);
+        logger.info("MQTT Message : {}", charBuffer);
+        assertNotNull(charBuffer);
+    }
+
+    @Test
+    void testBuildAbilityMessage() {
+        MerossMqttConnector.setDestinationDeviceUUID("012225456");
+        Map<String, Object> payload = Collections.emptyMap();
+        ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("GET", MerossConstants
+                .Namespace.SYSTEM_ABILITY.getValue(), payload));
+        CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqttMessage);
         logger.info("MQTT Message : {}", charBuffer);
         assertNotNull(charBuffer);
     }
 }
-

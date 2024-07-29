@@ -3,6 +3,7 @@ package org.meross4j.comunication;
 import org.meross4j.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Collections;
 
 public class MerossManager {
     private final static Logger logger = LoggerFactory.getLogger(MerossManager.class);
@@ -47,6 +48,9 @@ public class MerossManager {
             logger.debug("deviceUUID is null");
         }
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
+        byte[] abilityMessage = MerossMqttConnector.buildMqttMessage("GET",
+                MerossConstants.Namespace.SYSTEM_ABILITY.getValue(),Collections.emptyMap());
+        MerossMqttConnector.publishMqttMessage(abilityMessage,requestTopic);
         String type = merossHttpConnector.getDevTypeByDevName(deviceName);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
