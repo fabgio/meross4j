@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
-    private static final int SECURE_WEB_SOCKET_PORT = 443; //Secure WebSocket
+    private static final int SECURE_WEB_SOCKET_PORT = 443;
     private static final int RECEPTION_TIMEOUT_SECONDS = 15;
     private static String brokerAddress;
     private static String userId;
@@ -68,7 +68,7 @@ public final class MerossMqttConnector {
                 .send();
         Mqtt5Subscribe subscribeMessage = Mqtt5Subscribe.builder()
                 .addSubscription()
-                .topicFilter(buildClientUserTopic())//correct
+                .topicFilter(buildClientUserTopic())
                 .qos(MqttQos.AT_LEAST_ONCE)
                 .applySubscription()
                 .addSubscription()
@@ -94,13 +94,13 @@ public final class MerossMqttConnector {
         }
         try (final Mqtt5BlockingClient.Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.SUBSCRIBED)) {
            Optional<Mqtt5Publish>publishesResponse = publishes.receive(RECEPTION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-           if(publishesResponse.isPresent()) {
+           if (publishesResponse.isPresent()) {
              Mqtt5Publish mqtt5PublishResponse = publishesResponse.get();
-             if(mqtt5PublishResponse.getPayload().isPresent()){
-                 CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get());
-                 incomingPublishResponse = charBuffer.toString();
+             if (mqtt5PublishResponse.getPayload().isPresent()){
+                 incomingPublishResponse = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get())
+                         .toString();
              } else {
-                 logger.debug("payload non present: {}", incomingPublishResponse);
+                 logger.debug("Payload non present: {}", incomingPublishResponse);
              }
            }
         } catch (InterruptedException e) {
@@ -124,9 +124,9 @@ public final class MerossMqttConnector {
                 .withinRange('0', 'z')
                 .build();
         String randomString = randomStringGenerator.generate(16);
-        String messageId = DigestUtils.md5Hex(randomString.toLowerCase()); //hashed as string
+        String messageId = DigestUtils.md5Hex(randomString.toLowerCase());
         String signatureToHash = messageId + key + timestamp;
-        String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase(); //hashed as string
+        String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase();
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         headerMap.put("from", buildClientResponseTopic());

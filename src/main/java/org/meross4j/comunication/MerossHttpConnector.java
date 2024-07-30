@@ -32,7 +32,7 @@ import java.util.concurrent.ExecutionException;
 
 public final class MerossHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossHttpConnector.class);
-    private static final String CONSTANT_STRING = "23x17ahWarFH6w29";
+    private static final String INITIAL_STRING = "23x17ahWarFH6w29";
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
     private static final long CONNECTION_TIMEOUT_SECONDS = 15;
@@ -53,7 +53,7 @@ public final class MerossHttpConnector {
     public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
         HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl, path);
         if (httpResponse.statusCode() != 200) {
-            logger.error("responseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());
+            logger.error("ResponseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());
         } else {
             return httpResponse;
         }
@@ -151,7 +151,7 @@ public final class MerossHttpConnector {
                 throw new RuntimeException(e);
             }
         }
-        dataToSign = CONSTANT_STRING + timestamp + nonce + encodedParams;
+        dataToSign = INITIAL_STRING + timestamp + nonce + encodedParams;
         String md5hash = DigestUtils.md5Hex(dataToSign);
         Map<String,String> payloadMap = new HashMap<>();
         payloadMap.put("params",encodedParams);
