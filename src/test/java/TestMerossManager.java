@@ -21,7 +21,7 @@ public class TestMerossManager {
     @Test
     void testManager()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        manager.executeCommand("tolomeo", "off");
+        manager.executeCommand("Comodino", "off");
 
 
     }
