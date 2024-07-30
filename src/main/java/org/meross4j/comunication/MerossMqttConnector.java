@@ -45,7 +45,7 @@ public final class MerossMqttConnector {
     /**
      * @param message      the mqtt message to be published
      * @param requestTopic the request topic
-     * @return the next incoming Publish payload  message
+     * @return the next incoming Publish payload message
      */
     public static String publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
         String clearPassword = userId + key;

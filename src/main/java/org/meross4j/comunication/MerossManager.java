@@ -62,7 +62,7 @@ public class MerossManager {
            String commandPublishesMessage =  MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);//response
             logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
         } else {
-            logger.debug("device status not online");
+            logger.debug("device status: NOT ONLINE");
         }
         merossHttpConnector.logOut();
     }
