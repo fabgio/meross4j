@@ -3,7 +3,6 @@ package org.meross4j.comunication;
 import org.meross4j.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 
 public class MerossManager {
@@ -59,8 +58,8 @@ public class MerossManager {
         if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
            String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
            logger.debug("systemAllPublishesMessage i.e. response from broker: {}", systemAllPublishesMessage);
-           String commandPublishesMessage =  MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);//response
-            logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
+           String commandPublishesMessage =  MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
+           logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
         } else {
             logger.debug("device status: NOT ONLINE");
         }

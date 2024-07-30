@@ -45,7 +45,7 @@ public final class MerossMqttConnector {
     /**
      * @param message      the mqtt message to be published
      * @param requestTopic the request topic
-     * @return the next incoming Publish payload message
+     * @return the payload of the next incoming Publish  message
      */
     public static String publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
         String clearPassword = userId + key;
@@ -153,7 +153,7 @@ public final class MerossMqttConnector {
     }
 
     public static @NotNull String buildAppId(){
-        String randomString = "API"+UUID.randomUUID();
+        String randomString = "API" + UUID.randomUUID();
         String encodedString = StandardCharsets.UTF_8.encode(randomString).toString();
         return DigestUtils.md5Hex(encodedString);
     }
@@ -173,7 +173,7 @@ public final class MerossMqttConnector {
      * @param deviceUUID The device UUID
      * @return The topic to be published
      */
-    // topic to be published. push notification
+
     public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/"+deviceUUID+"/subscribe";
     }
