@@ -23,11 +23,6 @@ public class MerossConstants {
         public int getValue() {
             return value;
         }
-
-
-
-
-
     }
 
     public enum Namespace{

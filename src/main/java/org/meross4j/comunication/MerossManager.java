@@ -4,6 +4,8 @@ import org.meross4j.command.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+
 public class MerossManager {
     private final static Logger logger = LoggerFactory.getLogger(MerossManager.class);
     private final MerossHttpConnector merossHttpConnector;
@@ -50,9 +52,12 @@ public class MerossManager {
         String type = merossHttpConnector.getDevTypeByDevName(deviceName);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
+        byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",//doubts
+                MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         byte[] commandMessage = command.createCommandType(type);
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
+            MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
             MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);//response
         } else {
             logger.debug("device status not online");
