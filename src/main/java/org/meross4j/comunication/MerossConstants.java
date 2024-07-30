@@ -8,6 +8,28 @@ public class MerossConstants {
     public static final String LOGOUT_PATH = "/v1/Profile/logout";
     public static final String DEV_LIST_PATH = "/v1/Device/devList";
 
+    public enum OnlineStatus{
+        NOT_ONLINE(0),
+        ONLINE(1),
+        OFFLINE(2),
+        UNKNOWN(-1),
+
+        UPGRADING(3);
+
+        final int value;
+        OnlineStatus(int value) {
+            this.value = value;
+        }
+        public int getValue() {
+            return value;
+        }
+
+
+
+
+
+    }
+
     public enum Namespace{
         // Common abilities
         SYSTEM_ALL("Appliance.System.All"),

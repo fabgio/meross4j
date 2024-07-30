@@ -91,7 +91,7 @@ public final class MerossMqttConnector {
             logger.debug("pubAck: is null {}", mqtt5PublishResult);
         }
         try (final Mqtt5BlockingClient.Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.SUBSCRIBED)) {
-           Optional<Mqtt5Publish>response= publishes.receive(1, TimeUnit.SECONDS);
+           Optional<Mqtt5Publish>response= publishes.receive(15, TimeUnit.SECONDS);
            logger.debug("response: {}", StandardCharsets.UTF_8.decode(response.get().getPayload().get()));
         }catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -106,7 +106,7 @@ public final class MerossMqttConnector {
      * @param payload   The payload
      * @return  the message in byte[]
      */
-    public  static byte[] buildMqttMessage(String method, String namespace,
+    public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
         int timestamp = Math.round(Instant.now().getEpochSecond());
         RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
