@@ -100,7 +100,7 @@ public final class MerossMqttConnector {
                  CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get());
                  incomingPublishResponse = charBuffer.toString();
              } else {
-                 logger.debug("payload non present : {}", incomingPublishResponse);
+                 logger.debug("payload non present: {}", incomingPublishResponse);
              }
            }
         } catch (InterruptedException e) {
