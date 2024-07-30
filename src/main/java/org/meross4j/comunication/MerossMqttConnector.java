@@ -34,18 +34,20 @@ import java.util.concurrent.TimeUnit;
 public final class MerossMqttConnector {
     private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private static final int SECURE_WEB_SOCKET_PORT = 443; //Secure WebSocket
+    private static final int RECEPTION_TIMEOUT_SECONDS = 15;
     private static String brokerAddress;
     private static String userId;
     private static String clientId;
     private static String key;
     private static String destinationDeviceUUID;
-
+    private static String incomingPublishResponse;
 
     /**
      * @param message      the mqtt message to be published
      * @param requestTopic the request topic
+     * @return the next incoming Publish payload  message
      */
-    public static void publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
+    public static String publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
         String clearPassword = userId + key;
         String hashedPassword = DigestUtils.md5Hex(clearPassword);
         logger.debug("hashedPassword: {}", hashedPassword);
@@ -76,7 +78,7 @@ public final class MerossMqttConnector {
                 .build();
        Mqtt5Publish publishMessage = Mqtt5Publish.builder()
                 .topic(requestTopic)
-                .qos(MqttQos.AT_MOST_ONCE) // QOS=0 python paho default value
+                .qos(MqttQos.AT_MOST_ONCE)
                 .payload(message)
                 .build();
 
@@ -91,20 +93,28 @@ public final class MerossMqttConnector {
             logger.debug("pubAck: is null {}", mqtt5PublishResult);
         }
         try (final Mqtt5BlockingClient.Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.SUBSCRIBED)) {
-           Optional<Mqtt5Publish>response = publishes.receive(15, TimeUnit.SECONDS);
-           logger.debug("response: {}", StandardCharsets.UTF_8.decode(response.get().getPayload().get()));
-        }catch (InterruptedException e) {
+           Optional<Mqtt5Publish>publishesResponse = publishes.receive(RECEPTION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+           if(publishesResponse.isPresent()) {
+             Mqtt5Publish mqtt5PublishResponse = publishesResponse.get();
+             if(mqtt5PublishResponse.getPayload().isPresent()){
+                 CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get());
+                 incomingPublishResponse = charBuffer.toString();
+             } else {
+                 logger.debug("payload non present : {}", incomingPublishResponse);
+             }
+           }
+        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
         client.disconnect();
-        }
-
+        return incomingPublishResponse;
+    }
 
     /**
      * @param method    The method
      * @param namespace The namespace
      * @param payload   The payload
-     * @return  the message in byte[]
+     * @return  the message
      */
     public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
@@ -133,8 +143,6 @@ public final class MerossMqttConnector {
         String jsonString = new Gson().toJson(dataMap);
         return StandardCharsets.UTF_8.encode(jsonString).array();
     }
-
-
 
     /**
      * In general, the Meross App subscribes to this topic in order to update its state as events happen on the physical device.

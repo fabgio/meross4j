@@ -57,8 +57,10 @@ public class MerossManager {
         byte[] commandMessage = command.createCommandType(type);
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
-            MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
-            MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);//response
+           String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
+           logger.debug("systemAllPublishesMessage i.e. response from broker: {}", systemAllPublishesMessage);
+           String commandPublishesMessage =  MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);//response
+            logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
         } else {
             logger.debug("device status not online");
         }
