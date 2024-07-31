@@ -5,8 +5,6 @@ import org.meross4j.comunication.MerossManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ExecutionException;
-
 public class TestMerossManager {
     private static final String email = "giovanni.fabiani@outlook.com";
     private static final String password = "bruce975";
@@ -21,7 +19,7 @@ public class TestMerossManager {
     @Test
     void testManager()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        manager.executeCommand("Comodino", "off");
+        manager.executeCommand("tolomeo", "off");
 
 
     }
