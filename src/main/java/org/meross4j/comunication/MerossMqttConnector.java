@@ -114,7 +114,7 @@ public final class MerossMqttConnector {
      * @param method    The method
      * @param namespace The namespace
      * @param payload   The payload
-     * @return  the message
+     * @return the message
      */
     public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {

@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.record.CloudCredentials;
 import org.meross4j.record.Device;
@@ -61,6 +62,13 @@ public class TestMerossHttpConnector {
                 .findFirst();
         devName.ifPresent(s -> logger.info("devName: {}", s));
         assertEquals("tolomeo",devName.orElse(null));
+    }
+
+    @Test
+    void testFilterOnlineBy(){
+        int  status=connector.getDevStatusByDevName("tolomeo");
+        logger.info("status: {}", status);
+        assertEquals(1, status);
     }
 
     @Test
