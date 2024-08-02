@@ -15,7 +15,7 @@ public class MerossManager {
     public static MerossManager createMerossManager(MerossHttpConnector merossHttpConnector) {
         return new MerossManager(merossHttpConnector);
     }
-    public  void executeCommand(String deviceName, String mode) {
+    public void executeCommand(String deviceName, String mode) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
         logger.debug("ClientId set to: {} ", clientId);
@@ -51,17 +51,58 @@ public class MerossManager {
         String type = merossHttpConnector.getDevTypeByDevName(deviceName);
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
-        byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",//doubts
-                MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         byte[] commandMessage = command.createCommandType(type);
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
-           String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
-           logger.debug("systemAllPublishesMessage i.e. response from broker: {}", systemAllPublishesMessage);
            String commandPublishesMessage =  MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
            logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
         } else {
-            logger.debug("device status: NOT ONLINE");
+            logger.debug("device status: not online");
+        }
+        merossHttpConnector.logOut();
+    }
+
+    public void executeCommand(String deviceName) {
+        String clientId = MerossMqttConnector.buildClientId();
+        MerossMqttConnector.setClientId(clientId);
+        logger.debug("ClientId set to: {} ", clientId);
+        String userid = merossHttpConnector.getCloudCredentials().userId();
+        if (userid != null) {
+            MerossMqttConnector.setUserId(userid);
+            logger.debug("userid set to: {}", userid);
+        } else {
+            logger.debug("userid is null");
+        }
+        String key = merossHttpConnector.getCloudCredentials().key();
+        if (key != null) {
+            MerossMqttConnector.setKey(key);
+            logger.debug("key set to: {}", key);
+        } else {
+            logger.debug("key is null");
+        }
+        String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
+        if (brokerAddress != null) {
+            MerossMqttConnector.setBrokerAddress(brokerAddress);
+            logger.debug("brokerAddress set to: {}", brokerAddress);
+        } else {
+            logger.debug("brokerAddress is null");
+        }
+        String deviceUUID = merossHttpConnector.getDevUUIDByDevName(deviceName);
+        if (deviceUUID != null) {
+            MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
+            logger.debug("deviceUUID set to: {}", deviceUUID);
+        } else {
+            logger.debug("deviceUUID is null");
+        }
+        String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
+        byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
+                MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
+        int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
+        if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
+            String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
+            logger.debug("systemAllPublishesMessage i.e. response from broker: {}", systemAllPublishesMessage);
+        } else {
+            logger.debug("device status: not online");
         }
         merossHttpConnector.logOut();
     }

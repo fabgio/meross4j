@@ -20,6 +20,7 @@ public class TestMerossManager {
     void testManager()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         manager.executeCommand("tolomeo", "off");
+        //manager.executeCommand("tolomeo");
 
 
     }
