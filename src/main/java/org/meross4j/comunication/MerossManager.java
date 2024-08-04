@@ -1,8 +1,14 @@
 package org.meross4j.comunication;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import org.meross4j.command.Command;
+import org.meross4j.record.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
 import java.util.Collections;
 
 public class MerossManager {
@@ -15,7 +21,8 @@ public class MerossManager {
     public static MerossManager createMerossManager(MerossHttpConnector merossHttpConnector) {
         return new MerossManager(merossHttpConnector);
     }
-    public void executeCommand(String deviceName, String mode) {
+
+    public Response executeCommand(String deviceName, String mode) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
         logger.debug("ClientId set to: {} ", clientId);
@@ -52,17 +59,23 @@ public class MerossManager {
         AbstractFactory abstractFactory = FactoryProvider.getFactory(type);
         Command command = abstractFactory.createCommandMode(mode);
         byte[] commandMessage = command.createCommandType(type);
+        byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
+                MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
-        if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
-           String commandPublishesMessage =  MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
-           logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
-        } else {
+        if (deviceStatus != MerossConstants.OnlineStatus.ONLINE.getValue()) {
             logger.debug("device status: not online");
+            throw new RuntimeException("device status is not online");
         }
+        String commandPublishesMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
+        logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
+        String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
+        Response response = deselializeToggleXResponse(systemAllPublishesMessage);
+        logger.debug("commandPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
+        return response;
     }
 
-    public void executeCommand(String deviceName) {
+    public Response executeCommand(String deviceName) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
         logger.debug("ClientId set to: {} ", clientId);
@@ -98,12 +111,28 @@ public class MerossManager {
         byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
                 MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
-        if (deviceStatus == MerossConstants.OnlineStatus.ONLINE.getValue()) {
-            String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage,requestTopic);
-            logger.debug("systemAllPublishesMessage i.e. response from broker: {}", systemAllPublishesMessage);
-        } else {
+        if (deviceStatus != MerossConstants.OnlineStatus.ONLINE.getValue()) {
             logger.debug("device status: not online");
+            throw new RuntimeException("device status is not online");
         }
+        String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
+        Response response = deselializeToggleXResponse(systemAllPublishesMessage);
+        logger.debug("commandPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
+        return response;
+    }
+    private Response deselializeToggleXResponse(String jsonString) {
+        JsonElement digestElement =  JsonParser.parseString(jsonString);
+        String togglexString = digestElement.getAsJsonObject()
+                .get("payload")
+                .getAsJsonObject()
+                .get("all")
+                .getAsJsonObject()
+                .get("digest")
+                .getAsJsonObject()
+                .get("togglex")
+                .getAsJsonArray().toString();
+        TypeToken<ArrayList<Response>>type=new TypeToken<>(){};
+        return new Gson().fromJson(togglexString,type).get(0);
     }
 }
