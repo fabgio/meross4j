@@ -1,6 +1,6 @@
+package org.meross4j.comunication;
+
 import org.junit.jupiter.api.Test;
-import org.meross4j.comunication.MerossConstants;
-import org.meross4j.comunication.MerossMqttConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.ByteBuffer;

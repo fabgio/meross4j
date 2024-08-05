@@ -1,7 +1,7 @@
+package org.meross4j.comunication;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.meross4j.comunication.MerossHttpConnector;
-import org.meross4j.comunication.MerossManager;
 import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

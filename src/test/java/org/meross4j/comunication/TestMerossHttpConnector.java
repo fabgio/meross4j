@@ -1,7 +1,7 @@
+package org.meross4j.comunication;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.meross4j.comunication.MerossConstants;
-import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.record.CloudCredentials;
 import org.meross4j.record.Device;
 import org.slf4j.Logger;
@@ -25,16 +25,14 @@ public class TestMerossHttpConnector {
     }
     @Test
     void testStatusCodeIs200() {
-        int statusCode;
-        statusCode = connector.validateResponse().statusCode();
+        int statusCode = connector.validateResponse().statusCode();
         logger.info("statusCode: {}", statusCode);
         assertEquals(200,statusCode);
     }
 
     @Test
     void testLoginResponseBodyIsNotNull()  {
-        String responseBody;
-            responseBody = connector.errorCodeFreeResponse().body();
+        String responseBody = connector.errorCodeFreeResponse().body();
         logger.info("responseBody: {}", responseBody);
             assertNotNull(responseBody);
     }
@@ -66,7 +64,7 @@ public class TestMerossHttpConnector {
 
     @Test
     void testFilterOnlineBy(){
-        int  status=connector.getDevStatusByDevName("tolomeo");
+        int status=connector.getDevStatusByDevName("tolomeo");
         logger.info("status: {}", status);
         assertEquals(1, status);
     }
