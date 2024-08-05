@@ -1,10 +1,11 @@
-package org.meross4j.comunication;
+package org.meross4j.factory;
 
+import org.meross4j.command.Command;
 import org.meross4j.command.ToggleXCommand;
 
-public class ToggleXFactory  extends AbstractFactory{
+public class ToggleXFactory  extends AbstractFactory {
     @Override
-    Command commandMode(String mode) {
+    public Command commandMode(String mode) {
         return switch (mode){
             case "on" -> new ToggleXCommand.turnOn();
             case "off" -> new ToggleXCommand.turnOff();

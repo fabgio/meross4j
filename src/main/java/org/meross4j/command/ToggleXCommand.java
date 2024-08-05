@@ -1,6 +1,5 @@
 package org.meross4j.command;
 
-import org.meross4j.comunication.Command;
 import org.meross4j.comunication.MerossConstants;
 import org.meross4j.comunication.MerossMqttConnector;
 import java.util.Map;
