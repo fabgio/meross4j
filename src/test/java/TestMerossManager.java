@@ -2,7 +2,7 @@ import                                                                          
 import org.junit.jupiter.api.Test;
 import org.meross4j.comunication.MerossHttpConnector;
 import org.meross4j.comunication.MerossManager;
-import org.meross4j.record.Response;
+import org.meross4j.record.response.ToggleX;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +23,8 @@ public class TestMerossManager {
     @Test
     void testManager()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        Response response=manager.executeCommand("tolomeo","on");
-        logger.info("System All Response {}",response.toString());
+        ToggleX response=manager.executeCommand("tolomeo","off");
+        logger.info("System All Response: {}",response.toString());
         assertNotNull(response);
     }
 }
