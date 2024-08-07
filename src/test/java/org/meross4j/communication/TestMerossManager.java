@@ -1,4 +1,4 @@
-package org.meross4j.comunication;
+package org.meross4j.communication;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ public class TestMerossManager {
     @Test
     void testManager()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        Response response=manager.executeCommand("tolomeo","on");
-        logger.info("System All Response: {}",response.toString());
+        Response response = manager.executeCommand("Comodino","off");
+        logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }
 }

@@ -1,4 +1,4 @@
-package org.meross4j.comunication;
+package org.meross4j.communication;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -72,8 +72,8 @@ public class MerossManager {
         String commandPublishesMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
         logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
-        ToggleXResponse response = deselializeToggleXResponse(systemAllPublishesMessage);
-        logger.debug("commandPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
+        Response response = deselializeToggleXResponse(systemAllPublishesMessage);
+        logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
         return response;
     }
@@ -120,7 +120,7 @@ public class MerossManager {
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
         Response response = deselializeToggleXResponse(systemAllPublishesMessage);
-        logger.debug("commandPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
+        logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
         return response;
     }

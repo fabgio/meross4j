@@ -1,4 +1,4 @@
-package org.meross4j.comunication;
+package org.meross4j.communication;
 
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

@@ -1,4 +1,4 @@
-package org.meross4j.comunication;
+package org.meross4j.communication;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;

@@ -1,7 +1,7 @@
 package org.meross4j.command;
 
-import org.meross4j.comunication.MerossConstants;
-import org.meross4j.comunication.MerossMqttConnector;
+import org.meross4j.communication.MerossConstants;
+import org.meross4j.communication.MerossMqttConnector;
 import java.util.Map;
 
 public class ToggleXCommand {
