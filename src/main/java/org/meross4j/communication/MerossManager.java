@@ -1,17 +1,14 @@
 package org.meross4j.communication;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import org.meross4j.command.Command;
 import org.meross4j.factory.AbstractFactory;
 import org.meross4j.factory.FactoryProvider;
 import org.meross4j.record.response.Response;
-import org.meross4j.record.response.ToggleXResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
 import java.util.Collections;
 
 public class MerossManager {
@@ -72,7 +69,7 @@ public class MerossManager {
         String commandPublishesMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
         logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
-        Response response = deselializeToggleXResponse(systemAllPublishesMessage);
+        Response response = deselializeTogglexResponse(systemAllPublishesMessage);
         logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
         return response;
@@ -119,15 +116,16 @@ public class MerossManager {
             throw new RuntimeException("device status is not online");
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
-        Response response = deselializeToggleXResponse(systemAllPublishesMessage);
+        Response response = deselializeTogglexResponse(systemAllPublishesMessage);
         logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
         return response;
     }
 
-    private ToggleXResponse deselializeToggleXResponse(String jsonString) {
+    private Response deselializeTogglexResponse(String jsonString) {
         JsonElement jsonElement =  JsonParser.parseString(jsonString);
-        String togglexString = jsonElement.getAsJsonObject()
+        JsonArray togglexJsonArray = jsonElement.getAsJsonObject()
+                .getAsJsonObject()
                 .get("payload")
                 .getAsJsonObject()
                 .get("all")
@@ -135,8 +133,11 @@ public class MerossManager {
                 .get("digest")
                 .getAsJsonObject()
                 .get("togglex")
-                .getAsJsonArray().toString();
-        TypeToken<ArrayList<ToggleXResponse>>type=new TypeToken<>(){};
-        return new Gson().fromJson(togglexString,type).get(0);
+                .getAsJsonArray();
+        String method = jsonElement.getAsJsonObject().getAsJsonObject("header").get("method").getAsString();
+        int channel = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("channel").getAsInt();
+        int onoff = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("onoff").getAsInt();
+        long lmTime = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("lmTime").getAsLong();
+        return new Response(method,channel,onoff,lmTime);
     }
 }
