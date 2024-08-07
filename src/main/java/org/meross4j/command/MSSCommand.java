@@ -4,7 +4,7 @@ import org.meross4j.communication.MerossConstants;
 import org.meross4j.communication.MerossMqttConnector;
 import java.util.Map;
 
-public class ToggleXCommand {
+public class MSSCommand {
     public static class turnOn implements Command {
         @Override
         public byte[] commandType(String type) {
