@@ -2,11 +2,22 @@ package org.meross4j.communication;
 
 import java.util.stream.Stream;
 
-public class MerossConstants {
-    //endpoints
-    public static final String LOGIN_PATH = "/v1/Auth/signIn";
-    public static final String LOGOUT_PATH = "/v1/Profile/logout";
-    public static final String DEV_LIST_PATH = "/v1/Device/devList";
+public class MerossEnum {
+    public enum Endpoint{
+        LOGIN("/v1/Auth/signIn"),
+        LOGOUT("/v1/Profile/logout"),
+        DEV_LIST("/v1/Device/devList");
+
+        public String getValue() {
+            return value;
+        }
+
+        private final String value;
+        Endpoint(String value) {
+            this.value = value;
+        }
+    }
+
 
     public enum OnlineStatus{
         NOT_ONLINE(0),

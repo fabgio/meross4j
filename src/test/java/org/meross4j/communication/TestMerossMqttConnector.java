@@ -43,7 +43,7 @@ public class TestMerossMqttConnector {
     void testBuildToggleXMessage() {
         MerossMqttConnector.setUserId("3807527");
         Map<String, Object> payload = Map.of("togglex", Map.of("onoff", 1, "channel", 0));
-        ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("SET", MerossConstants
+        ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("SET", MerossEnum
                 .Namespace.CONTROL_TOGGLEX.getValue(), payload));
         CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqttMessage);
         logger.info("MQTT Message : {}", charBuffer);
@@ -54,7 +54,7 @@ public class TestMerossMqttConnector {
     void testBuildAbilityMessage() {
         MerossMqttConnector.setDestinationDeviceUUID("012225456");
         Map<String, Object> payload = Collections.emptyMap();
-        ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("GET", MerossConstants
+        ByteBuffer mqttMessage = ByteBuffer.wrap(MerossMqttConnector.buildMqttMessage("GET", MerossEnum
                 .Namespace.SYSTEM_ABILITY.getValue(), payload));
         CharBuffer charBuffer = StandardCharsets.UTF_8.decode(mqttMessage);
         logger.info("MQTT Message : {}", charBuffer);

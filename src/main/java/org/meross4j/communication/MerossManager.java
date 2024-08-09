@@ -60,9 +60,9 @@ public class MerossManager {
         Command command = abstractFactory.commandMode(mode);
         byte[] commandMessage = command.commandType(type);
         byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
-                MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
+                MerossEnum.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
-        if (deviceStatus != MerossConstants.OnlineStatus.ONLINE.getValue()) {
+        if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
             logger.debug("device status: not online");
             throw new RuntimeException("device status is not online");
         }
@@ -109,9 +109,9 @@ public class MerossManager {
         }
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
         byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
-                MerossConstants.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
+                MerossEnum.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
-        if (deviceStatus != MerossConstants.OnlineStatus.ONLINE.getValue()) {
+        if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
             logger.debug("device status: not online");
             throw new RuntimeException("device status is not online");
         }

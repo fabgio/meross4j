@@ -78,7 +78,7 @@ public final class MerossHttpConnector {
         }
         try {
             loginMap.put("password", password);
-            return Objects.requireNonNull(getResponse(loginMap, MerossConstants.LOGIN_PATH));
+            return Objects.requireNonNull(getResponse(loginMap, MerossEnum.Endpoint.LOGIN.getValue()));
         } catch (Exception e) {
             try {
                 throw new IOException("Unable to reach Meross Host");
@@ -95,8 +95,8 @@ public final class MerossHttpConnector {
     public HttpResponse<String> errorCodeFreeResponse() {
         JsonElement jsonElement = JsonParser.parseString(validateResponse().body());
         int  errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
-        if (errorCode != MerossConstants.ErrorCode.NOT_AN_ERROR.getValue()) {
-            String errorMessage = MerossConstants.ErrorCode.getMessageByStatusCode(errorCode);
+        if (errorCode != MerossEnum.ErrorCode.NOT_AN_ERROR.getValue()) {
+            String errorMessage = MerossEnum.ErrorCode.getMessageByStatusCode(errorCode);
             try {
                 throw new IOException("Response resulted in error code" + "  "+errorCode + " with message"+ " "+ errorMessage);
             } catch (IOException e) {
@@ -123,7 +123,7 @@ public final class MerossHttpConnector {
     public ArrayList<Device> getDevices(){
         String token =  getCloudCredentials().token();
         setToken(token);
-        var response = Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.DEV_LIST_PATH));
+        var response = Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.Endpoint.DEV_LIST.getValue()));
         JsonElement jsonElement = JsonParser.parseString(response.body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
@@ -215,7 +215,7 @@ public final class MerossHttpConnector {
     }
 
     void logOut() {
-        Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossConstants.LOGOUT_PATH));
+        Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.Endpoint.LOGOUT.getValue()));
     }
 }
 
