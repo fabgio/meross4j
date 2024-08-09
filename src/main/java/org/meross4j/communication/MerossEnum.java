@@ -18,13 +18,11 @@ public class MerossEnum {
         }
     }
 
-
     public enum OnlineStatus{
         NOT_ONLINE(0),
         ONLINE(1),
         OFFLINE(2),
         UNKNOWN(-1),
-
         UPGRADING(3);
 
         final int value;
@@ -44,15 +42,12 @@ public class MerossEnum {
         SYSTEM_REPORT("Appliance.System.Report"),
         SYSTEM_DEBUG("Appliance.System.Debug"),
         SYSTEM_RUNTIME("Appliance.System.Runtime"),
-
         SYSTEM_ENCRYPTION("Appliance.Encrypt.Suite"),
         SYSTEM_ENCRYPTION_ECDHE("Appliance.Encrypt.ECDHE"),
-
         CONTROL_BIND("Appliance.Control.Bind"),
         CONTROL_CONTROL_UNBIND("Appliance.Control.Unbind"),
         CONTROL_TRIGGER("Appliance.Control.Trigger"),
         CONTROL_TRIGGERX("Appliance.Control.TriggerX"),
-
         CONFIG_WIFI_LIST("Appliance.Config.WifiList"),
         CONFIG_TRACE("Appliance.Config.Trace"),
         SYSTEM_DND_MODE("Appliance.System.DND.Mode"),
