@@ -3,7 +3,7 @@ package org.meross4j.communication;
 import java.util.stream.Stream;
 
 public class MerossEnum {
-    public enum Endpoint{
+    public enum HttpEndpoint {
         LOGIN("/v1/Auth/signIn"),
         LOGOUT("/v1/Profile/logout"),
         DEV_LIST("/v1/Device/devList");
@@ -13,7 +13,7 @@ public class MerossEnum {
         }
 
         private final String value;
-        Endpoint(String value) {
+        HttpEndpoint(String value) {
             this.value = value;
         }
     }

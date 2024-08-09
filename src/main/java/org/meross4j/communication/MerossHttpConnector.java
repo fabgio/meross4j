@@ -78,7 +78,7 @@ public final class MerossHttpConnector {
         }
         try {
             loginMap.put("password", password);
-            return Objects.requireNonNull(getResponse(loginMap, MerossEnum.Endpoint.LOGIN.getValue()));
+            return Objects.requireNonNull(getResponse(loginMap, MerossEnum.HttpEndpoint.LOGIN.getValue()));
         } catch (Exception e) {
             try {
                 throw new IOException("Unable to reach Meross Host");
@@ -123,7 +123,7 @@ public final class MerossHttpConnector {
     public ArrayList<Device> getDevices(){
         String token =  getCloudCredentials().token();
         setToken(token);
-        var response = Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.Endpoint.DEV_LIST.getValue()));
+        var response = Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
         JsonElement jsonElement = JsonParser.parseString(response.body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
@@ -215,7 +215,7 @@ public final class MerossHttpConnector {
     }
 
     void logOut() {
-        Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.Endpoint.LOGOUT.getValue()));
+        Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.HttpEndpoint.LOGOUT.getValue()));
     }
 }
 
