@@ -11,8 +11,6 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.text.CharacterPredicates;
-import org.apache.commons.text.RandomStringGenerator;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,11 +117,7 @@ public final class MerossMqttConnector {
     public static byte[] buildMqttMessage(String method, String namespace,
                                         Map<String,Object> payload) {
         int timestamp = Math.round(Instant.now().getEpochSecond());
-        RandomStringGenerator randomStringGenerator = new RandomStringGenerator.Builder()
-                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
-                .withinRange('0', 'z')
-                .build();
-        String randomString = randomStringGenerator.generate(16);
+        String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         String messageId = DigestUtils.md5Hex(randomString.toLowerCase());
         String signatureToHash = messageId + key + timestamp;
         String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase();
