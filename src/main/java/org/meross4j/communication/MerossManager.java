@@ -10,6 +10,8 @@ import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class MerossManager {
     private final static Logger logger = LoggerFactory.getLogger(MerossManager.class);
@@ -59,22 +61,15 @@ public class MerossManager {
         AbstractFactory abstractFactory = FactoryProvider.getFactory(devType);
         Command command = abstractFactory.commandMode(mode);
         byte[] commandMessage = command.commandType(devType);
-        byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
-                MerossEnum.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
             logger.debug("device status: not online");
             throw new RuntimeException("device status is not online");
         }
-        String commandPublishesMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
-        logger.debug("commandPublishesMessage i.e. response from broker : {}", commandPublishesMessage);
-        String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
-        logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
-        merossHttpConnector.logOut();
-        return switch (devType){
-            case "mss110","mss210","mss310","mss310h"->deselializeTogglexResponse(systemAllPublishesMessage);
-            default -> throw new IllegalStateException("Unexpected devType: " + devType);
-        };
+        String publishMqttMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
+        JsonElement jsonElement =  JsonParser.parseString(publishMqttMessage);
+        String method = jsonElement.getAsJsonObject().getAsJsonObject("header").get("method").getAsString();
+        return new Response(Map.of("method",method));
     }
 
     public Response executeCommand(String deviceName) {
@@ -121,7 +116,7 @@ public class MerossManager {
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
         logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
-        return switch (type){
+         return switch (type){
             case "mss110","mss210","mss310","mss310h"->deselializeTogglexResponse(systemAllPublishesMessage);
             default -> throw new IllegalStateException("Unexpected type: " + type);
         };
@@ -143,6 +138,6 @@ public class MerossManager {
         int channel = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("channel").getAsInt();
         int onoff = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("onoff").getAsInt();
         long lmTime = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("lmTime").getAsLong();
-        return new Response(method,channel,onoff,lmTime);
+        return new Response(Map.of("method",method,"channel",channel,"onoff",onoff,"lmTime",lmTime));
     }
 }

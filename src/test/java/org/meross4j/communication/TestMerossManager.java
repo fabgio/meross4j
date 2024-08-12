@@ -19,10 +19,18 @@ public class TestMerossManager {
     }
 
     @Test
-    void testManager()  {
+    void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        Response response =  manager.executeCommand("Scrivania", "OFF");
-        logger.info("SystemAll Response: {}",response);
+        var response=  manager.executeCommand("Comodino", "ON");
+        logger.info("SystemAll Response: {}",response.map().get("method"));
+        assertNotNull(response);
+    }
+
+    @Test
+    void testReceive()  {
+        var manager = MerossManager.createMerossManager(merossHttpConnector);
+        Response response =  manager.executeCommand("Scrivania");
+        logger.info("SystemAll Response: {}",response.map().get("onoff"));
         assertNotNull(response);
     }
 }
