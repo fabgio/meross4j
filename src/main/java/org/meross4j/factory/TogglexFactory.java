@@ -1,14 +1,14 @@
 package org.meross4j.factory;
 
 import org.meross4j.command.Command;
-import org.meross4j.command.MSSCommand;
+import org.meross4j.command.TogglexCommand;
 
-public class MSSFactory extends AbstractFactory {
+public class TogglexFactory extends AbstractFactory {
     @Override
     public Command commandMode(String mode) {
         return switch (mode){
-            case "ON" -> new MSSCommand.turnOn();
-            case "OFF" -> new MSSCommand.turnOff();
+            case "ON" -> new TogglexCommand.turnOn();
+            case "OFF" -> new TogglexCommand.turnOff();
             default -> throw new IllegalStateException("Unexpected value: " + mode);
         };
     }

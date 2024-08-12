@@ -10,7 +10,6 @@ import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 public class MerossManager {
@@ -24,35 +23,36 @@ public class MerossManager {
         return new MerossManager(merossHttpConnector);
     }
 
+    /**
+     * Executes a command on the device and set mode e,g. ON or OFF and return data
+     * @param deviceName The device's name
+     * @param mode the mode
+     * @return Response record
+     */
     public Response executeCommand(String deviceName, String mode) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
-        logger.debug("ClientId set to: {} ", clientId);
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
             MerossMqttConnector.setUserId(userid);
-            logger.debug("userid set to: {}", userid);
         } else {
             logger.debug("userid is null");
         }
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
-            logger.debug("key set to: {}", key);
         } else {
             logger.debug("key is null");
         }
         String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
             MerossMqttConnector.setBrokerAddress(brokerAddress);
-            logger.debug("brokerAddress set to: {}", brokerAddress);
         } else {
             logger.debug("brokerAddress is null");
         }
         String deviceUUID = merossHttpConnector.getDevUUIDByDevName(deviceName);
         if (deviceUUID != null) {
             MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
-            logger.debug("deviceUUID set to: {}", deviceUUID);
         } else {
             logger.debug("deviceUUID is null");
         }
@@ -72,35 +72,35 @@ public class MerossManager {
         return new Response(Map.of("method",method));
     }
 
+    /**
+     * Executes a command on the device and return data e.g. onoff status
+     * @param deviceName The device's name
+     * @return Response record
+     */
     public Response executeCommand(String deviceName) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
-        logger.debug("ClientId set to: {} ", clientId);
         String userid = merossHttpConnector.getCloudCredentials().userId();
         if (userid != null) {
             MerossMqttConnector.setUserId(userid);
-            logger.debug("userid set to: {}", userid);
         } else {
             logger.debug("userid is null");
         }
         String key = merossHttpConnector.getCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
-            logger.debug("key set to: {}", key);
         } else {
             logger.debug("key is null");
         }
         String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
             MerossMqttConnector.setBrokerAddress(brokerAddress);
-            logger.debug("brokerAddress set to: {}", brokerAddress);
         } else {
             logger.debug("brokerAddress is null");
         }
         String deviceUUID = merossHttpConnector.getDevUUIDByDevName(deviceName);
         if (deviceUUID != null) {
             MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
-            logger.debug("deviceUUID set to: {}", deviceUUID);
         } else {
             logger.debug("deviceUUID is null");
         }
@@ -114,7 +114,6 @@ public class MerossManager {
             throw new RuntimeException("device status is not online");
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
-        logger.debug("systemAllPublishesMessage i.e. response from broker : {}", systemAllPublishesMessage);
         merossHttpConnector.logOut();
          return switch (type){
             case "mss110","mss210","mss310","mss310h"->deselializeTogglexResponse(systemAllPublishesMessage);

@@ -5,16 +5,10 @@ import com.hivemq.client.mqtt.MqttGlobalPublishFilter;
 import com.hivemq.client.mqtt.datatypes.MqttQos;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
-import com.hivemq.client.mqtt.mqtt5.message.connect.connack.Mqtt5ConnAck;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
-import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5PublishResult;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
-import com.hivemq.client.mqtt.mqtt5.message.subscribe.suback.Mqtt5SubAck;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
@@ -30,7 +24,6 @@ import java.util.concurrent.TimeUnit;
  **/
 
 public final class MerossMqttConnector {
-    private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private static final int SECURE_WEB_SOCKET_PORT = 443;
     private static final int RECEPTION_TIMEOUT_SECONDS = 15;
     private static String brokerAddress;
@@ -40,23 +33,17 @@ public final class MerossMqttConnector {
     private static String destinationDeviceUUID;
     private static String incomingPublishResponse;
 
-    /**
-     * @param message      the mqtt message to be published
-     * @param requestTopic the request topic
-     * @return the payload of the next incoming Publish  message
-     */
-    public static String publishMqttMessage(byte @NotNull[] message, @NotNull String requestTopic)  {
+
+    public static String publishMqttMessage(byte[] message, @NotNull String requestTopic) {
         String clearPassword = userId + key;
         String hashedPassword = DigestUtils.md5Hex(clearPassword);
-        logger.debug("hashedPassword: {}", hashedPassword);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
                 .serverPort(SECURE_WEB_SOCKET_PORT)
                 .sslWithDefaultConfig()
                 .buildBlocking();
-        Mqtt5ConnAck connAck = client
-                .connectWith()
+                 client.connectWith()
                 .keepAlive(30)
                 .cleanStart(false)
                 .simpleAuth()
@@ -74,33 +61,22 @@ public final class MerossMqttConnector {
                 .qos(MqttQos.AT_LEAST_ONCE)
                 .applySubscription()
                 .build();
-       Mqtt5Publish publishMessage = Mqtt5Publish.builder()
+        Mqtt5Publish publishMessage = Mqtt5Publish.builder()
                 .topic(requestTopic)
                 .qos(MqttQos.AT_MOST_ONCE)
                 .payload(message)
                 .build();
-
-        logger.debug("connAck: {}", connAck.getReasonCode());
-        Mqtt5SubAck subAck = client.subscribe(subscribeMessage);
-        logger.debug("subAck: {}  subscriptions: {}",subAck,subscribeMessage.getSubscriptions());
-        Mqtt5PublishResult mqtt5PublishResult = client.publish(publishMessage);
-        if (publishMessage.getPayload().isPresent()) {
-            CharBuffer charBuffer = StandardCharsets.UTF_8.decode(publishMessage.getPayload().get());
-            logger.debug("pubAck: {} payload: {}",mqtt5PublishResult.getPublish(),charBuffer);
-        } else {
-            logger.debug("pubAck: is null {}", mqtt5PublishResult);
-        }
+        client.subscribe(subscribeMessage);
+        client.publish(publishMessage);
         try (final Mqtt5BlockingClient.Mqtt5Publishes publishes = client.publishes(MqttGlobalPublishFilter.SUBSCRIBED)) {
-           Optional<Mqtt5Publish>publishesResponse = publishes.receive(RECEPTION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
-           if (publishesResponse.isPresent()) {
-             Mqtt5Publish mqtt5PublishResponse = publishesResponse.get();
-             if (mqtt5PublishResponse.getPayload().isPresent()){
-                 incomingPublishResponse = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get())
-                         .toString();
-             } else {
-                 logger.debug("Payload non present: {}", incomingPublishResponse);
-             }
-           }
+            Optional<Mqtt5Publish> publishesResponse = publishes.receive(RECEPTION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            if (publishesResponse.isPresent()) {
+                Mqtt5Publish mqtt5PublishResponse = publishesResponse.get();
+                if (mqtt5PublishResponse.getPayload().isPresent()) {
+                    incomingPublishResponse = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get())
+                            .toString();
+                }
+            }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -115,7 +91,7 @@ public final class MerossMqttConnector {
      * @return the message
      */
     public static byte[] buildMqttMessage(String method, String namespace,
-                                        Map<String,Object> payload) {
+                                          Map<String, Object> payload) {
         int timestamp = Math.round(Instant.now().getEpochSecond());
         String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         String messageId = DigestUtils.md5Hex(randomString.toLowerCase());
@@ -140,36 +116,42 @@ public final class MerossMqttConnector {
 
     /**
      * In general, the Meross App subscribes to this topic in order to update its state as events happen on the physical device.
+     *
      * @return The client user topic
      */
-    public static @NotNull String buildClientUserTopic(){
-        return "/app/"+getUserId()+"/subscribe";
+    public static @NotNull String buildClientUserTopic() {
+        return "/app/" + getUserId() + "/subscribe";
     }
 
-    public static @NotNull String buildAppId(){
+    public static @NotNull String buildAppId() {
         String randomString = "API" + UUID.randomUUID();
         String encodedString = StandardCharsets.UTF_8.encode(randomString).toString();
         return DigestUtils.md5Hex(encodedString);
     }
-    /** App command.
+
+    /**
+     * App command.
      * It is the topic to which the Meross App subscribes. It is used by the app to receive the response to commands sent to the appliance
+     *
      * @return The response topic
      */
-    public  static @NotNull String buildClientResponseTopic() {
-        return "/app/"+getUserId()+"-"+buildAppId()+"/subscribe";
+    public static @NotNull String buildClientResponseTopic() {
+        return "/app/" + getUserId() + "-" + buildAppId() + "/subscribe";
     }
 
-    public static @NotNull String buildClientId(){
-        return "app:"+buildAppId();
+    public static @NotNull String buildClientId() {
+        return "app:" + buildAppId();
     }
 
-    /** App command.
+    /**
+     * App command.
+     *
      * @param deviceUUID The device UUID
      * @return The topic to be published
      */
 
     public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
-        return "/appliance/"+deviceUUID+"/subscribe";
+        return "/appliance/" + deviceUUID + "/subscribe";
     }
 
 
