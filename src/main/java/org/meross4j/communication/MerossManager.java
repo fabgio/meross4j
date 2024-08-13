@@ -63,7 +63,6 @@ public class MerossManager {
         byte[] commandMessage = command.commandType(devType);
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
-            logger.debug("device status: not online");
             throw new RuntimeException("device status is not online");
         }
         String publishMqttMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
@@ -110,7 +109,6 @@ public class MerossManager {
                 MerossEnum.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
-            logger.debug("device status: not online");
             throw new RuntimeException("device status is not online");
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);

@@ -30,7 +30,7 @@ public class TestMerossManager {
     void testReceive()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         Response response =  manager.executeCommand("Scrivania");
-        logger.info("SystemAll Response: {}",response.map().get("onoff"));
+        logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }
 }

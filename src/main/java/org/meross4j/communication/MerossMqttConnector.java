@@ -33,9 +33,8 @@ public final class MerossMqttConnector {
     private static String destinationDeviceUUID;
     private static String incomingPublishResponse;
 
-
     public static String publishMqttMessage(byte[] message, @NotNull String requestTopic) {
-        String clearPassword = userId + key;
+        String clearPassword = "%s%s".formatted(userId, key);
         String hashedPassword = DigestUtils.md5Hex(clearPassword);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
@@ -95,7 +94,7 @@ public final class MerossMqttConnector {
         int timestamp = Math.round(Instant.now().getEpochSecond());
         String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
         String messageId = DigestUtils.md5Hex(randomString.toLowerCase());
-        String signatureToHash = messageId + key + timestamp;
+        String signatureToHash = "%s%s%d".formatted(messageId, key, timestamp);
         String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase();
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();

@@ -151,7 +151,7 @@ public final class MerossHttpConnector {
                 throw new RuntimeException(e);
             }
         }
-        dataToSign = INITIAL_STRING + timestamp + nonce + encodedParams;
+        dataToSign = "%s%d%s%s".formatted(INITIAL_STRING, timestamp, nonce, encodedParams);
         String md5hash = DigestUtils.md5Hex(dataToSign);
         Map<String,String> payloadMap = new HashMap<>();
         payloadMap.put("params",encodedParams);
@@ -160,7 +160,7 @@ public final class MerossHttpConnector {
         payloadMap.put("nonce", nonce);
         String payload = new Gson().toJson(payloadMap);
         if (token != null) {
-            authorizationValue = "Basic " + token;
+            authorizationValue = "Basic %s".formatted(token);
         } else {
             authorizationValue = "Basic";
         }
