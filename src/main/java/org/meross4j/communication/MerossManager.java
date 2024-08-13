@@ -24,7 +24,7 @@ public class MerossManager {
     }
 
     /**
-     * Executes a command on the device and set mode e,g. ON or OFF and return data
+     * Executes a command on the device and set mode e,g. ON or OFF and returns data
      * @param deviceName The device's name
      * @param mode the mode
      * @return Response record
@@ -72,7 +72,7 @@ public class MerossManager {
     }
 
     /**
-     * Executes a command on the device and return data e.g. onoff status
+     * Executes a command on the device and returns data e.g. onoff status
      * @param deviceName The device's name
      * @return Response record
      */
@@ -104,7 +104,7 @@ public class MerossManager {
             logger.debug("deviceUUID is null");
         }
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
-        String type = merossHttpConnector.getDevTypeByDevName(deviceName);
+        String devType = merossHttpConnector.getDevTypeByDevName(deviceName);
         byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
                 MerossEnum.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
@@ -113,11 +113,12 @@ public class MerossManager {
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
         merossHttpConnector.logOut();
-         return switch (type){
-            case "mss110","mss210","mss310","mss310h"->deselializeTogglexResponse(systemAllPublishesMessage);
-            default -> throw new IllegalStateException("Unexpected type: " + type);
+         return switch (devType){
+             case "mss110","mss210","mss310","mss310h"->deselializeTogglexResponse(systemAllPublishesMessage);
+             default -> throw new IllegalStateException("Unexpected devType: " + devType);
         };
     }
+
 
     private Response deselializeTogglexResponse(String jsonString) {
         JsonElement jsonElement =  JsonParser.parseString(jsonString);

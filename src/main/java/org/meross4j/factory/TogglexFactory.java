@@ -3,7 +3,7 @@ package org.meross4j.factory;
 import org.meross4j.command.Command;
 import org.meross4j.command.TogglexCommand;
 
-public class TogglexFactory extends AbstractFactory {
+public class TogglexFactory implements AbstractFactory {
     @Override
     public Command commandMode(String mode) {
         return switch (mode){

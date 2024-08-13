@@ -18,6 +18,7 @@ public class TestMerossHttpConnector {
     private static final String email ="giovanni.fabiani@outlook.com";
     private static final String password = "bruce975";
     public static final String URL ="https://iotx-eu.meross.com";
+    private static final String DEVICE_NAME="Scrivania";
 
     @BeforeEach
     void setUp() {
@@ -52,32 +53,32 @@ public class TestMerossHttpConnector {
         assertNotNull(devices);
     }
     @Test
-    void testFilterTolomeo(){
+    void testFilterDeviceName(){
         Optional<String> devName = connector.getDevices()
                 .stream()
                 .map(Device::devName)
-                .filter(p->p.equals("tolomeo"))
+                .filter(p->p.equals(DEVICE_NAME))
                 .findFirst();
         devName.ifPresent(s -> logger.info("devName: {}", s));
-        assertEquals("tolomeo",devName.orElse(null));
+        assertEquals(DEVICE_NAME,devName.orElse(null));
     }
 
     @Test
-    void testFilterOnlineBy(){
-        int status=connector.getDevStatusByDevName("tolomeo");
+    void testFilterOnlineByDevName(){
+        int status=connector.getDevStatusByDevName(DEVICE_NAME);
         logger.info("status: {}", status);
         assertEquals(1, status);
     }
 
     @Test
     void testGetUUIDbyName(){
-        String uuid = connector.getDevUUIDByDevName("tolomeo");
-        logger.info("uuid for tolomeo: {}", uuid);
+        String uuid = connector.getDevUUIDByDevName(DEVICE_NAME);
+        logger.info("uuid for %s {}".formatted(DEVICE_NAME), uuid);
         assertNotNull(uuid);
     }
     @Test
     void testGetTypeByName(){
-        String type = connector.getDevTypeByDevName("tolomeo");
+        String type = connector.getDevTypeByDevName(DEVICE_NAME);
         logger.info("devType: {}", type);
         assertNotNull(type);
     }
