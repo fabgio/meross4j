@@ -2,8 +2,6 @@ package org.meross4j.record;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-
 /**
  *  Record containing the  Device components
  **/

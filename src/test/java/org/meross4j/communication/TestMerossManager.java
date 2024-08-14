@@ -21,15 +21,16 @@ public class TestMerossManager {
     @Test
     void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        var response=  manager.executeCommand("Comodino", "OFF");
-        logger.info("SystemAll Response: {}",response.map().get("method"));
+        var response=  manager.executeCommand("Comodino",
+                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
+        logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }
 
     @Test
     void testReceive()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        Response response =  manager.executeCommand("Scrivania");
+        Response response =  manager.executeCommand("Scrivania",MerossEnum.Namespace.CONTROL_TOGGLEX.name());
         logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }
