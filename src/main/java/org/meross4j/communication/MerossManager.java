@@ -12,7 +12,6 @@ import org.meross4j.factory.FactoryProvider;
 import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -74,7 +73,7 @@ public class MerossManager {
             throw new RuntimeException("device status is not online");
         }
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
-        ArrayList<String>abilities=abilitiesResponse(systemAbilityPublishesMessage);
+        ArrayList<String>abilities = abilitiesResponse(systemAbilityPublishesMessage);
         logger.info("abilities: {}", abilities);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
             throw new RuntimeException("command type not supported");
@@ -131,7 +130,7 @@ public class MerossManager {
         byte[] systemAbilityMessage = MerossMqttConnector.buildMqttMessage("GET",
                 MerossEnum.Namespace.SYSTEM_ABILITY.getValue(), Collections.emptyMap());
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
-        ArrayList<String>abilities=abilitiesResponse(systemAbilityPublishesMessage);
+        ArrayList<String>abilities = abilitiesResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
             throw new RuntimeException("command type not supported");
         }
@@ -163,6 +162,7 @@ public class MerossManager {
         long lmTime = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("lmTime").getAsLong();
         return new Response(Map.of("method",method,"channel",channel,"onoff",onoff,"lmTime",lmTime));
     }
+
     private ArrayList<String> abilitiesResponse(String jsonString) {
         JsonElement digestElement=  JsonParser.parseString(jsonString);
         String togglexString = digestElement.getAsJsonObject()
@@ -171,8 +171,8 @@ public class MerossManager {
                 .get("ability")
                 .getAsJsonObject()
                 .toString();
-        TypeToken<HashMap<String, HashMap<String,String>>>type=new TypeToken<>(){};
-        HashMap<String,HashMap<String,String>> response=new Gson().fromJson(togglexString,type);
+        TypeToken<HashMap<String, HashMap<String,String>>>type = new TypeToken<>(){};
+        HashMap<String,HashMap<String,String>> response = new Gson().fromJson(togglexString,type);
         return new ArrayList<>(response.keySet());
 
     }
