@@ -76,10 +76,4 @@ public class TestMerossHttpConnector {
         logger.info("uuid for %s {}".formatted(DEVICE_NAME), uuid);
         assertNotNull(uuid);
     }
-    @Test
-    void testGetTypeByName(){
-        String type = connector.getDevTypeByDevName(DEVICE_NAME);
-        logger.info("devType: {}", type);
-        assertNotNull(type);
-    }
 }

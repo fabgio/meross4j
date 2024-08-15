@@ -182,6 +182,7 @@ public final class MerossHttpConnector {
             throw new RuntimeException(e);
         }
     }
+
     private static String encodeParams(Map<String, String> paramsData) {
         return Base64.getEncoder().encodeToString(new Gson().toJson(paramsData).getBytes());
     }
@@ -194,14 +195,6 @@ public final class MerossHttpConnector {
         return  getDevices().stream()
                 .filter(device->device.devName().equals(devName))
                 .map(Device::uuid)
-                .findFirst()
-                .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
-    }
-
-    public String getDevTypeByDevName(String devName) {
-        return  getDevices().stream()
-                .filter(device->device.devName().equals(devName))
-                .map(Device::deviceType)
                 .findFirst()
                 .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
     }

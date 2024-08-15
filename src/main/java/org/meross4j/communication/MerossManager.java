@@ -73,15 +73,19 @@ public class MerossManager {
             throw new RuntimeException("device status is not online");
         }
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
-        ArrayList<String>abilities = abilitiesResponse(systemAbilityPublishesMessage);
-        logger.info("abilities: {}", abilities);
+        ArrayList<String> abilities = abilityResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
             throw new RuntimeException("command type not supported");
         }
+        String method = getMethod(commandMessage, requestTopic);
+        merossHttpConnector.logOut();
+        return new Response(Map.of("method",method));
+    }
+
+    private static String getMethod(byte[] commandMessage, String requestTopic) {
         String publishMqttMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
         JsonElement jsonElement = JsonParser.parseString(publishMqttMessage);
-        String method = jsonElement.getAsJsonObject().getAsJsonObject("header").get("method").getAsString();
-        return new Response(Map.of("method",method));
+        return jsonElement.getAsJsonObject().getAsJsonObject("header").get("method").getAsString();
     }
 
     /**
@@ -126,25 +130,25 @@ public class MerossManager {
             throw new RuntimeException("device status is not online");
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
-        merossHttpConnector.logOut();
         byte[] systemAbilityMessage = MerossMqttConnector.buildMqttMessage("GET",
                 MerossEnum.Namespace.SYSTEM_ABILITY.getValue(), Collections.emptyMap());
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
-        ArrayList<String>abilities = abilitiesResponse(systemAbilityPublishesMessage);
+        ArrayList<String>abilities = abilityResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
             throw new RuntimeException("command type not supported");
         }
+        merossHttpConnector.logOut();
         return getResponse(commandType, systemAllPublishesMessage);
     }
 
     private @NotNull Response getResponse(String commandType, String systemAllPublishesMessage) {
         return switch (commandType) {
-            case "CONTROL_TOGGLEX" -> deselializeTogglexResponse(systemAllPublishesMessage);
+            case "CONTROL_TOGGLEX" -> togglexResponse(systemAllPublishesMessage);
             default -> throw new IllegalStateException("Unexpected commandType: " + commandType);
         };
     }
 
-    private Response deselializeTogglexResponse(String jsonString) {
+    private Response togglexResponse(String jsonString) {
         JsonElement jsonElement =  JsonParser.parseString(jsonString);
         JsonArray togglexJsonArray = jsonElement.getAsJsonObject()
                 .getAsJsonObject()
@@ -163,16 +167,16 @@ public class MerossManager {
         return new Response(Map.of("method",method,"channel",channel,"onoff",onoff,"lmTime",lmTime));
     }
 
-    private ArrayList<String> abilitiesResponse(String jsonString) {
-        JsonElement digestElement=  JsonParser.parseString(jsonString);
-        String togglexString = digestElement.getAsJsonObject()
+    private ArrayList<String> abilityResponse(String jsonString) {
+        JsonElement digestElement = JsonParser.parseString(jsonString);
+        String abilityString = digestElement.getAsJsonObject()
                 .get("payload")
                 .getAsJsonObject()
                 .get("ability")
                 .getAsJsonObject()
                 .toString();
         TypeToken<HashMap<String, HashMap<String,String>>>type = new TypeToken<>(){};
-        HashMap<String,HashMap<String,String>> response = new Gson().fromJson(togglexString,type);
+        HashMap<String,HashMap<String,String>> response = new Gson().fromJson(abilityString,type);
         return new ArrayList<>(response.keySet());
 
     }
