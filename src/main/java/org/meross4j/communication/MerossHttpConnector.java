@@ -143,7 +143,6 @@ public final class MerossHttpConnector {
         if (paramsData != null) {
             encodedParams = encodeParams(paramsData);
         } else {
-            logger.debug("Parameter data map is null");
             try {
                 throw new NullPointerException("Parameter data map is null");
             } catch (NullPointerException e) {

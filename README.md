@@ -20,14 +20,14 @@ This library is available via Maven Central repository by adding the dependency 
 
 ```xml   
     <dependency>
-      <groupId> </groupId>
+      <groupId>>org.meross4j</groupId>
       <artifactId>meross4j</artifactId>
       <version>0.1</version>
     </dependency>
 ```
 
 ## Usage example
-```java
+```java 
 // Creates  HttpConnection with EU URL = https://iotx-eu.meross.com"; email = myemail@email.com  and password = mypassword
 MerossHttpConnector merossHttpConnector = new MerossHttpConnector("https://iotx-eu.meross.com", "myemail@email.com" , "mypassword");
 var manager = MerossManager.createMerossManager(merossHttpConnector);
@@ -40,9 +40,8 @@ var response =  manager.executeCommand("Desk",
         MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
 
 // Get info about  "Desk" e.g. current ON/OFF state ...  
-var response=  manager.executeCommand("Desk",
+var response =  manager.executeCommand("Desk",
         MerossEnum.Namespace.CONTROL_TOGGLEX.name());
-
 
 ```
 
@@ -52,7 +51,7 @@ Tested devices so far:
 
 - MSS210 (Smart plug)
 
-Anyway the library may support the togglex capability, i.e ON/OFF for the majority of plugs/bulbs
+Anyway the library may support the togglex capability, i.e. ON/OFF for the majority of plugs/bulbs
 
 ## Building from Source
 
@@ -61,6 +60,9 @@ With Maven:
 ```
 mvn clean install
 ```
+
+## Contributions
+Pull requests are really welcomed
 
 ## Disclaimer
 This library is not associated by any means with Meross or other subsidiaries

@@ -12,9 +12,9 @@ import org.meross4j.factory.FactoryProvider;
 import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class MerossManager {
@@ -60,7 +60,7 @@ public class MerossManager {
         if (deviceUUID != null) {
             MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
         } else {
-            logger.debug("deviceUUID is null");
+            logger.debug("Device UUID is null");
         }
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
         byte[] systemAbilityMessage = MerossMqttConnector.buildMqttMessage("GET",
@@ -70,10 +70,10 @@ public class MerossManager {
         byte[] commandMessage = command.commandType(commandType);
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
-            throw new RuntimeException("device status is not online");
+            throw new RuntimeException("Device status is not online");
         }
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
-        ArrayList<String> abilities = abilityResponse(systemAbilityPublishesMessage);
+        HashSet<String> abilities = abilityResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
             throw new RuntimeException("Command type not supported");
         }
@@ -120,20 +120,20 @@ public class MerossManager {
         if (deviceUUID != null) {
             MerossMqttConnector.setDestinationDeviceUUID(deviceUUID);
         } else {
-            logger.debug("deviceUUID is null");
+            logger.debug("Device UUID is null");
         }
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
         byte[] systemAllMessage = MerossMqttConnector.buildMqttMessage("GET",
                 MerossEnum.Namespace.SYSTEM_ALL.getValue(), Collections.emptyMap());
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
-            throw new RuntimeException("device status is not online");
+            throw new RuntimeException("Device status is not online");
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
         byte[] systemAbilityMessage = MerossMqttConnector.buildMqttMessage("GET",
                 MerossEnum.Namespace.SYSTEM_ABILITY.getValue(), Collections.emptyMap());
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
-        ArrayList<String>abilities = abilityResponse(systemAbilityPublishesMessage);
+        HashSet<String> abilities = abilityResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
             throw new RuntimeException("Command type not supported");
         }
@@ -167,7 +167,7 @@ public class MerossManager {
         return new Response(Map.of("method",method,"channel",channel,"onoff",onoff,"lmTime",lmTime));
     }
 
-    private ArrayList<String> abilityResponse(String jsonString) {
+    private HashSet<String> abilityResponse(String jsonString) {
         JsonElement digestElement = JsonParser.parseString(jsonString);
         String abilityString = digestElement.getAsJsonObject()
                 .get("payload")
@@ -177,6 +177,6 @@ public class MerossManager {
                 .toString();
         TypeToken<HashMap<String, HashMap<String,String>>>type = new TypeToken<>(){};
         HashMap<String,HashMap<String,String>> response = new Gson().fromJson(abilityString,type);
-        return new ArrayList<>(response.keySet());
+        return new HashSet<>(response.keySet());
     }
 }
