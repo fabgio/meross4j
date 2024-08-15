@@ -178,6 +178,5 @@ public class MerossManager {
         TypeToken<HashMap<String, HashMap<String,String>>>type = new TypeToken<>(){};
         HashMap<String,HashMap<String,String>> response = new Gson().fromJson(abilityString,type);
         return new ArrayList<>(response.keySet());
-
     }
 }
