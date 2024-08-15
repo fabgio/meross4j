@@ -34,7 +34,7 @@ public final class MerossMqttConnector {
     private static String clientId;
     private static String key;
     private static String destinationDeviceUUID;
-    private static String incomingPublishResponse;
+    private static String incomingPublishesResponse;
 
     public static String publishMqttMessage(byte[] message, @NotNull String requestTopic) {
         String clearPassword = "%s%s".formatted(userId, key);
@@ -75,9 +75,9 @@ public final class MerossMqttConnector {
             if (publishesResponse.isPresent()) {
                 Mqtt5Publish mqtt5PublishResponse = publishesResponse.get();
                 if (mqtt5PublishResponse.getPayload().isPresent()) {
-                    incomingPublishResponse = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get())
+                    incomingPublishesResponse = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get())
                             .toString();
-                    logger.debug("JSON Response: {}",incomingPublishResponse);
+                    logger.debug("JSON Response: {}", incomingPublishesResponse);
                 } else {
                     logger.debug("Response is null");
                 }
@@ -86,7 +86,7 @@ public final class MerossMqttConnector {
             throw new RuntimeException(e);
         }
         client.disconnect();
-        return incomingPublishResponse;
+        return incomingPublishesResponse;
     }
 
     /**
