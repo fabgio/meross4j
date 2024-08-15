@@ -36,13 +36,18 @@ var response=  manager.executeCommand("Desk",
         MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"ON");
 
 // Turns smart plug named "Desk" OFF
-var response=  manager.executeCommand("Desk",
+var response =  manager.executeCommand("Desk",
         MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
+
+// Get info about  "Desk" e.g. current ON/OFF state ...  
+var response=  manager.executeCommand("Desk",
+        MerossEnum.Namespace.CONTROL_TOGGLEX.name());
+
 
 ```
 
 ## Currently supported devices
-Starting from v0.4.0.0, this library should support the majority of Meross devices on the market.
+
 Tested devices so far:
 
 - MSS210 (Smart plug)
