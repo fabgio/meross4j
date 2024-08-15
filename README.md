@@ -3,7 +3,7 @@
 **meross4j** is a Java library providing API for controlling Meross IoT devices over the internet.
 
 To utilize the the library you should first create an account via The Meross android app. Moreover, the devices should be in an 
-online status
+online status.
 
 Supported capabilities:
 * `Togglex` Power bulb/plug capability 
