@@ -75,7 +75,7 @@ public class MerossManager {
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
         ArrayList<String> abilities = abilityResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
-            throw new RuntimeException("command type not supported");
+            throw new RuntimeException("Command type not supported");
         }
         String method = getMethod(commandMessage, requestTopic);
         merossHttpConnector.logOut();
@@ -135,7 +135,7 @@ public class MerossManager {
         String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
         ArrayList<String>abilities = abilityResponse(systemAbilityPublishesMessage);
         if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
-            throw new RuntimeException("command type not supported");
+            throw new RuntimeException("Command type not supported");
         }
         merossHttpConnector.logOut();
         return getResponse(commandType, systemAllPublishesMessage);
