@@ -94,7 +94,7 @@ public final class MerossHttpConnector {
      */
     public HttpResponse<String> errorCodeFreeResponse() {
         JsonElement jsonElement = JsonParser.parseString(validateResponse().body());
-        int  errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
+        int errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
         if (errorCode != MerossEnum.ErrorCode.NOT_AN_ERROR.getValue()) {
             String errorMessage = MerossEnum.ErrorCode.getMessageByStatusCode(errorCode);
             try {

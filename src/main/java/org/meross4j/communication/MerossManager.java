@@ -1,8 +1,10 @@
 package org.meross4j.communication;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.meross4j.command.Command;
 import org.meross4j.factory.AbstractFactory;
@@ -10,7 +12,10 @@ import org.meross4j.factory.FactoryProvider;
 import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MerossManager {
@@ -59,12 +64,20 @@ public class MerossManager {
             logger.debug("deviceUUID is null");
         }
         String requestTopic = MerossMqttConnector.buildDeviceRequestTopic(deviceUUID);
+        byte[] systemAbilityMessage = MerossMqttConnector.buildMqttMessage("GET",
+                MerossEnum.Namespace.SYSTEM_ABILITY.getValue(), Collections.emptyMap());
         AbstractFactory abstractFactory = FactoryProvider.getFactory(commandType);
         Command command = abstractFactory.commandMode(commandMode);
         byte[] commandMessage = command.commandType(commandType);
         int deviceStatus = merossHttpConnector.getDevStatusByDevName(deviceName);
         if (deviceStatus != MerossEnum.OnlineStatus.ONLINE.getValue()) {
             throw new RuntimeException("device status is not online");
+        }
+        String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
+        ArrayList<String>abilities=abilitiesResponse(systemAbilityPublishesMessage);
+        logger.info("abilities: {}", abilities);
+        if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
+            throw new RuntimeException("command type not supported");
         }
         String publishMqttMessage = MerossMqttConnector.publishMqttMessage(commandMessage, requestTopic);
         JsonElement jsonElement = JsonParser.parseString(publishMqttMessage);
@@ -115,6 +128,13 @@ public class MerossManager {
         }
         String systemAllPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAllMessage, requestTopic);
         merossHttpConnector.logOut();
+        byte[] systemAbilityMessage = MerossMqttConnector.buildMqttMessage("GET",
+                MerossEnum.Namespace.SYSTEM_ABILITY.getValue(), Collections.emptyMap());
+        String systemAbilityPublishesMessage = MerossMqttConnector.publishMqttMessage(systemAbilityMessage,requestTopic);
+        ArrayList<String>abilities=abilitiesResponse(systemAbilityPublishesMessage);
+        if(!abilities.contains(MerossEnum.Namespace.getAbilityValueByName(commandType))){
+            throw new RuntimeException("command type not supported");
+        }
         return getResponse(commandType, systemAllPublishesMessage);
     }
 
@@ -142,5 +162,18 @@ public class MerossManager {
         int onoff = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("onoff").getAsInt();
         long lmTime = togglexJsonArray.get(0).getAsJsonObject().getAsJsonPrimitive("lmTime").getAsLong();
         return new Response(Map.of("method",method,"channel",channel,"onoff",onoff,"lmTime",lmTime));
+    }
+    private ArrayList<String> abilitiesResponse(String jsonString) {
+        JsonElement digestElement=  JsonParser.parseString(jsonString);
+        String togglexString = digestElement.getAsJsonObject()
+                .get("payload")
+                .getAsJsonObject()
+                .get("ability")
+                .getAsJsonObject()
+                .toString();
+        TypeToken<HashMap<String, HashMap<String,String>>>type=new TypeToken<>(){};
+        HashMap<String,HashMap<String,String>> response=new Gson().fromJson(togglexString,type);
+        return new ArrayList<>(response.keySet());
+
     }
 }

@@ -34,7 +34,7 @@ public class MerossEnum {
         }
     }
 
-    public enum Namespace{
+    public enum Namespace {
         // Common abilities
         SYSTEM_ALL("Appliance.System.All"),
         SYSTEM_ABILITY("Appliance.System.Ability"),
@@ -120,7 +120,21 @@ public class MerossEnum {
         Namespace(String value) {
             this.value = value;
         }
+
+        public static String getAbilityValueByName(String name) {
+            for (Namespace namespace : Namespace.values()) {
+                if (namespace.name().equals(name)) {
+                    return namespace.getValue();
+                }
+            }
+            return null;
+        }
     }
+
+
+
+
+
 
     public enum ErrorCode {
         NOT_AN_ERROR(0),

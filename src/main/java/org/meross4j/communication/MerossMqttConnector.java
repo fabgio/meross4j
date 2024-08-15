@@ -9,6 +9,8 @@ import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
@@ -24,6 +26,7 @@ import java.util.concurrent.TimeUnit;
  **/
 
 public final class MerossMqttConnector {
+    private final static Logger logger = LoggerFactory.getLogger(MerossMqttConnector.class);
     private static final int SECURE_WEB_SOCKET_PORT = 443;
     private static final int RECEPTION_TIMEOUT_SECONDS = 15;
     private static String brokerAddress;
@@ -74,6 +77,9 @@ public final class MerossMqttConnector {
                 if (mqtt5PublishResponse.getPayload().isPresent()) {
                     incomingPublishResponse = StandardCharsets.UTF_8.decode(mqtt5PublishResponse.getPayload().get())
                             .toString();
+                    logger.debug("JSON Response: {}",incomingPublishResponse);
+                } else {
+                    logger.debug("Response is null");
                 }
             }
         } catch (InterruptedException e) {

@@ -21,7 +21,7 @@ public class TestMerossManager {
     @Test
     void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        var response=  manager.executeCommand("Comodino",
+        var response=  manager.executeCommand("Scrivania",
                 MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
         logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
