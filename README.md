@@ -32,7 +32,7 @@ This library is available via Maven Central repository by adding the dependency 
 MerossHttpConnector merossHttpConnector = new MerossHttpConnector("https://iotx-eu.meross.com", "myemail@email.com" , "mypassword");
 var manager = MerossManager.createMerossManager(merossHttpConnector);
 // Turns smart plug named "Desk" ON
-var response=  manager.executeCommand("Desk",
+var response = manager.executeCommand("Desk",
         MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"ON");
 
 // Turns smart plug named "Desk" OFF
