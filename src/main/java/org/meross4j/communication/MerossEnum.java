@@ -124,7 +124,7 @@ public class MerossEnum {
         public static String getAbilityValueByName(String name) {
             return Stream.of(Namespace.values())
                     .filter(p->p.name().equals(name))
-                    .map(Namespace::getValue).findFirst().orElse("Unidentified Http Error Message");
+                    .map(Namespace::getValue).findFirst().orElse("Unidentified Ability");
         }
     }
 
