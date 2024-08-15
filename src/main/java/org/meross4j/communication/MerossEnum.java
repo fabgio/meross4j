@@ -121,25 +121,12 @@ public class MerossEnum {
             this.value = value;
         }
 
-//        public static String getAbilityValueByName(String name) {
-//            for (Namespace namespace : Namespace.values()) {
-//                if (namespace.name().equals(name)) {
-//                    return namespace.getValue();
-//                }
-//            }
-//            return null;
-//        }
         public static String getAbilityValueByName(String name) {
             return Stream.of(Namespace.values())
                     .filter(p->p.name().equals(name))
                     .map(Namespace::getValue).findFirst().orElse("Unidentified Http Error Message");
         }
     }
-
-
-
-
-
 
     public enum ErrorCode {
         NOT_AN_ERROR(0),
