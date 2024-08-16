@@ -123,4 +123,11 @@
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub OWNER Apache Maven Packages</name>
+            <url>https://github.com/fabgio/meross4j</url>
+        </repository>
+    </distributionManagement>
 </project>
