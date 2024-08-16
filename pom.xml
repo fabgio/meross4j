@@ -82,11 +82,6 @@
             <name>Maven Central</name>
             <url>https://repo.maven.apache.org/maven2/</url>
         </repository>
-        <repository>
-            <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/fabgio/meross4j</url>
-        </repository>
         </repositories>
     <build>
         <plugins>
@@ -123,11 +118,4 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>
-        <repository>
-            <id>github</id>
-            <name>meross4j</name>
-            <url>https://github.com/fabgio/meross4j</url>
-        </repository>
-    </distributionManagement>
 </project>
