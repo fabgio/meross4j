@@ -5,6 +5,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
+test
 
 ### Eclipse ###
 .apt_generated
@@ -30,3 +31,4 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/src/test/
