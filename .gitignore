@@ -5,7 +5,7 @@ target/
 
 ### IntelliJ IDEA ###
 .idea/
-test
+
 
 ### Eclipse ###
 .apt_generated
