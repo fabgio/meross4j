@@ -10,7 +10,12 @@
 
     <name>meross4j Meross Java library</name>
     <description>meross4j is a Java library for the Meross cloud</description>
-    <!-- SCM? -->
+
+    <scm>
+        <connection>scm:git:https://github.com/fabgio/meross4j.git</connection>
+        <developerConnection>scm:git:git@github.com:fabgio/meross4j.git</developerConnection>
+        <url>https://github.com/fabgio/meross4j</url>
+    </scm>
 
     <licenses>
         <license>
