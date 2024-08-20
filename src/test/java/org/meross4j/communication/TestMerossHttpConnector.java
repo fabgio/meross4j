@@ -15,8 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestMerossHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossHttpConnector.class);
     private MerossHttpConnector connector;
-    private static final String email = "your email";
-    private static final String password = "your password";
+    private static final String email ="giovanni.fabiani@outlook.com";
+    private static final String password = "bruce975";
     public static final String URL ="https://iotx-eu.meross.com";
     private static final String DEVICE_NAME="Scrivania";
 
