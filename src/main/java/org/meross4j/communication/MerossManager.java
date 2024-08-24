@@ -38,19 +38,19 @@ public class MerossManager {
     public Response executeCommand(String deviceName, String commandType, String commandMode) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
-        String userid = merossHttpConnector.getCloudCredentials().userId();
+        String userid = merossHttpConnector.fetchCloudCredentials().userId();
         if (userid != null) {
             MerossMqttConnector.setUserId(userid);
         } else {
             logger.debug("userid is null");
         }
-        String key = merossHttpConnector.getCloudCredentials().key();
+        String key = merossHttpConnector.fetchCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
         } else {
             logger.debug("key is null");
         }
-        String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
+        String brokerAddress = merossHttpConnector.fetchCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
             MerossMqttConnector.setBrokerAddress(brokerAddress);
         } else {
@@ -98,19 +98,19 @@ public class MerossManager {
     public Response executeCommand(String deviceName, String commandType) {
         String clientId = MerossMqttConnector.buildClientId();
         MerossMqttConnector.setClientId(clientId);
-        String userid = merossHttpConnector.getCloudCredentials().userId();
+        String userid = merossHttpConnector.fetchCloudCredentials().userId();
         if (userid != null) {
             MerossMqttConnector.setUserId(userid);
         } else {
             logger.debug("userid is null");
         }
-        String key = merossHttpConnector.getCloudCredentials().key();
+        String key = merossHttpConnector.fetchCloudCredentials().key();
         if (key != null) {
             MerossMqttConnector.setKey(key);
         } else {
             logger.debug("key is null");
         }
-        String brokerAddress = merossHttpConnector.getCloudCredentials().mqttDomain();
+        String brokerAddress = merossHttpConnector.fetchCloudCredentials().mqttDomain();
         if (brokerAddress != null) {
             MerossMqttConnector.setBrokerAddress(brokerAddress);
         } else {
