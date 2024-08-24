@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestMerossManager {
-    private static final String email = "your email";
-    private static final String password = "your password";
+    private static final String email = "giovanni.fabiani@outlook.com";
+    private static final String password = "bruce975";
     private static final String URL = "https://iotx-eu.meross.com";
     private final static Logger logger = LoggerFactory.getLogger(TestMerossManager.class);
     private MerossHttpConnector merossHttpConnector;
@@ -21,7 +21,7 @@ public class TestMerossManager {
     @Test
     void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
-        var response=  manager.executeCommand("Scrivania",
+        var response=  manager.executeCommand("Comodino",
                 MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
         logger.info("SystemAll Response: {}",response);
         assertNotNull(response);

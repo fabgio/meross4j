@@ -14,6 +14,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -24,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -50,7 +53,7 @@ public final class MerossHttpConnector {
         this.password = password;
     }
 
-    public HttpResponse<String> getResponse(Map<String, String> payloadMap, String path) {
+    public HttpResponse<String> response(Map<String, String> payloadMap, String path) {
         HttpResponse<String> httpResponse = postResponse(payloadMap, apiBaseUrl, path);
         if (httpResponse.statusCode() != 200) {
             logger.error("ResponseToLogin request resulted in HTTP error code {}", httpResponse.statusCode());
@@ -60,7 +63,7 @@ public final class MerossHttpConnector {
         return null;
     }
 
-    public HttpResponse<String> validateResponse() {
+    public HttpResponse<String> login() {
         Map<String, String> loginMap = new HashMap<>();
         if (email != null && !email.isBlank()) {
             loginMap.put("email", email);
@@ -78,7 +81,7 @@ public final class MerossHttpConnector {
         }
         try {
             loginMap.put("password", password);
-            return Objects.requireNonNull(getResponse(loginMap, MerossEnum.HttpEndpoint.LOGIN.getValue()));
+            return Objects.requireNonNull(response(loginMap, MerossEnum.HttpEndpoint.LOGIN.getValue()));
         } catch (Exception e) {
             try {
                 throw new IOException("Unable to reach Meross Host");
@@ -92,8 +95,8 @@ public final class MerossHttpConnector {
     /**
      * @return The response body at login
      */
-    public HttpResponse<String> errorCodeFreeResponse() {
-        JsonElement jsonElement = JsonParser.parseString(validateResponse().body());
+    public HttpResponse<String> errorCodeFreeLogin() {
+        JsonElement jsonElement = JsonParser.parseString(login().body());
         int errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
         if (errorCode != MerossEnum.ErrorCode.NOT_AN_ERROR.getValue()) {
             String errorMessage = MerossEnum.ErrorCode.getMessageByStatusCode(errorCode);
@@ -103,32 +106,82 @@ public final class MerossHttpConnector {
                 throw new RuntimeException(e);
             }
         } else {
-            return validateResponse();
+            return login();
         }
     }
 
     /**
      * @return The user's Meross cloud Credentials
      */
-    public CloudCredentials getCloudCredentials() {
-        JsonElement jsonElement = JsonParser.parseString(errorCodeFreeResponse().body());
+    public CloudCredentials fetchCloudCredentials() {
+        JsonElement jsonElement = JsonParser.parseString(errorCodeFreeLogin().body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
+    }
+
+    public CloudCredentials getCredentials() {
+        Path path = Path.of("src", "main", "resources", "cloud_credentials.json");
+        CloudCredentials credentials;
+        String data;
+        if (Files.exists(path)) {
+            try {
+                JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
+                data = jsonElement.getAsJsonObject().toString();
+                credentials = new Gson().fromJson(data, CloudCredentials.class);
+                logger.info("Reading credentials from file: {}", path);
+            } catch (IOException e) {
+                logger.debug("Error reading credentials from file", e);
+                throw new RuntimeException(e);
+            }
+        } else {
+            credentials = fetchCloudCredentials();
+            logger.info("File {} not found getting credentials from cloud", path);
+            CompletableFuture.supplyAsync(this::fetchCloudCredentials)
+                    .thenAccept(this::saveCloudCredentials)
+                    .join();
+        }
+        return credentials;
+    }
+
+    public ArrayList<Device> fetchDevices(){
+        String token =  fetchCloudCredentials().token();
+        setToken(token);
+        var response = Objects.requireNonNull(response(Collections.emptyMap(), MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
+        JsonElement jsonElement = JsonParser.parseString(response.body());
+        String data = jsonElement.getAsJsonObject().get("data").toString();
+        TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
+        return new Gson().fromJson(data, type);
     }
 
     /**
      * @return The user's device list
      */
 
-    public ArrayList<Device> getDevices(){
-        String token =  getCloudCredentials().token();
-        setToken(token);
-        var response = Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
-        JsonElement jsonElement = JsonParser.parseString(response.body());
-        String data = jsonElement.getAsJsonObject().get("data").toString();
-        TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
-        return new Gson().fromJson(data, type);
+    public ArrayList<Device> getDevices() {
+        Path path = Path.of("src", "main", "resources", "devices.json");
+        ArrayList<Device> devices;
+        String data;
+        if (Files.exists(path)) {
+            try {
+                JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
+                data = jsonElement.getAsJsonArray().toString();
+                TypeToken<ArrayList<Device>> typeToken = new TypeToken<>() {};
+                devices = new Gson().fromJson(data, typeToken);
+                logger.info("Reading devices from file: {}", path);
+            } catch (IOException e) {
+                logger.debug("Error devices from file", e);
+                throw new RuntimeException(e);
+            }
+        } else {
+            devices = fetchDevices();
+            logger.info("File {} not found getting devices from cloud", path);
+            CompletableFuture.supplyAsync(this::fetchDevices)
+                    .thenAccept(this::saveDevices)
+                    .join();
         }
+        return devices;
+    }
+
     /**
      * @param uri The URI
      * @return The HttpResponse
@@ -207,7 +260,27 @@ public final class MerossHttpConnector {
     }
 
     void logOut() {
-        Objects.requireNonNull(getResponse(Collections.emptyMap(), MerossEnum.HttpEndpoint.LOGOUT.getValue()));
+        Objects.requireNonNull(response(Collections.emptyMap(), MerossEnum.HttpEndpoint.LOGOUT.getValue()));
+    }
+
+    void saveCloudCredentials(CloudCredentials cloudCredentials) {
+        Path path = Path.of("src/main/resources/cloud_credentials.json");
+        String json = new Gson().toJson(cloudCredentials);
+        try {
+            Files.writeString(path,json);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    void saveDevices(ArrayList<Device> devices) {
+        Path path=Path.of("src/main/resources/devices.json");
+        String json = new Gson().toJson(devices);
+        try {
+            Files.writeString(path,json);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 

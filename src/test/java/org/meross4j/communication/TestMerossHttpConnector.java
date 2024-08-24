@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,21 +28,21 @@ public class TestMerossHttpConnector {
     }
     @Test
     void testStatusCodeIs200() {
-        int statusCode = connector.validateResponse().statusCode();
+        int statusCode = connector.login().statusCode();
         logger.info("statusCode: {}", statusCode);
         assertEquals(200,statusCode);
     }
 
     @Test
     void testLoginResponseBodyIsNotNull()  {
-        String responseBody = connector.errorCodeFreeResponse().body();
+        String responseBody = connector.errorCodeFreeLogin().body();
         logger.info("responseBody: {}", responseBody);
             assertNotNull(responseBody);
     }
 
     @Test
     void testCredentialsIsNotNull(){
-        CloudCredentials credentials = connector.getCloudCredentials();
+        CloudCredentials credentials = connector.fetchCloudCredentials();
         logger.info("credentials: {}", credentials);
         assertNotNull(credentials);
     }
@@ -48,13 +50,13 @@ public class TestMerossHttpConnector {
     @Test
     void testDevicesNotNull() {
         ArrayList<Device> devices;
-        devices = Objects.requireNonNull(connector.getDevices());
+        devices = Objects.requireNonNull(connector.fetchDevices());
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
     }
     @Test
     void testFilterDeviceName(){
-        Optional<String> devName = connector.getDevices()
+        Optional<String> devName = connector.fetchDevices()
                 .stream()
                 .map(Device::devName)
                 .filter(p->p.equals(DEVICE_NAME))
@@ -75,5 +77,10 @@ public class TestMerossHttpConnector {
         String uuid = connector.getDevUUIDByDevName(DEVICE_NAME);
         logger.info("uuid for %s {}".formatted(DEVICE_NAME), uuid);
         assertNotNull(uuid);
+    }
+    @Test
+    void testSaveCloudCredentialIsNotThrown() {
+        CloudCredentials credentials = connector.fetchCloudCredentials();
+        assertDoesNotThrow(() -> connector.saveCloudCredentials(credentials));
     }
 }
