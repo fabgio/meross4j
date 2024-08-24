@@ -22,7 +22,7 @@ public class TestMerossManager {
     void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         var response=  manager.executeCommand("Comodino",
-                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
+                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"ON");
         logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }

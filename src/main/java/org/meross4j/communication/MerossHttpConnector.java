@@ -119,20 +119,26 @@ public final class MerossHttpConnector {
         return new Gson().fromJson(data, CloudCredentials.class);
     }
 
+    private static CloudCredentials loadCredentials(Path path) {
+        CloudCredentials credentials;
+        String data;
+        try {
+            JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
+            data = jsonElement.getAsJsonObject().toString();
+            credentials = new Gson().fromJson(data, CloudCredentials.class);
+            logger.info("Reading credentials from file: {}", path);
+        } catch (IOException e) {
+            logger.debug("Error reading credentials from file", e);
+            throw new RuntimeException(e);
+        }
+        return credentials;
+    }
+
     public CloudCredentials getCredentials() {
         Path path = Path.of("src", "main", "resources", "cloud_credentials.json");
         CloudCredentials credentials;
-        String data;
         if (Files.exists(path)) {
-            try {
-                JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
-                data = jsonElement.getAsJsonObject().toString();
-                credentials = new Gson().fromJson(data, CloudCredentials.class);
-                logger.info("Reading credentials from file: {}", path);
-            } catch (IOException e) {
-                logger.debug("Error reading credentials from file", e);
-                throw new RuntimeException(e);
-            }
+            credentials = loadCredentials(path);
         } else {
             credentials = fetchCloudCredentials();
             logger.info("File {} not found getting credentials from cloud", path);
@@ -142,6 +148,8 @@ public final class MerossHttpConnector {
         }
         return credentials;
     }
+
+
 
     public ArrayList<Device> fetchDevices(){
         String token =  fetchCloudCredentials().token();
@@ -153,6 +161,22 @@ public final class MerossHttpConnector {
         return new Gson().fromJson(data, type);
     }
 
+    private ArrayList<Device> loadDevices(Path path) {
+        ArrayList<Device> devices;
+        String data;
+        try {
+            JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
+            data = jsonElement.getAsJsonArray().toString();
+            TypeToken<ArrayList<Device>> typeToken = new TypeToken<>() {};
+            devices = new Gson().fromJson(data, typeToken);
+            logger.info("Reading devices from file: {}", path);
+        } catch (IOException e) {
+            logger.debug("Error devices from file", e);
+            throw new RuntimeException(e);
+        }
+        return devices;
+    }
+
     /**
      * @return The user's device list
      */
@@ -160,18 +184,8 @@ public final class MerossHttpConnector {
     public ArrayList<Device> getDevices() {
         Path path = Path.of("src", "main", "resources", "devices.json");
         ArrayList<Device> devices;
-        String data;
         if (Files.exists(path)) {
-            try {
-                JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
-                data = jsonElement.getAsJsonArray().toString();
-                TypeToken<ArrayList<Device>> typeToken = new TypeToken<>() {};
-                devices = new Gson().fromJson(data, typeToken);
-                logger.info("Reading devices from file: {}", path);
-            } catch (IOException e) {
-                logger.debug("Error devices from file", e);
-                throw new RuntimeException(e);
-            }
+            devices = loadDevices(path);
         } else {
             devices = fetchDevices();
             logger.info("File {} not found getting devices from cloud", path);
