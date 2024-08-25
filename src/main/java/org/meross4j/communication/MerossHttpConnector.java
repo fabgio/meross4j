@@ -207,7 +207,6 @@ public final class MerossHttpConnector {
             logger.info("Loaded devices from {}", path);
         } else {
             devices = fetchDevices();
-            saveDevices(devices);
         }
         return devices;
     }
