@@ -276,7 +276,7 @@ public final class MerossHttpConnector {
         }
     }
 
-    private static String encodeParams(Map<String, String> paramsData) {
+    public static String encodeParams(Map<String, String> paramsData) {
         return Base64.getEncoder().encodeToString(new Gson().toJson(paramsData).getBytes());
     }
 
