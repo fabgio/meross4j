@@ -126,7 +126,6 @@ public final class MerossHttpConnector {
             JsonElement jsonElement = JsonParser.parseString(Files.readString(path));
             data = jsonElement.getAsJsonObject().toString();
             credentials = new Gson().fromJson(data, CloudCredentials.class);
-            logger.info("Reading credentials from file: {}", path);
         } catch (IOException e) {
             logger.debug("Error reading credentials from file", e);
             throw new RuntimeException(e);
@@ -139,22 +138,22 @@ public final class MerossHttpConnector {
         CloudCredentials credentials;
         if (Files.exists(path)) {
             credentials = loadCredentials(path);
+            logger.info("Loaded credentials from: {}", path);
         } else {
-            credentials = fetchCloudCredentials();
-            logger.info("File {} not found getting credentials from cloud", path);
-            CompletableFuture.supplyAsync(this::fetchCloudCredentials)
-                    .thenAccept(this::saveCloudCredentials)
-                    .join();
+            CompletableFuture<CloudCredentials> completableFuture = CompletableFuture
+                    .supplyAsync(this::fetchCloudCredentials);
+            credentials = completableFuture.join();
+            logger.info("Fetching credentials from cloud");
+            completableFuture.thenAccept(this::saveCloudCredentials).join();
         }
         return credentials;
     }
 
-
-
     public ArrayList<Device> fetchDevices(){
         String token =  fetchCloudCredentials().token();
         setToken(token);
-        var response = Objects.requireNonNull(response(Collections.emptyMap(), MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
+        var response = Objects.requireNonNull(response(Collections.emptyMap(),
+                MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
         JsonElement jsonElement = JsonParser.parseString(response.body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
@@ -169,7 +168,6 @@ public final class MerossHttpConnector {
             data = jsonElement.getAsJsonArray().toString();
             TypeToken<ArrayList<Device>> typeToken = new TypeToken<>() {};
             devices = new Gson().fromJson(data, typeToken);
-            logger.info("Reading devices from file: {}", path);
         } catch (IOException e) {
             logger.debug("Error devices from file", e);
             throw new RuntimeException(e);
@@ -186,12 +184,12 @@ public final class MerossHttpConnector {
         ArrayList<Device> devices;
         if (Files.exists(path)) {
             devices = loadDevices(path);
+            logger.info("Loaded devices from {}", path);
         } else {
-            devices = fetchDevices();
+            CompletableFuture<ArrayList<Device>> completableFuture = CompletableFuture.supplyAsync(this::fetchDevices);
+            devices = completableFuture.join();
             logger.info("File {} not found getting devices from cloud", path);
-            CompletableFuture.supplyAsync(this::fetchDevices)
-                    .thenAccept(this::saveDevices)
-                    .join();
+            completableFuture.thenAccept(this::saveDevices).join();
         }
         return devices;
     }
