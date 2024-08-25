@@ -39,8 +39,6 @@ public final class MerossHttpConnector {
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
     private static final long CONNECTION_TIMEOUT_SECONDS = 15;
-    private static final Path credentialPath=Path.of(System.getProperty("user.home"), ".meross", "credentials");
-    private static final Path devicePath=Path.of(System.getProperty("user.home"), ".meross", "devices");
     private final String apiBaseUrl;
     private final String email;
     private final String password;
