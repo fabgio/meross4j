@@ -21,6 +21,8 @@ public class TestMerossHttpConnector {
     public static final String URL ="https://iotx-eu.meross.com";
     private static final String DEVICE_NAME="Scrivania";
 
+
+
     @BeforeEach
     void setUp() {
          connector = new MerossHttpConnector(URL, email, password);
@@ -41,7 +43,7 @@ public class TestMerossHttpConnector {
 
     @Test
     void testCredentialsIsNotNull(){
-        CloudCredentials credentials = connector.fetchCloudCredentials();
+        CloudCredentials credentials = connector.fetchCredentials();
         logger.info("credentials: {}", credentials);
         assertNotNull(credentials);
     }
@@ -49,13 +51,13 @@ public class TestMerossHttpConnector {
     @Test
     void testDevicesNotNull() {
         ArrayList<Device> devices;
-        devices = Objects.requireNonNull(connector.fetchDevices());
+        devices = Objects.requireNonNull(connector.fetchDevicesInternal());
         logger.info(String.valueOf(devices));
         assertNotNull(devices);
     }
     @Test
     void testFilterDeviceName(){
-        Optional<String> devName = connector.fetchDevices()
+        Optional<String> devName = connector.fetchDevicesInternal()
                 .stream()
                 .map(Device::devName)
                 .filter(p->p.equals(DEVICE_NAME))
@@ -79,7 +81,12 @@ public class TestMerossHttpConnector {
     }
     @Test
     void testSaveCloudCredentialIsNotThrown() {
-        CloudCredentials credentials = connector.fetchCloudCredentials();
-        assertDoesNotThrow(() -> connector.saveCloudCredentials(credentials));
+        CloudCredentials credentials = connector.fetchCredentials();
+        assertDoesNotThrow(() -> connector.saveCredentials(credentials));
+    }
+    @Test
+    void testDevicesIsNotThrown() {
+        var  devices = connector.fetchDevices();
+        assertDoesNotThrow(() -> connector.saveDevices(devices));
     }
 }

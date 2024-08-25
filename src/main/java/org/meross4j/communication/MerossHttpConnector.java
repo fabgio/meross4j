@@ -39,6 +39,8 @@ public final class MerossHttpConnector {
     private static final String DEFAULT_APP_TYPE = "MerossIOT";
     private static final String MODULE_VERSION = "0.0.0";
     private static final long CONNECTION_TIMEOUT_SECONDS = 15;
+    private static final Path credentialPath=Path.of(System.getProperty("user.home"), ".meross", "credentials");
+    private static final Path devicePath=Path.of(System.getProperty("user.home"), ".meross", "devices");
     private final String apiBaseUrl;
     private final String email;
     private final String password;
@@ -113,13 +115,8 @@ public final class MerossHttpConnector {
     /**
      * @return The user's Meross cloud Credentials
      */
-    public CloudCredentials fetchCloudCredentials() {
-        JsonElement jsonElement = JsonParser.parseString(errorCodeFreeLogin().body());
-        String data = jsonElement.getAsJsonObject().get("data").toString();
-        return new Gson().fromJson(data, CloudCredentials.class);
-    }
 
-    private static CloudCredentials loadCredentials(Path path) {
+    private  CloudCredentials loadCredentials(Path path) {
         CloudCredentials credentials;
         String data;
         try {
@@ -133,6 +130,29 @@ public final class MerossHttpConnector {
         return credentials;
     }
 
+    public CloudCredentials fetchCredentials() {
+        CloudCredentials credentials = CompletableFuture.supplyAsync(this::fetchCredentialsInternal).join();
+        logger.info("Fetching credentials from cloud");
+        saveCredentials(credentials);
+        return credentials;
+    }
+
+    private CloudCredentials fetchCredentialsInternal() {
+        JsonElement jsonElement = JsonParser.parseString(errorCodeFreeLogin().body());
+        String data = jsonElement.getAsJsonObject().get("data").toString();
+        return new Gson().fromJson(data, CloudCredentials.class);
+    }
+
+    public void saveCredentials(CloudCredentials cloudCredentials) {
+        Path path = Path.of("src/main/resources/cloud_credentials.json");
+        String json = new Gson().toJson(cloudCredentials);
+        try {
+            Files.writeString(path,json);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public CloudCredentials getCredentials() {
         Path path = Path.of("src", "main", "resources", "cloud_credentials.json");
         CloudCredentials credentials;
@@ -140,27 +160,12 @@ public final class MerossHttpConnector {
             credentials = loadCredentials(path);
             logger.info("Loaded credentials from: {}", path);
         } else {
-            CompletableFuture<CloudCredentials> completableFuture = CompletableFuture
-                    .supplyAsync(this::fetchCloudCredentials);
-            credentials = completableFuture.join();
-            logger.info("Fetching credentials from cloud");
-            completableFuture.thenAccept(this::saveCloudCredentials).join();
+            credentials = fetchCredentials();
         }
         return credentials;
     }
 
-    public ArrayList<Device> fetchDevices(){
-        String token =  fetchCloudCredentials().token();
-        setToken(token);
-        var response = Objects.requireNonNull(response(Collections.emptyMap(),
-                MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
-        JsonElement jsonElement = JsonParser.parseString(response.body());
-        String data = jsonElement.getAsJsonObject().get("data").toString();
-        TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
-        return new Gson().fromJson(data, type);
-    }
-
-    private ArrayList<Device> loadDevices(Path path) {
+    public ArrayList<Device> loadDevices(Path path) {
         ArrayList<Device> devices;
         String data;
         try {
@@ -175,6 +180,23 @@ public final class MerossHttpConnector {
         return devices;
     }
 
+   public ArrayList<Device> fetchDevices() {
+        ArrayList<Device> devices = CompletableFuture.supplyAsync(this::fetchDevicesInternal).join();
+        saveDevices(devices);
+        return devices;
+    }
+
+    public ArrayList<Device> fetchDevicesInternal(){
+        String token =  fetchCredentialsInternal().token();
+        setToken(token);
+        var response = Objects.requireNonNull(response(Collections.emptyMap(),
+                MerossEnum.HttpEndpoint.DEV_LIST.getValue()));
+        JsonElement jsonElement = JsonParser.parseString(response.body());
+        String data = jsonElement.getAsJsonObject().get("data").toString();
+        TypeToken<ArrayList<Device>> type = new TypeToken<>() {};
+        return new Gson().fromJson(data, type);
+    }
+
     /**
      * @return The user's device list
      */
@@ -186,12 +208,20 @@ public final class MerossHttpConnector {
             devices = loadDevices(path);
             logger.info("Loaded devices from {}", path);
         } else {
-            CompletableFuture<ArrayList<Device>> completableFuture = CompletableFuture.supplyAsync(this::fetchDevices);
-            devices = completableFuture.join();
-            logger.info("File {} not found getting devices from cloud", path);
-            completableFuture.thenAccept(this::saveDevices).join();
+            devices = fetchDevices();
+            saveDevices(devices);
         }
         return devices;
+    }
+
+   public void saveDevices(ArrayList<Device> devices) {
+        Path path=Path.of("src/main/resources/devices.json");
+        String json = new Gson().toJson(devices);
+        try {
+            Files.writeString(path,json);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -271,28 +301,8 @@ public final class MerossHttpConnector {
                 .orElseThrow(()->new RuntimeException("No device found with name: "+devName));
     }
 
-    void logOut() {
+    public void logOut() {
         Objects.requireNonNull(response(Collections.emptyMap(), MerossEnum.HttpEndpoint.LOGOUT.getValue()));
-    }
-
-    void saveCloudCredentials(CloudCredentials cloudCredentials) {
-        Path path = Path.of("src/main/resources/cloud_credentials.json");
-        String json = new Gson().toJson(cloudCredentials);
-        try {
-            Files.writeString(path,json);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    void saveDevices(ArrayList<Device> devices) {
-        Path path=Path.of("src/main/resources/devices.json");
-        String json = new Gson().toJson(devices);
-        try {
-            Files.writeString(path,json);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
 
