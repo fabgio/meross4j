@@ -135,7 +135,7 @@ public final class MerossHttpConnector {
         return credentials;
     }
 
-    private CloudCredentials fetchCredentialsInternal() {
+    public CloudCredentials fetchCredentialsInternal() {
         JsonElement jsonElement = JsonParser.parseString(errorCodeFreeLogin().body());
         String data = jsonElement.getAsJsonObject().get("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
@@ -159,6 +159,7 @@ public final class MerossHttpConnector {
             logger.info("Loaded credentials from: {}", path);
         } else {
             credentials = fetchCredentials();
+            logger.info("Fetched credentials from cloud");
         }
         return credentials;
     }
@@ -207,12 +208,13 @@ public final class MerossHttpConnector {
             logger.info("Loaded devices from {}", path);
         } else {
             devices = fetchDevices();
+            logger.info("Fetched devices from cloud");
         }
         return devices;
     }
 
    public void saveDevices(ArrayList<Device> devices) {
-        Path path=Path.of("src/main/resources/devices.json");
+        Path path = Path.of("src/main/resources/devices.json");
         String json = new Gson().toJson(devices);
         try {
             Files.writeString(path,json);

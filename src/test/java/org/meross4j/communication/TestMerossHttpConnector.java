@@ -81,12 +81,12 @@ public class TestMerossHttpConnector {
     }
     @Test
     void testSaveCloudCredentialIsNotThrown() {
-        CloudCredentials credentials = connector.fetchCredentials();
+        CloudCredentials credentials = connector.fetchCredentialsInternal();
         assertDoesNotThrow(() -> connector.saveCredentials(credentials));
     }
     @Test
     void testDevicesIsNotThrown() {
-        var  devices = connector.fetchDevices();
+        var  devices = connector.fetchDevicesInternal();
         assertDoesNotThrow(() -> connector.saveDevices(devices));
     }
 }
