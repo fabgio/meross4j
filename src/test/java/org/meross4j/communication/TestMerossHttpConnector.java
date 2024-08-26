@@ -41,7 +41,7 @@ public class TestMerossHttpConnector {
 
     @Test
     void testCredentialsIsNotNull(){
-        CloudCredentials credentials = connector.fetchCloudCredentials();
+        CloudCredentials credentials = connector.fetchCredentials();
         logger.info("credentials: {}", credentials);
         assertNotNull(credentials);
     }
@@ -79,7 +79,7 @@ public class TestMerossHttpConnector {
     }
     @Test
     void testSaveCloudCredentialIsNotThrown() {
-        CloudCredentials credentials = connector.fetchCloudCredentials();
-        assertDoesNotThrow(() -> connector.saveCloudCredentials(credentials));
+        CloudCredentials credentials = connector.fetchCredentials();
+        assertDoesNotThrow(() -> connector.saveCredentials(credentials));
     }
 }

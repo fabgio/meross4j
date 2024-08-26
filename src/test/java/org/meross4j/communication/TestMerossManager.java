@@ -16,6 +16,7 @@ public class TestMerossManager {
     @BeforeEach
     void setUp(){
         merossHttpConnector = new MerossHttpConnector(URL, email, password);
+        merossHttpConnector.refresh();
     }
 
     @Test
