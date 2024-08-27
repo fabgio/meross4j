@@ -16,14 +16,13 @@ public class TestMerossManager {
     @BeforeEach
     void setUp(){
         merossHttpConnector = new MerossHttpConnector(URL, email, password);
-        merossHttpConnector.refresh();
     }
 
     @Test
     void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         var response=  manager.executeCommand("Scrivania",
-                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"ON");
+                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
         logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }
