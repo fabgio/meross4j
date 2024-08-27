@@ -18,12 +18,16 @@ Supported capabilities:
 
 This library is available via Maven Central repository by adding the dependency in your POM.xml:
 
+
+
 ```xml   
+<!--WIP -->
     <dependency>
-      <groupId>>org.meross4j</groupId>
+      <groupId>org.meross4j</groupId>
       <artifactId>meross4j</artifactId>
       <version>0.1</version>
     </dependency>
+        <!--WIP -->
 ```
 
 ## Usage example
