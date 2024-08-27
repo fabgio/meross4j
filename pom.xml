@@ -15,9 +15,6 @@
         <url>https://github.com/fabgio/meross4j</url>
   </scm>
 
-
-
-
     <licenses>
         <license>
             <name>Eclipse Public License 2.0</name>
