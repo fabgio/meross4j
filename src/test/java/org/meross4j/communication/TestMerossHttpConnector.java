@@ -19,7 +19,7 @@ public class TestMerossHttpConnector {
     private static final String email ="your email";
     private static final String password = "your password";
     public static final String URL ="https://iotx-eu.meross.com";
-    private static final String DEVICE_NAME="Scrivania";
+    private static final String DEVICE_NAME="Desk";
 
     @BeforeEach
     void setUp() {
