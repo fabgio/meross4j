@@ -6,6 +6,8 @@ import org.meross4j.record.CloudCredentials;
 import org.meross4j.record.Device;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,10 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestMerossHttpConnector {
     private final static Logger logger = LoggerFactory.getLogger(TestMerossHttpConnector.class);
     private MerossHttpConnector connector;
-    private static final String email ="your email";
-    private static final String password = "your password";
+    private static final String email ="giovanni.fabiani@outlook.com";
+    private static final String password = "bruce975";
     public static final String URL ="https://iotx-eu.meross.com";
-    private static final String DEVICE_NAME="Desk";
+    private static final String DEVICE_NAME="Scrivania";
 
     @BeforeEach
     void setUp() {
@@ -34,7 +36,12 @@ public class TestMerossHttpConnector {
 
     @Test
     void testLoginResponseBodyIsNotNull()  {
-        String responseBody = connector.errorCodeFreeLogin().body();
+        String responseBody = null;
+        try {
+            responseBody = connector.errorCodeFreeLogin().body();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         logger.info("responseBody: {}", responseBody);
             assertNotNull(responseBody);
     }
@@ -81,5 +88,10 @@ public class TestMerossHttpConnector {
     void testSaveCloudCredentialIsNotThrown() {
         CloudCredentials credentials = connector.fetchCredentials();
         assertDoesNotThrow(() -> connector.saveCredentials(credentials));
+    }
+    @Test
+    void testErrorCode(){
+        int errorCode = connector.getErrorCode();
+        assertEquals(MerossEnum.ErrorCode.NOT_AN_ERROR.getValue(),errorCode);
     }
 }

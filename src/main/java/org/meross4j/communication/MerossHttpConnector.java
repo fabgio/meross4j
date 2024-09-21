@@ -45,7 +45,6 @@ public final class MerossHttpConnector {
     private String token;
     private final Path credentialsPath = Path.of("src", "main", "resources", "cloud_credentials.json");
     private final Path devicesPath = Path.of("src", "main", "resources", "devices.json");
-
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.of(CONNECTION_TIMEOUT_SECONDS, ChronoUnit.SECONDS))
             .build();
@@ -94,23 +93,24 @@ public final class MerossHttpConnector {
             }
         }
     }
-
+    
+   
     /**
      * @return The response body at login
      */
-    public HttpResponse<String> errorCodeFreeLogin() {
-        JsonElement jsonElement = JsonParser.parseString(login().body());
-        int errorCode = jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
+    public HttpResponse<String> errorCodeFreeLogin() throws IOException {
+        int errorCode = getErrorCode();
         if (errorCode != MerossEnum.ErrorCode.NOT_AN_ERROR.getValue()) {
             String errorMessage = MerossEnum.ErrorCode.getMessageByStatusCode(errorCode);
-            try {
-                throw new IOException("Response resulted in error code" + "  "+errorCode + " with message"+ " "+ errorMessage);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            throw new IOException("Response resulted in error code" + "  "+errorCode + " with message"+ " "+ errorMessage);
         } else {
             return login();
         }
+    }
+
+    public int getErrorCode() {
+        JsonElement jsonElement = JsonParser.parseString(login().body());
+        return jsonElement.getAsJsonObject().get("apiStatus").getAsInt();
     }
 
     /**
@@ -139,7 +139,12 @@ public final class MerossHttpConnector {
     }
 
     public CloudCredentials fetchCredentialsImpl() {
-        JsonElement jsonElement = JsonParser.parseString(errorCodeFreeLogin().body());
+        JsonElement jsonElement;
+        try {
+            jsonElement = JsonParser.parseString(errorCodeFreeLogin().body());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         String data = jsonElement.getAsJsonObject().get("data").toString();
         return new Gson().fromJson(data, CloudCredentials.class);
     }

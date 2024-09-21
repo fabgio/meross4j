@@ -159,7 +159,6 @@ public final class MerossMqttConnector {
         return "/appliance/" + deviceUUID + "/subscribe";
     }
 
-
     public static void setUserId(String userId) {
         MerossMqttConnector.userId = userId;
     }

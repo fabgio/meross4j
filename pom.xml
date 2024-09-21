@@ -4,7 +4,7 @@
 
     <groupId>org.meross4j</groupId>
     <artifactId>meross4j</artifactId>
-    <version>0.1</version>
+    <version>0.2</version>
 
     <name>meross4j Meross Java library</name>
     <description>meross4j is a Java library for the Meross cloud</description>
@@ -37,8 +37,8 @@
     </developers>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>23</maven.compiler.source>
+        <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
