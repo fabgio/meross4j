@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TestMerossManager {
@@ -31,7 +33,8 @@ public class TestMerossManager {
     void testReceive()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         Response response =  manager.executeCommand("Scrivania",MerossEnum.Namespace.CONTROL_TOGGLEX.name());
-        logger.info("SystemAll Response: {}",response);
-        assertNotNull(response);
+        int  status = (Integer) response.map().get("onoff");
+        assertEquals(status,0);
+        logger.info("Status: {}",status);
     }
 }
