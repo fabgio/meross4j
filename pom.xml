@@ -148,7 +148,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>org.meross4j.*,com.hivemq.*,
+                        <Export-Package>com.hivemq.client.mqtt.*; version="[1.3.0,2.0.0)",
                             ,org.apache.commons.codec.digest.*"</Export-Package>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Activator>org.meross4j.bundle.Activator</Bundle-Activator>
