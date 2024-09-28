@@ -4,7 +4,7 @@
 
     <groupId>org.meross4j</groupId>
     <artifactId>meross4j</artifactId>
-    <version>0.2.4</version>
+    <version>0.2.5</version>
 
     <name>meross4j Meross Java library</name>
     <description>meross4j is a Java library for the Meross cloud</description>
@@ -67,7 +67,6 @@
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
             <version>24.1.0</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>commons-codec</groupId>
@@ -148,8 +147,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>com.hivemq.client.mqtt.*; version="[1.3.0,2.0.0)",
-                            ,org.apache.commons.codec.digest.*"</Export-Package>
+                        <Export-Package>org.meross4j.*;uses:="com.hivemq.client",
+                            uses:="org.apache.commons.codec.digest"</Export-Package>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Activator>org.meross4j.bundle.Activator</Bundle-Activator>
                         <Bundle-Version>$(replace;$(project.version);"").$(tstamp;yyyyMMdd-HHmm)</Bundle-Version>
