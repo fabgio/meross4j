@@ -43,8 +43,9 @@ public final class MerossHttpConnector {
     private final String email;
     private final String password;
     private String token;
-    private final Path credentialsPath = Path.of("src", "main", "resources", "cloud_credentials.json");
-    private final Path devicesPath = Path.of("src", "main", "resources", "devices.json");
+    private final String path = System.getProperty("user.home");
+    private final Path credentialsPath = Path.of(path + "//.meross_credentials");
+    private final Path devicesPath = Path.of(path + "//.meross_devices");
     private final HttpClient client = HttpClient.newBuilder()
             .connectTimeout(Duration.of(CONNECTION_TIMEOUT_SECONDS, ChronoUnit.SECONDS))
             .build();
@@ -164,6 +165,13 @@ public final class MerossHttpConnector {
     public void saveCredentials(CloudCredentials cloudCredentials) {
         String json = new Gson().toJson(cloudCredentials);
         try {
+            if(!credentialsPath.toFile().exists()) {
+                try {;
+                    Files.createFile(credentialsPath);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             Files.writeString(credentialsPath,json);
             logger.info("Saving credentials to {}", credentialsPath);
         } catch (IOException e) {
@@ -221,14 +229,22 @@ public final class MerossHttpConnector {
     }
 
    public void saveDevices(ArrayList<Device> devices) {
-        String json = new Gson().toJson(devices);
-        try {
-            Files.writeString(devicesPath,json);
-            logger.info("Saved devices to {}", devicesPath);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+       if (!devicesPath.toFile().exists()) {
+           try {
+               Files.createFile(devicesPath);
+           } catch (IOException e) {
+               throw new RuntimeException(e);
+           }
+           String json = new Gson().toJson(devices);
+           try {
+               Files.writeString(devicesPath, json);
+           } catch (IOException e) {
+               throw new RuntimeException(e);
+           }
+           logger.info("Saved devices to {}", devicesPath);
+
+       }
+   }
 
     /**
      * @param uri The URI
