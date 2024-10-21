@@ -4,7 +4,7 @@
 
     <groupId>org.meross4j</groupId>
     <artifactId>meross4j</artifactId>
-    <version>0.2.6</version>
+    <version>0.2.7</version>
 
     <name>meross4j Meross Java library</name>
     <description>meross4j is a Java library for the Meross cloud</description>

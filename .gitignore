@@ -35,3 +35,4 @@ build/
 
 
 /src/test/java/org/meross4j/communication/
+/src/test/java/
