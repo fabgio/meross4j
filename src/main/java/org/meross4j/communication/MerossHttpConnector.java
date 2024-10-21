@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.meross4j.record.CloudCredentials;
 import org.meross4j.record.Device;
+import org.meross4j.util.MD5Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -268,7 +268,7 @@ public final class MerossHttpConnector {
             }
         }
         dataToSign = "%s%d%s%s".formatted(INITIAL_STRING, timestamp, nonce, encodedParams);
-        String md5hash = DigestUtils.md5Hex(dataToSign);
+        String md5hash = MD5Utils.getMD5String(dataToSign);
         Map<String,String> payloadMap = new HashMap<>();
         payloadMap.put("params",encodedParams);
         payloadMap.put("sign", md5hash);

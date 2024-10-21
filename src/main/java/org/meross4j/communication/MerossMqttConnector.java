@@ -7,8 +7,7 @@ import com.hivemq.client.mqtt.mqtt5.Mqtt5BlockingClient;
 import com.hivemq.client.mqtt.mqtt5.Mqtt5Client;
 import com.hivemq.client.mqtt.mqtt5.message.publish.Mqtt5Publish;
 import com.hivemq.client.mqtt.mqtt5.message.subscribe.Mqtt5Subscribe;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.jetbrains.annotations.NotNull;
+import org.meross4j.util.MD5Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.nio.charset.StandardCharsets;
@@ -36,9 +35,9 @@ public final class MerossMqttConnector {
     private static String destinationDeviceUUID;
     private static String incomingPublishesResponse;
 
-    public static String publishMqttMessage(byte[] message, @NotNull String requestTopic) {
+    public static String publishMqttMessage(byte[] message,  String requestTopic) {
         String clearPassword = "%s%s".formatted(userId, key);
-        String hashedPassword = DigestUtils.md5Hex(clearPassword);
+        String hashedPassword = MD5Utils.getMD5String(clearPassword);
         Mqtt5BlockingClient client = Mqtt5Client.builder()
                 .identifier(clientId)
                 .serverHost(brokerAddress)
@@ -99,9 +98,9 @@ public final class MerossMqttConnector {
                                           Map<String, Object> payload) {
         int timestamp = Math.round(Instant.now().getEpochSecond());
         String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 16);
-        String messageId = DigestUtils.md5Hex(randomString.toLowerCase());
+        String messageId = MD5Utils.getMD5String(randomString.toLowerCase());
         String signatureToHash = "%s%s%d".formatted(messageId, key, timestamp);
-        String signature = DigestUtils.md5Hex(signatureToHash).toLowerCase();
+        String signature = MD5Utils.getMD5String(signatureToHash).toLowerCase();
         Map<String, Object> headerMap = new HashMap<>();
         Map<String, Object> dataMap = new HashMap<>();
         headerMap.put("from", buildClientResponseTopic());
@@ -124,14 +123,14 @@ public final class MerossMqttConnector {
      *
      * @return The client user topic
      */
-    public static @NotNull String buildClientUserTopic() {
+    public static  String buildClientUserTopic() {
         return "/app/" + getUserId() + "/subscribe";
     }
 
-    public static @NotNull String buildAppId() {
+    public static  String buildAppId() {
         String randomString = "API" + UUID.randomUUID();
         String encodedString = StandardCharsets.UTF_8.encode(randomString).toString();
-        return DigestUtils.md5Hex(encodedString);
+        return MD5Utils.getMD5String(encodedString);
     }
 
     /**
@@ -140,11 +139,11 @@ public final class MerossMqttConnector {
      *
      * @return The response topic
      */
-    public static @NotNull String buildClientResponseTopic() {
+    public static  String buildClientResponseTopic() {
         return "/app/" + getUserId() + "-" + buildAppId() + "/subscribe";
     }
 
-    public static @NotNull String buildClientId() {
+    public static  String buildClientId() {
         return "app:" + buildAppId();
     }
 
@@ -155,7 +154,7 @@ public final class MerossMqttConnector {
      * @return The topic to be published
      */
 
-    public static @NotNull String buildDeviceRequestTopic(String deviceUUID) {
+    public static  String buildDeviceRequestTopic(String deviceUUID) {
         return "/appliance/" + deviceUUID + "/subscribe";
     }
 

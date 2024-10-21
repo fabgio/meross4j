@@ -5,7 +5,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import org.jetbrains.annotations.NotNull;
 import org.meross4j.command.Command;
 import org.meross4j.factory.AbstractFactory;
 import org.meross4j.factory.FactoryProvider;
@@ -141,7 +140,7 @@ public class MerossManager {
         return getResponse(commandType, systemAllPublishesMessage);
     }
 
-    private @NotNull Response getResponse(String commandType, String systemAllPublishesMessage) {
+    private  Response getResponse(String commandType, String systemAllPublishesMessage) {
         return switch (commandType) {
             case "CONTROL_TOGGLEX" -> togglexResponse(systemAllPublishesMessage);
             default -> throw new IllegalStateException("Unexpected commandType: " + commandType);
