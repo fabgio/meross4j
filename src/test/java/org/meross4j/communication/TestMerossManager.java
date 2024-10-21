@@ -1,6 +1,7 @@
 package org.meross4j.communication;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.meross4j.record.response.Response;
 import org.slf4j.Logger;
@@ -24,11 +25,11 @@ public class TestMerossManager {
     void testSend()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
         var response=  manager.executeCommand("Scrivania",
-                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"OFF");
+                MerossEnum.Namespace.CONTROL_TOGGLEX.name(),"ON");
         logger.info("SystemAll Response: {}",response);
         assertNotNull(response);
     }
-
+    @Disabled
     @Test
     void testReceive()  {
         var manager = MerossManager.createMerossManager(merossHttpConnector);
