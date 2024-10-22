@@ -25,7 +25,7 @@ This library is available via Maven Central repository by adding the dependency 
     <dependency>
       <groupId>org.meross4j</groupId>
       <artifactId>meross4j</artifactId>
-      <version>0.2.6</version>
+      <version>0.2.7</version>
     </dependency>
 ```
 
