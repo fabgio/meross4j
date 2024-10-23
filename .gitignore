@@ -29,10 +29,11 @@ build/
 ### VS Code ###
 .vscode/
 
+
 ### Mac OS ###
 .DS_Store
 /test
 
 
-/src/test/java/org/meross4j/communication/
-/src/test/java/
+/src/test/
+
