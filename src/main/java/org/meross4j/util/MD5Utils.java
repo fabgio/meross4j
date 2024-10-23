@@ -52,7 +52,7 @@ public class MD5Utils {
      * @param input nonce as input
      * @return Encrypted String
      */
-    public static String getMD5String( String input) {
+    public static String getMD5String(String input) {
         if (input != null) {
             byte[] md5InBytes = MD5Utils.digest(input.getBytes(UTF_8));
             return bytesToHex(md5InBytes);
