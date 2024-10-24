@@ -1,4 +1,4 @@
-package org.meross4j.record.response;
+package org.meross4j.record;
 
 import java.util.Map;
 

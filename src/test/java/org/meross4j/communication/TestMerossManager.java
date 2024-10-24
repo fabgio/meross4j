@@ -3,7 +3,7 @@ package org.meross4j.communication;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.meross4j.record.response.Response;
+import org.meross4j.record.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

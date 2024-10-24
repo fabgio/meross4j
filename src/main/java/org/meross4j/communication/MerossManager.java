@@ -8,7 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import org.meross4j.command.Command;
 import org.meross4j.factory.AbstractFactory;
 import org.meross4j.factory.FactoryProvider;
-import org.meross4j.record.response.Response;
+import org.meross4j.record.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collections;
